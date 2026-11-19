@@ -12,7 +12,7 @@
 | T01.03 | DONE | `Sources/InventoryCore/Data/Schema.swift` | `SchemaTests.enforcesConstraints` | items/tags/item_tags, CHECK quantity ≥ 1, UNIQUE(name_key) |
 | T01.04 | DONE | `Sources/InventoryCore/Data/Schema.swift` | `historyIsImmutable`, `createsIndexes`, `reopensWithForeignKeys` | Четыре триггера истории, семь индексов, FK на каждом открытии |
 | T01.05 | DONE | `Sources/InventoryCore/Data/SeedData.swift` | `SchemaTests.seedsOnce` | Семь статусов, три настройки; повторный запуск идемпотентен |
-| T01.06 | DONE | `Sources/InventoryCore/Infrastructure/` | `LoggerTests` | Ротация по числу и размеру, ошибка лога не подменяет исходную, доменные ошибки без UI-строк |
+| T01.06 | DONE | `Sources/InventoryCore/Data/RotatingFileLogger.swift`, `Sources/InventoryCore/Domain/DomainError.swift` | `LoggerTests` | Ротация по числу и размеру, ошибка лога не подменяет исходную, доменные ошибки без UI-строк |
 | T01.07 | DONE | `Sources/InventoryCore/Data/StorageLock.swift` | `preventsConcurrentOpen`, `lockIsCrossProcess`, `symlinkCannotBypassLock` | `flock` + реестр путей; второй процесс и symlink не обходят блокировку |
 | T01.08 | DONE | `Sources/InventoryCore/Data/StorageCoordinator.swift` | `StorageTests`: create/reopen, corrupt, missing path, lock release | Повреждённая БД и пропавший диск не заменяются новой базой, `integrity_check` до работы |
 | T01.09 | DONE | `Sources/InventoryCore/Data/MigrationCoordinator.swift` | `MigrationTests`: `VACUUM INTO`, restore с WAL, artificial failure | Копия ДО миграции, откат возвращает прежнюю БД, `user_version` = 1 |
