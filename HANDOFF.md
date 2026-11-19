@@ -2,7 +2,7 @@
 
 Задача: этап 1 (T01.01–T01.18), приёмка T01.19
 Результат: DONE по коду и автотестам; BLOCKED по подтверждению владельца
-Коммит или точные изменённые файлы: см. `git status` после коммита этапа 1; основные каталоги — `Package.swift`, `project.yml`, `Support/`, `Sources/`, `Tests/`, `fixtures/`, `DECISIONS_APPROVED.md`, `TOOLCHAIN.md`, `Inventory.xcodeproj/`
+Коммит или точные изменённые файлы: `720868d` — `Package.swift`, `project.yml`, `Support/`, `Sources/`, `Tests/`, `fixtures/`, `DECISIONS_APPROVED.md`, `TOOLCHAIN.md`, `Inventory.xcodeproj/`, `HANDOFF.md`, `RUN_LOG.md`
 
 ## Что уже работает
 
