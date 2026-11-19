@@ -1,0 +1,84 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+Icon?
+
+# Xcode: сборочные артефакты и пользовательские данные
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM
+*.dSYM.zip
+*.xcresult
+TestResults/
+timeline.xctimeline
+playground.xcworkspace
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# Swift Package Manager
+# Package.resolved коммитится: версии зависимостей должны быть зафиксированы.
+.build/
+.swiftpm/
+Packages/
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/configuration/
+
+# Менеджеры зависимостей (на случай появления)
+Pods/
+Carthage/Build/
+.bundle/
+
+# Fastlane и результаты прогонов
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+*.xcoverprofile
+
+# Логи, временные и частичные файлы
+*.log
+logs/
+*.tmp
+*.part
+*.swp
+*.swo
+*~
+
+# Исключения для фикстур и документации: сами данные не игнорируются,
+# если они осознанно добавлены в тесты.
+!Tests/**/Fixtures/**
+
+# Секреты и подпись
+.env
+.env.*
+!.env.example
+*.p12
+*.cer
+*.provisionprofile
+*.mobileprovision
+*.key
+
+# IDE и редакторы
+.vscode/
+.idea/
+*.iml
+*.code-workspace
+
+# Защита от случайного появления Dart/Flutter: проект только на Swift
+.dart_tool/
+.packages
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec.lock
