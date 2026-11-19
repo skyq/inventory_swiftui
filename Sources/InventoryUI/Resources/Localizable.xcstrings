@@ -1,0 +1,986 @@
+{
+  "sourceLanguage": "ru",
+  "strings": {
+    "app.name": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Инвентарь"
+          }
+        }
+      }
+    },
+    "common.close": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрыть"
+          }
+        }
+      }
+    },
+    "common.error": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ошибка"
+          }
+        }
+      }
+    },
+    "common.ok": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "error.backupIntegrityFailed": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В архиве не хватает данных или фотографий."
+          }
+        }
+      }
+    },
+    "error.backupInvalidZip": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Архив повреждён или не является архивом Inventory."
+          }
+        }
+      }
+    },
+    "error.backupLimitExceeded": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Архив превышает допустимые размеры."
+          }
+        }
+      }
+    },
+    "error.backupManifestInvalid": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Манифест архива некорректен."
+          }
+        }
+      }
+    },
+    "error.backupNewerFormat": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Архив создан более новой версией приложения."
+          }
+        }
+      }
+    },
+    "error.duplicateName": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Такое имя уже существует."
+          }
+        }
+      }
+    },
+    "error.importFailed": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось импортировать архив."
+          }
+        }
+      }
+    },
+    "error.internalError": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Внутренняя ошибка приложения."
+          }
+        }
+      }
+    },
+    "error.ioError": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ошибка доступа к файлу."
+          }
+        }
+      }
+    },
+    "error.migrationFailed": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось обновить базу данных; изменения отменены."
+          }
+        }
+      }
+    },
+    "error.personArchived": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Человек находится в архиве."
+          }
+        }
+      }
+    },
+    "error.personNameDuplicate": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Человек с таким именем уже существует."
+          }
+        }
+      }
+    },
+    "error.photoCorrupt": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось прочитать изображение."
+          }
+        }
+      }
+    },
+    "error.photoReadFailed": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось прочитать фото."
+          }
+        }
+      }
+    },
+    "error.photoTooLarge": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Фото слишком большое: не более 12 000 px по длинной стороне."
+          }
+        }
+      }
+    },
+    "error.photoUnsupportedFormat": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Формат не поддерживается."
+          }
+        }
+      }
+    },
+    "error.photoWriteFailed": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось сохранить фото."
+          }
+        }
+      }
+    },
+    "error.placeCycle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нельзя переместить место внутрь самого себя."
+          }
+        }
+      }
+    },
+    "error.placeNotEmpty": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В месте ещё есть вложенные места или вещи."
+          }
+        }
+      }
+    },
+    "error.rollbackFailed": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось откатить последний импорт."
+          }
+        }
+      }
+    },
+    "error.statusArchived": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статус находится в архиве."
+          }
+        }
+      }
+    },
+    "error.statusInUse": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статус используется в настройках."
+          }
+        }
+      }
+    },
+    "error.statusNameDuplicate": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статус с таким именем уже существует."
+          }
+        }
+      }
+    },
+    "error.statusUnchanged": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статус уже установлен."
+          }
+        }
+      }
+    },
+    "error.storageBusy": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Хранилище уже открыто в другом экземпляре приложения."
+          }
+        }
+      }
+    },
+    "error.storageCorrupt": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "База данных повреждена. Восстановите её из резервной копии."
+          }
+        }
+      }
+    },
+    "error.storageIntegrityFailed": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Проверка целостности базы не пройдена."
+          }
+        }
+      }
+    },
+    "error.storageNewerSchema": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "База создана более новой версией приложения."
+          }
+        }
+      }
+    },
+    "error.storageUnavailable": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Папка данных недоступна."
+          }
+        }
+      }
+    },
+    "error.tagNameConflict": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тег с таким именем уже существует."
+          }
+        }
+      }
+    },
+    "error.validationNotFound": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запись не найдена."
+          }
+        }
+      }
+    },
+    "error.validationOutOfRange": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Значение вне допустимого диапазона."
+          }
+        }
+      }
+    },
+    "error.validationRequired": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заполните обязательное поле."
+          }
+        }
+      }
+    },
+    "error.validationTooLong": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Слишком длинное значение."
+          }
+        }
+      }
+    },
+    "photo.failed": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось обработать фото."
+          }
+        }
+      }
+    },
+    "photo.processing": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обрабатываем фото…"
+          }
+        }
+      }
+    },
+    "placeForm.editTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Редактировать место"
+          }
+        }
+      }
+    },
+    "placeForm.newTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Новое место"
+          }
+        }
+      }
+    },
+    "places.add": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавить место"
+          }
+        }
+      }
+    },
+    "places.cancel": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмена"
+          }
+        }
+      }
+    },
+    "places.changePhoto": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заменить фото…"
+          }
+        }
+      }
+    },
+    "places.choosePhoto": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выбрать фото…"
+          }
+        }
+      }
+    },
+    "places.created": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Создано"
+          }
+        }
+      }
+    },
+    "places.delete": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить"
+          }
+        }
+      }
+    },
+    "places.deleteMessage": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Место «%@» будет удалено вместе с фотографией."
+          }
+        }
+      }
+    },
+    "places.deleteTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить место?"
+          }
+        }
+      }
+    },
+    "places.description": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Описание"
+          }
+        }
+      }
+    },
+    "places.details": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Детали"
+          }
+        }
+      }
+    },
+    "places.duplicateConfirm": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сохранить всё равно"
+          }
+        }
+      }
+    },
+    "places.duplicateMessage": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "У места-родителя уже есть место с именем «%@». Сохранить всё равно?"
+          }
+        }
+      }
+    },
+    "places.duplicateTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Такое имя уже есть"
+          }
+        }
+      }
+    },
+    "places.edit": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Редактировать"
+          }
+        }
+      }
+    },
+    "places.empty": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Мест пока нет"
+          }
+        }
+      }
+    },
+    "places.emptyHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Создайте первое место, чтобы разложить вещи."
+          }
+        }
+      }
+    },
+    "places.inspector.empty": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выберите место, чтобы посмотреть детали."
+          }
+        }
+      }
+    },
+    "places.inspector.toggle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показать или скрыть детали"
+          }
+        }
+      }
+    },
+    "places.name": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Название"
+          }
+        }
+      }
+    },
+    "places.nameMaxLength": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не более %d символов"
+          }
+        }
+      }
+    },
+    "places.nameRequired": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Введите название места."
+          }
+        }
+      }
+    },
+    "places.noParent": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Без родителя"
+          }
+        }
+      }
+    },
+    "places.notEmptyMessage": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В месте «%@»: вложенных мест — %lld, вещей — %lld. Сначала переложите их."
+          }
+        }
+      }
+    },
+    "places.notEmptyTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Место не пустое"
+          }
+        }
+      }
+    },
+    "places.open": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открыть"
+          }
+        }
+      }
+    },
+    "places.path": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Путь"
+          }
+        }
+      }
+    },
+    "places.photo": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Фото"
+          }
+        }
+      }
+    },
+    "places.photoHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "JPEG, PNG или WebP, не более 12 000 px по длинной стороне."
+          }
+        }
+      }
+    },
+    "places.photoRequired": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавьте фотографию места."
+          }
+        }
+      }
+    },
+    "places.root": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По местам"
+          }
+        }
+      }
+    },
+    "places.save": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сохранить"
+          }
+        }
+      }
+    },
+    "places.title": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По местам"
+          }
+        }
+      }
+    },
+    "places.updated": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Изменено"
+          }
+        }
+      }
+    },
+    "search.comingSoon": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поиск станет доступен на следующем этапе."
+          }
+        }
+      }
+    },
+    "search.menu": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Найти"
+          }
+        }
+      }
+    },
+    "search.placeholder": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поиск"
+          }
+        }
+      }
+    },
+    "section.comingSoon": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Раздел «%@» появится на следующем этапе."
+          }
+        }
+      }
+    },
+    "settings.comingSoon": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Остальные настройки появятся на этапе 5."
+          }
+        }
+      }
+    },
+    "settings.data": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Данные"
+          }
+        }
+      }
+    },
+    "settings.folder": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Папка данных"
+          }
+        }
+      }
+    },
+    "settings.folderHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Путь к базе, фотографиям и копиям безопасности."
+          }
+        }
+      }
+    },
+    "settings.showInFinder": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показать в Finder"
+          }
+        }
+      }
+    },
+    "settings.title": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Настройки"
+          }
+        }
+      }
+    },
+    "sidebar.data": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Данные"
+          }
+        }
+      }
+    },
+    "sidebar.gallery": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Галерея"
+          }
+        }
+      }
+    },
+    "sidebar.people": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Люди"
+          }
+        }
+      }
+    },
+    "sidebar.places": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По местам"
+          }
+        }
+      }
+    },
+    "sidebar.statuses": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статусы"
+          }
+        }
+      }
+    },
+    "sidebar.tags": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Теги"
+          }
+        }
+      }
+    },
+    "storage.chooseFolder": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выбрать папку…"
+          }
+        }
+      }
+    },
+    "storage.chooseFolderTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Папка данных"
+          }
+        }
+      }
+    },
+    "storage.createFolder": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Создать хранилище…"
+          }
+        }
+      }
+    },
+    "storage.failedTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось открыть хранилище"
+          }
+        }
+      }
+    },
+    "storage.opening": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открываем хранилище…"
+          }
+        }
+      }
+    },
+    "storage.retry": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Повторить"
+          }
+        }
+      }
+    },
+    "window.title": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Инвентарь"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

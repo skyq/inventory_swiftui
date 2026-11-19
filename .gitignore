@@ -10,6 +10,7 @@ Icon?
 
 # Xcode: сборочные артефакты и пользовательские данные
 build/
+build-release/
 DerivedData/
 *.xcuserstate
 xcuserdata/

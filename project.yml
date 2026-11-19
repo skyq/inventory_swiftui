@@ -1,0 +1,90 @@
+name: Inventory
+options:
+  bundleIdPrefix: app.inventory
+  deploymentTarget:
+    macOS: "12.0"
+  createIntermediateGroups: true
+  xcodeVersion: "16.0"
+
+packages:
+  Inventory:
+    path: .
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    SWIFT_TREAT_WARNINGS_AS_ERRORS: YES
+    MACOSX_DEPLOYMENT_TARGET: "12.0"
+    CODE_SIGNING_ALLOWED: NO
+    CODE_SIGNING_REQUIRED: NO
+    ENABLE_HARDENED_RUNTIME: NO
+    ENABLE_APP_SANDBOX: NO
+    ARCHS: "arm64 x86_64"
+    ONLY_ACTIVE_ARCH: NO
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+
+targets:
+  InventoryApp:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/InventoryApp
+    dependencies:
+      - package: Inventory
+        product: InventoryCore
+      - package: Inventory
+        product: InventoryPlatform
+      - package: Inventory
+        product: InventoryUI
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.inventory.Inventory
+        PRODUCT_NAME: Inventory
+        GENERATE_INFOPLIST_FILE: NO
+        ENABLE_PREVIEWS: YES
+        SWIFT_EMIT_LOC_STRINGS: YES
+    info:
+      path: Support/Info.plist
+      properties:
+        CFBundleDisplayName: Инвентарь
+        CFBundleName: Инвентарь
+        CFBundleDevelopmentRegion: ru
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
+        LSApplicationCategoryType: public.app-category.productivity
+        NSPrincipalClass: NSApplication
+        ITSAppUsesNonExemptEncryption: false
+        NSHumanReadableCopyright: ""
+
+  InventoryAppTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests/InventoryUITests
+    dependencies:
+      - package: Inventory
+        product: InventoryCore
+      - package: Inventory
+        product: InventoryUI
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.inventory.InventoryTests
+        GENERATE_INFOPLIST_FILE: YES
+
+schemes:
+  InventoryApp:
+    build:
+      targets:
+        InventoryApp: all
+        InventoryAppTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - InventoryAppTests
+    archive:
+      config: Release
