@@ -88,3 +88,43 @@ struct PhotoThumbnailView: View {
     }
   }
 }
+
+/// Полное фото без обрезки: используется в карточке вещи.
+struct PhotoFitView: View {
+  let url: URL?
+
+  @State private var image: NSImage?
+
+  var body: some View {
+    ZStack {
+      RoundedRectangle(cornerRadius: 6)
+        .fill(Color(nsColor: .quaternaryLabelColor))
+      if let image {
+        Image(nsImage: image)
+          .resizable()
+          .aspectRatio(contentMode: .fit)
+          .padding(4)
+      } else {
+        Image(systemName: "photo")
+          .font(.system(size: 34))
+          .foregroundColor(.secondary)
+      }
+    }
+    .frame(maxWidth: .infinity)
+    .frame(height: 240)
+    .clipShape(RoundedRectangle(cornerRadius: 6))
+    .task(id: url) {
+      image = nil
+      guard let url else { return }
+      let data = try? await Task.detached(
+        priority: .utility,
+        operation: {
+          try Data(contentsOf: url)
+        }
+      ).value
+      if let data {
+        image = NSImage(data: data)
+      }
+    }
+  }
+}

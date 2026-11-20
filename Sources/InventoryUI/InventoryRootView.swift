@@ -27,18 +27,31 @@ public struct InventoryRootView: View {
               systemImage: "magnifyingglass"
             )
             .frame(minWidth: 480, maxWidth: .infinity)
+          } else if let gallery = model.gallery,
+            (model.selectedSection ?? .gallery) == .gallery
+          {
+            GalleryWorkspaceView(
+              model: gallery,
+              onAddItem: { model.presentCreateItemFromCurrentContext() },
+              onEditItem: { model.presentEditItem($0) },
+              onOpenPlace: { model.openPlaceInPlaces($0) }
+            )
+            .frame(minWidth: 480, maxWidth: .infinity)
           } else if let browser = model.browser,
             (model.selectedSection ?? .places) == .places
           {
             PlaceWorkspaceView(
               browser: browser,
               onAddPlace: { model.presentCreatePlace() },
-              onEditPlace: { model.presentEditPlace($0) }
+              onEditPlace: { model.presentEditPlace($0) },
+              onAddItem: { model.presentCreateItem(placeId: browser.creationPlaceId) },
+              onEditItem: { model.presentEditItem($0) },
+              onOpenPlace: { model.openPlaceInPlaces($0) }
             )
             .frame(minWidth: 480, maxWidth: .infinity)
           } else {
             PlaceholderSectionView(
-              section: model.selectedSection ?? .places
+              section: model.selectedSection ?? .gallery
             )
             .frame(minWidth: 480, maxWidth: .infinity)
           }
@@ -53,12 +66,12 @@ public struct InventoryRootView: View {
       }
       ToolbarItemGroup(placement: .automatic) {
         Button {
-          model.presentCreatePlace()
+          model.presentCreateItemFromCurrentContext()
         } label: {
-          Label(L10n.string("places.add"), systemImage: "plus")
+          Label(L10n.string("items.add"), systemImage: "plus")
         }
-        .disabled(!model.canCreatePlace)
-        .help(L10n.string("places.add"))
+        .disabled(!model.canCreateItem)
+        .help(L10n.string("items.add"))
       }
     }
     .task {
@@ -70,6 +83,11 @@ public struct InventoryRootView: View {
     .sheet(item: $model.placeForm) { presentation in
       if let formModel = model.makePlaceFormModel(for: presentation) {
         PlaceFormView(model: formModel, onClose: { model.dismissPlaceForm() })
+      }
+    }
+    .sheet(item: $model.itemForm) { presentation in
+      if let formModel = model.makeItemFormModel(for: presentation) {
+        ItemFormView(model: formModel, onClose: { model.dismissItemForm() })
       }
     }
     .alert(item: $model.alert) { alert in

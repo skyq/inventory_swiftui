@@ -381,6 +381,576 @@
         }
       }
     },
+    "gallery.archived": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "архив"
+          }
+        }
+      }
+    },
+    "gallery.count": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вещей: %d"
+          }
+        }
+      }
+    },
+    "gallery.empty": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет вещей"
+          }
+        }
+      }
+    },
+    "gallery.emptyHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавьте вещь с фотографией, чтобы она появилась в галерее."
+          }
+        }
+      }
+    },
+    "gallery.filters": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Фильтры"
+          }
+        }
+      }
+    },
+    "gallery.filters.allPlaces": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Все места"
+          }
+        }
+      }
+    },
+    "gallery.filters.noTags": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Теги появятся после добавления их вещам."
+          }
+        }
+      }
+    },
+    "gallery.filters.place": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Место"
+          }
+        }
+      }
+    },
+    "gallery.filters.reset": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сбросить фильтры"
+          }
+        }
+      }
+    },
+    "gallery.filters.statuses": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статусы"
+          }
+        }
+      }
+    },
+    "gallery.filters.tags": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Теги"
+          }
+        }
+      }
+    },
+    "gallery.noMatches": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ничего не найдено"
+          }
+        }
+      }
+    },
+    "gallery.noMatchesHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Измените или сбросьте фильтры."
+          }
+        }
+      }
+    },
+    "gallery.sort": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сортировка"
+          }
+        }
+      }
+    },
+    "gallery.sort.asc": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По возрастанию"
+          }
+        }
+      }
+    },
+    "gallery.sort.createdAt": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По дате добавления"
+          }
+        }
+      }
+    },
+    "gallery.sort.desc": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По убыванию"
+          }
+        }
+      }
+    },
+    "gallery.sort.name": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По названию"
+          }
+        }
+      }
+    },
+    "gallery.tileSize": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Размер плитки"
+          }
+        }
+      }
+    },
+    "gallery.tileSize.large": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Крупный"
+          }
+        }
+      }
+    },
+    "gallery.tileSize.medium": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Средний"
+          }
+        }
+      }
+    },
+    "gallery.tileSize.small": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Мелкий"
+          }
+        }
+      }
+    },
+    "items.add": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавить вещь"
+          }
+        }
+      }
+    },
+    "items.changePhoto": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заменить фото…"
+          }
+        }
+      }
+    },
+    "items.choosePhoto": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выбрать фото…"
+          }
+        }
+      }
+    },
+    "items.created": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавлено"
+          }
+        }
+      }
+    },
+    "items.description": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Описание"
+          }
+        }
+      }
+    },
+    "items.details": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Карточка вещи"
+          }
+        }
+      }
+    },
+    "items.drop": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отпустите фото"
+          }
+        }
+      }
+    },
+    "items.dropHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Можно перетащить файл или нажать Cmd+V."
+          }
+        }
+      }
+    },
+    "items.edit": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Редактировать"
+          }
+        }
+      }
+    },
+    "items.editTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Редактировать вещь"
+          }
+        }
+      }
+    },
+    "items.name": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Название"
+          }
+        }
+      }
+    },
+    "items.nameMaxLength": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не более %d символов"
+          }
+        }
+      }
+    },
+    "items.nameRequired": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Введите название вещи."
+          }
+        }
+      }
+    },
+    "items.newTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Новая вещь"
+          }
+        }
+      }
+    },
+    "items.noPlace": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Без места"
+          }
+        }
+      }
+    },
+    "items.none": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "—"
+          }
+        }
+      }
+    },
+    "items.notes": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заметки"
+          }
+        }
+      }
+    },
+    "items.paste": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вставить"
+          }
+        }
+      }
+    },
+    "items.pasteEmpty": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В буфере обмена нет изображения."
+          }
+        }
+      }
+    },
+    "items.photo": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Фото"
+          }
+        }
+      }
+    },
+    "items.photoHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Форматы JPEG, PNG, WebP, HEIC и HEIF. Длинная сторона до 12 000 px."
+          }
+        }
+      }
+    },
+    "items.photoRequired": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавьте фото"
+          }
+        }
+      }
+    },
+    "items.place": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Место"
+          }
+        }
+      }
+    },
+    "items.quantity": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Количество"
+          }
+        }
+      }
+    },
+    "items.quantityRange": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Количество должно быть целым числом от 1."
+          }
+        }
+      }
+    },
+    "items.removeTag": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Убрать тег"
+          }
+        }
+      }
+    },
+    "items.status": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статус"
+          }
+        }
+      }
+    },
+    "items.statusDefault": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По умолчанию"
+          }
+        }
+      }
+    },
+    "items.statusReadOnly": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статус меняется отдельным действием на этапе 3."
+          }
+        }
+      }
+    },
+    "items.tagHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter добавляет тег. Не более %d символов."
+          }
+        }
+      }
+    },
+    "items.tagPlaceholder": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавить тег"
+          }
+        }
+      }
+    },
+    "items.tagRequired": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тег не может быть пустым."
+          }
+        }
+      }
+    },
+    "items.tagTooLong": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тег длиннее %d символов."
+          }
+        }
+      }
+    },
+    "items.tags": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Теги"
+          }
+        }
+      }
+    },
+    "items.updated": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Изменено"
+          }
+        }
+      }
+    },
     "photo.failed": {
       "localizations": {
         "ru": {
@@ -581,6 +1151,26 @@
         }
       }
     },
+    "places.emptyItems": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Здесь пока нет вещей"
+          }
+        }
+      }
+    },
+    "places.emptyItemsHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавьте вещь в это место."
+          }
+        }
+      }
+    },
     "places.inspector.empty": {
       "localizations": {
         "ru": {
@@ -641,6 +1231,26 @@
         }
       }
     },
+    "places.noPlaceEmpty": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет вещей без места"
+          }
+        }
+      }
+    },
+    "places.noPlaceEmptyHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вещи без места появятся здесь."
+          }
+        }
+      }
+    },
     "places.notEmptyMessage": {
       "localizations": {
         "ru": {
@@ -671,6 +1281,16 @@
         }
       }
     },
+    "places.parent": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Родительское место"
+          }
+        }
+      }
+    },
     "places.path": {
       "localizations": {
         "ru": {
@@ -696,7 +1316,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "JPEG, PNG или WebP, не более 12 000 px по длинной стороне."
+            "value": "Форматы JPEG, PNG, WebP, HEIC и HEIF. Длинная сторона до 12 000 px."
           }
         }
       }

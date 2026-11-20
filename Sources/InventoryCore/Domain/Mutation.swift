@@ -9,6 +9,9 @@ public enum MutationKind: String, Sendable {
 
 public enum MutationEvent: Sendable, Equatable {
   case placesChanged(affectedIds: Set<String>, parentId: String?, kind: MutationKind)
+  case itemsChanged(itemIds: Set<String>, kind: MutationKind)
+  case statusesChanged(statusIds: Set<String>, kind: MutationKind)
+  case tagsChanged(tagIds: Set<String>, kind: MutationKind)
 }
 
 /// Публикует события после успешного commit. Подписчики сами перечитывают данные.

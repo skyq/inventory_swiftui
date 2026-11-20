@@ -1,45 +1,48 @@
 # HANDOFF — состояние проекта после задачи
 
-Задача: этап 1 (T01.01–T01.18), приёмка T01.19
-Результат: DONE по коду и автотестам; BLOCKED по подтверждению владельца
-Коммит или точные изменённые файлы: `720868d` — `Package.swift`, `project.yml`, `Support/`, `Sources/`, `Tests/`, `fixtures/`, `DECISIONS_APPROVED.md`, `TOOLCHAIN.md`, `Inventory.xcodeproj/`, `HANDOFF.md`, `RUN_LOG.md`
+Задача: этап 2 (T02.01–T02.15), приёмка T02.16
+Результат: DONE по коду и автотестам; BLOCKED по подтверждению владельца и ручным native-проверкам
+Коммит или точные изменённые файлы: `Package.swift`, `project.yml`, `Inventory.xcodeproj/`, `Sources/InventoryCore/`, `Sources/InventoryPlatform/`, `Sources/InventoryUI/`, `Sources/InventoryFixture/`, `Tests/`, `HANDOFF.md`, `RUN_LOG.md`
 
 ## Что уже работает
 
-- Swift-пакет из трёх библиотек (`InventoryCore`, `InventoryPlatform`, `InventoryUI`) и тонкого исполняемого таргета `InventoryApp`; Xcode-проект генерируется `project.yml` через XcodeGen.
-- Схема SQLite v1: places, statuses, people, items, tags, item_tags, status_changes, transfers, settings; FK, CHECK, UNIQUE, четыре триггера неизменяемой истории и семь индексов.
-- Seed: семь статусов и три настройки, повторный запуск идемпотентен и не перезаписывает выбор владельца.
-- Файловый лог с ротацией, доменные `AppException` без русских UI-строк.
-- Блокировка папки через `flock` + реестр путей; повторное открытие, symlink и второй процесс не обходят lock.
-- Создание/открытие хранилища, `integrity_check`, отказ от создания пустой базы при пропавшем пути или повреждённом файле.
-- Резервная копия `VACUUM INTO` перед миграцией, откат с удалением `-wal`/`-shm`/`-journal`, `PRAGMA user_version = 1`.
-- Обработка фото через ImageIO: JPEG/PNG/WebP, EXIF, белый фон вместо alpha, лимит 12000 px, фото ≤2560 px и превью ≤400 px, вне UI-потока.
-- Согласование файлов и SQL: новые файлы до commit, удаление при сбое SQL, старые — после commit, очистка сирот.
-- Места: CRUD, обязательное фото, дубли после подтверждения, путь, потомки, естественная сортировка, перенос поддерева без циклов, удаление только пустых мест с фото.
-- Нативный SwiftUI-каркас: source-list сайдбар из шести разделов, toolbar-поиск, вложенный `HSplitView`, хлебные крошки, сетка мест, инспектор, модальная форма, экран сбоя хранилища, `Settings`, Cmd+N/K/W/Esc.
-- 98 русских строк в String Catalog; `L10n` и `ErrorPresenter` переводят доменные ошибки.
+- Ядро вещей: `Item`/`ItemCreate`/`ItemDetailsUpdate`/`ItemDetails`, `ItemService` и `ItemRepository`; имя ≤200, количество ≥1, фото обязательно, место должно существовать, статус при создании — только активный, default status из settings, история при создании не пишется.
+- Редактирование вещи: обычные поля, место (включая NULL), теги и замена фото; `statusId` через `updateDetails` не меняется; при сбое SQL старое фото и связи тегов сохраняются; публичного удаления вещи нет.
+- Теги: `TagKey`/`Tag`/`TagSuggestion`, нормализация регистра, пробелов и е/ё, переиспользование id и первого написания, автодополнение по префиксу и частоте, удаление неиспользуемых тегов в транзакции владельца.
+- Статусы: read-only `StatusService` с архивными статусами для фильтров; новые вещи получают только активный статус.
+- Галерея: `GalleryQuery` с местом и потомками, «Без места», статусами (включая архивные), AND по тегам, сортировкой по дате/имени и детерминированным id-tie-break; `searchItemIds` зарезервирован под этап 4 без реализации поиска.
+- `GalleryState`/`GalleryStateCodec`: режим, размер плитки, сортировка, направление и id фильтров хранятся в `PreferencesStore` вне БД, повреждённые значения и исчезнувшие id безопасно очищаются.
+- HEIC/HEIF: тот же `ImageIOProcessor`, декодирование вне главного потока, EXIF-ориентация, белый фон, лимит 12000 px, JPEG ≤2560 px и thumbnail ≤400 px.
+- Фото вещей: файлы пишутся до SQL, при сбое удаляются, старые удаляются после commit; `OrphanPhotoCleaner` на безопасном старте чистит только `photos/` и `thumbs/`, не трогая `_safety`/`_tmp`.
+- Форма вещи: все поля, количество 1 по умолчанию, автодополнение тегов, активные статусы при создании и read-only статус при редактировании, кнопки сохранения/отмены, Esc, Cmd+V, drag/drop и выбор файла через общий `PhotoPipeline`.
+- Галерея: ленивая сетка с тремя размерами плиток, естественная сортировка, метка статуса, loading/empty/error, панель фильтров, сброс, инспектор справа.
+- Инспектор вещи: фото целиком без crop, название, описание, заметки, статус, количество, теги, кликабельные крошки места, даты, «Редактировать», закрытие по Esc.
+- Режим «По местам»: в корне первым виртуальный «Без места» со счётчиком, затем вложенные места и прямые вещи текущего уровня; карточка вещи открывается справа; создание вещи предзаполняет текущее место, в «Без места» — NULL.
+- Cmd+N открывает создание вещи с текущим местом в режиме «По местам»; другие горячие клавиши не добавлялись (только Cmd+K/N/W/Esc).
+- `Sources/InventoryFixture`: детерминированный генератор отдельного хранилища на 500 вещей; отказывается работать поверх пути по умолчанию и не использует пользовательские фото.
+- 160 русских строк в String Catalog; поиск в toolbar остаётся заглушкой этапа 4.
 
 ## Действующие контракты
 
 - `DECISIONS_APPROVED.md`: U01–U05 подтверждены; S01–S12 — временное поведение до отдельного утверждения.
 - `TOOLCHAIN.md`: Swift 6.4.2, GRDB 7.12.0, ZIPFoundation 0.9.20; macOS 12.0, sandbox и hardened runtime выключены.
 - Контракты ядра — публичные протоколы и DTO в `Sources/InventoryCore/Domain/`; UI не содержит SQL.
-- Данные совместимы с Flutter-редакцией: `user_version = 1`, служебная таблица `grdb_migrations` сохранена для будущих миграций GRDB.
+- `GalleryState.mode` синхронизирован с разделом сайдбара «Галерея/По местам»; фильтры и вид хранятся только в preferences, не в `settings` и не в архиве.
 - Новых решений без подтверждения нет.
 
 ## Проверки
 
-- `swift test` → 63 теста в 12 сюитах: 42 core, 8 platform, 13 UI; все прошли.
+- `swift test` → 113 тестов в 20 сюитах: 73 core, 9 platform, 31 UI; все прошли.
 - `swift format lint --recursive Sources Tests` → без замечаний.
 - `swift build -c release` → `Build complete`.
-- `xcodebuild ... -configuration Debug ... test` → `TEST SUCCEEDED`, 13 UI-тестов.
-- `xcodebuild ... -configuration Release -destination 'generic/platform=macOS' ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO` → `BUILD SUCCEEDED`, `lipo -info` показывает `x86_64 arm64`.
-- Запуск `.app` с временным `CFFIXED_USER_HOME` → создан `inventory.db`, каталоги `photos/`, `thumbs/`, `logs/`, `_safety/`, `_tmp/`; лог содержит `store created` и `store opened`.
-- Не выполнено: запуск на Intel Mac, ручной осмотр HIG/масштабирования текста/Tab, скриншот окна (среда без доступа к дисплею).
+- `xcodebuild ... -configuration Debug ... test` → `TEST SUCCEEDED`, 31 UI-тест в 5 сюитах (после `xcodegen generate`, чтобы новые файлы тестов попали в проект).
+- `xcodebuild ... -configuration Release -destination 'generic/platform=macOS' ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO` → `BUILD SUCCEEDED`; `lipo -info` → `x86_64 arm64`.
+- Фикстура: `swift run -c release InventoryFixture /tmp/InventoryFixture500` → 16 мест, 500 вещей; создание 500 вещей — 0.25 с, запрос галереи — 1.5 мс, средний `get` — 0.06 мс (первые 50 карточек). Оборудование: Apple M4, Mac16,12, macOS 26.7.1, release.
+- Не выполнено: запуск на Intel Mac; ручной осмотр HIG/масштабирования/Tab; реальные Cmd+V и drag/drop в GUI; прокрутка 500 вещей в окне; открытие HEIC/HEIF через интерфейс. Эти проверки не выдаются за unit-тесты и остаются за владельцем.
 
 ## Входы для следующей задачи
 
-- Следующий ID: T01.19 (приёмка этапа 1), затем T02.01.
-- Точные файлы кода/тестов: `Sources/InventoryCore/`, `Sources/InventoryPlatform/`, `Sources/InventoryUI/`, `Tests/`, `project.yml`, `Inventory.xcodeproj/`, `RUN_LOG.md`.
-- Ограничения, незавершённое, временные заглушки: поиск в toolbar намеренно показывает заглушку «следующий этап»; тема и локализация готовы к расширению; `Inventory.xcodeproj` генерируется из `project.yml` и не редактируется вручную.
-- Для конца этапа: подтверждение владельца ожидается.
+- Следующий ID: T02.16 (приёмка этапа 2); этап 3 начинается только после подтверждения владельца.
+- Точные файлы кода/тестов: `Sources/InventoryCore/`, `Sources/InventoryPlatform/`, `Sources/InventoryUI/`, `Sources/InventoryFixture/`, `Tests/`, `project.yml`, `Inventory.xcodeproj/`, `RUN_LOG.md`.
+- Ограничения и заглушки: поиск показывает заглушку до этапа 4; смена статуса и история вещи появятся на этапе 3; `Inventory.xcodeproj` генерируется из `project.yml` через XcodeGen и не редактируется вручную.
+- Для конца этапа: требуется подтверждение владельца и ручные native-проверки.

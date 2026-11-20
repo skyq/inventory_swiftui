@@ -49,28 +49,41 @@ public final class AppModel: ObservableObject {
   }
 
   @Published public private(set) var loadState: LoadState = .idle
-  @Published public var selectedSection: SidebarSection? = .places
+  @Published public var selectedSection: SidebarSection? {
+    didSet { persistSectionMode() }
+  }
   @Published public var searchText = ""
   @Published public private(set) var searchFocusToken = 0
   @Published public private(set) var storePath: String?
   @Published public private(set) var browser: PlaceBrowserModel?
+  @Published public private(set) var gallery: GalleryModel?
   @Published public var placeForm: PlaceFormPresentation?
+  @Published public var itemForm: ItemFormPresentation?
   @Published public var alert: AppAlert?
 
   private let storage: StorageCoordinator
   private let imageProcessor: any ImageProcessor
   private let dialogs: any FileDialogs
+  private let preferences: any PreferencesStore
   private var session: StorageSession?
   private var started = false
 
   public init(
     storage: StorageCoordinator,
     imageProcessor: any ImageProcessor,
-    dialogs: any FileDialogs
+    dialogs: any FileDialogs,
+    preferences: any PreferencesStore
   ) {
     self.storage = storage
     self.imageProcessor = imageProcessor
     self.dialogs = dialogs
+    self.preferences = preferences
+    switch GalleryStateCodec.load(from: preferences).mode {
+    case .grid:
+      self.selectedSection = .gallery
+    case .places:
+      self.selectedSection = .places
+    }
   }
 
   /// Вызывается один раз при появлении окна.
@@ -112,6 +125,7 @@ public final class AppModel: ObservableObject {
 
   public func closeInspector() {
     browser?.clearSelection()
+    gallery?.clearSelection()
   }
 
   public func presentCreatePlace() {
@@ -122,6 +136,32 @@ public final class AppModel: ObservableObject {
   public func presentEditPlace(_ place: Place) {
     guard case .ready = loadState else { return }
     placeForm = PlaceFormPresentation(mode: .edit(place))
+  }
+
+  public func presentCreateItem(placeId: String?) {
+    guard case .ready = loadState, itemForm == nil else { return }
+    itemForm = ItemFormPresentation(mode: .create(placeId: placeId))
+  }
+
+  /// Cmd+N: вещь с местом текущего уровня в режиме «По местам».
+  public func presentCreateItemFromCurrentContext() {
+    let placeId =
+      (selectedSection ?? .gallery) == .places
+      ? browser?.creationPlaceId
+      : nil
+    presentCreateItem(placeId: placeId)
+  }
+
+  public func presentEditItem(_ details: ItemDetails) {
+    guard case .ready = loadState, itemForm == nil else { return }
+    itemForm = ItemFormPresentation(mode: .edit(details))
+  }
+
+  /// Переход к месту из крошек карточки вещи.
+  public func openPlaceInPlaces(_ placeId: String) {
+    guard case .ready = loadState else { return }
+    selectedSection = .places
+    Task { await browser?.reveal(placeId: placeId) }
   }
 
   public func makePlaceFormModel(for presentation: PlaceFormPresentation) -> PlaceFormModel? {
@@ -135,8 +175,26 @@ public final class AppModel: ObservableObject {
     )
   }
 
+  public func makeItemFormModel(for presentation: ItemFormPresentation) -> ItemFormModel? {
+    guard let session else { return nil }
+    return ItemFormModel(
+      mode: presentation.mode,
+      items: session.items,
+      tags: session.tags,
+      statuses: session.statuses,
+      places: session.places,
+      images: imageProcessor,
+      dialogs: dialogs,
+      photos: session.photos
+    )
+  }
+
   public func dismissPlaceForm() {
     placeForm = nil
+  }
+
+  public func dismissItemForm() {
+    itemForm = nil
   }
 
   /// Закрывает хранилище. Нужен при выходе и в тестах.
@@ -144,8 +202,10 @@ public final class AppModel: ObservableObject {
     session?.close()
     session = nil
     browser = nil
+    gallery = nil
     storePath = nil
     placeForm = nil
+    itemForm = nil
     alert = nil
     loadState = .idle
     started = false
@@ -153,6 +213,14 @@ public final class AppModel: ObservableObject {
 
   public var canCreatePlace: Bool {
     if case .ready = loadState { return selectedSection == .places && placeForm == nil }
+    return false
+  }
+
+  public var canCreateItem: Bool {
+    if case .ready = loadState {
+      let section = selectedSection ?? .gallery
+      return (section == .gallery || section == .places) && itemForm == nil
+    }
     return false
   }
 
@@ -168,6 +236,20 @@ public final class AppModel: ObservableObject {
 
   // MARK: - Внутренние шаги
 
+  /// Режим «Галерея/По местам» хранится вместе с видом галереи (D12/T02.09).
+  private func persistSectionMode() {
+    let mode: GalleryMode
+    switch selectedSection {
+    case .places:
+      mode = .places
+    case .gallery, .none:
+      mode = .grid
+    default:
+      return
+    }
+    preferences.setString(mode.rawValue, forKey: PreferenceKeys.galleryMode)
+  }
+
   private func openDefaultStore() async {
     await performOpen { try self.storage.openOrCreateDefault() }
   }
@@ -181,6 +263,9 @@ public final class AppModel: ObservableObject {
       loadState = .ready
       if let browser {
         await browser.start()
+      }
+      if let gallery {
+        await gallery.start()
       }
     case .failure(let error):
       if session != nil {
@@ -197,9 +282,21 @@ public final class AppModel: ObservableObject {
     session?.close()
     session = opened
     storePath = opened.layout.rootPath
-    let browser = PlaceBrowserModel(places: opened.places, photos: opened.photos)
-    self.browser = browser
+    browser = PlaceBrowserModel(
+      places: opened.places,
+      photos: opened.photos,
+      items: opened.items
+    )
+    gallery = GalleryModel(
+      items: opened.items,
+      tags: opened.tags,
+      statuses: opened.statuses,
+      places: opened.places,
+      photos: opened.photos,
+      preferences: preferences
+    )
     placeForm = nil
+    itemForm = nil
   }
 
   private func currentDirectoryHint() -> URL? {

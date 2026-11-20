@@ -49,6 +49,16 @@ let package = Package(
       path: "Sources/InventoryApp",
       swiftSettings: strictSettings
     ),
+    .executableTarget(
+      name: "InventoryFixture",
+      dependencies: [
+        "InventoryCore",
+        "InventoryPlatform",
+        .product(name: "GRDB", package: "GRDB.swift"),
+      ],
+      path: "Sources/InventoryFixture",
+      swiftSettings: strictSettings
+    ),
     .testTarget(
       name: "InventoryCoreTests",
       dependencies: [

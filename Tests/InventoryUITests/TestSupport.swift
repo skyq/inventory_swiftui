@@ -35,6 +35,46 @@ func makeTestPhoto() -> ProcessedPhoto {
   )
 }
 
+func makeTestStatus(id: String = "status-1", name: String = "В наличии", archived: Bool = false)
+  -> Status
+{
+  Status(id: id, name: name, isArchived: archived, sortOrder: 0, createdAt: 1_700_000_000_000)
+}
+
+func makeTestItemDetails(
+  id: String,
+  name: String,
+  placeId: String? = nil,
+  statusId: String = "status-1",
+  status: Status? = nil,
+  tagNames: [String] = [],
+  quantity: Int = 1,
+  createdAt: Int64 = 1_700_000_000_000
+) -> ItemDetails {
+  let item = Item(
+    id: id,
+    name: name,
+    description: "",
+    notes: "",
+    quantity: quantity,
+    placeId: placeId,
+    statusId: statusId,
+    photoFile: "photos/\(id).jpg",
+    thumbFile: "thumbs/\(id).jpg",
+    createdAt: createdAt,
+    updatedAt: createdAt
+  )
+  let tags = tagNames.map { name in
+    Tag(id: "tag-\(name)", name: name, nameKey: name.lowercased())
+  }
+  return ItemDetails(
+    item: item,
+    status: status ?? makeTestStatus(id: statusId),
+    tags: tags,
+    placePath: []
+  )
+}
+
 final class FakePlaceService: PlaceService, @unchecked Sendable {
   private let lock = NSLock()
   private var placesById: [String: Place] = [:]
@@ -244,6 +284,246 @@ final class FakePlaceService: PlaceService, @unchecked Sendable {
   private func sorted<S: Sequence>(_ places: S) -> [Place] where S.Element == Place {
     places.sorted { NaturalSort.compare($0.name, $1.name) < 0 }
   }
+}
+
+final class FakeItemService: ItemService, @unchecked Sendable {
+  private let lock = NSLock()
+  private var itemsById: [String: ItemDetails]
+  private var created: [ItemCreate] = []
+  private var updated: [ItemDetailsUpdate] = []
+  private var idCounter = 0
+  private let continuation: AsyncStream<MutationEvent>.Continuation
+  let changes: AsyncStream<MutationEvent>
+
+  var createError: AppException?
+  var updateError: AppException?
+  var listError: AppException?
+  var getError: AppException?
+  private(set) var lastQuery: GalleryQuery?
+
+  init(initial: [ItemDetails] = []) {
+    itemsById = Dictionary(uniqueKeysWithValues: initial.map { ($0.item.id, $0) })
+    (changes, continuation) = AsyncStream.makeStream(of: MutationEvent.self)
+  }
+
+  var stored: [ItemDetails] {
+    lock.lock()
+    defer { lock.unlock() }
+    return Array(itemsById.values)
+  }
+
+  var createdInputs: [ItemCreate] {
+    lock.lock()
+    defer { lock.unlock() }
+    return created
+  }
+
+  var updatedInputs: [ItemDetailsUpdate] {
+    lock.lock()
+    defer { lock.unlock() }
+    return updated
+  }
+
+  func emit(_ event: MutationEvent) {
+    continuation.yield(event)
+  }
+
+  func create(_ input: ItemCreate) throws -> ItemDetails {
+    lock.lock()
+    created.append(input)
+    if let createError {
+      lock.unlock()
+      throw createError
+    }
+    idCounter += 1
+    let id = "created-item-\(idCounter)"
+    let details = makeTestItemDetails(
+      id: id,
+      name: input.name.trimmingCharacters(in: .whitespacesAndNewlines),
+      placeId: input.placeId,
+      statusId: input.statusId ?? "status-1",
+      tagNames: input.tags,
+      quantity: input.quantity
+    )
+    itemsById[id] = details
+    lock.unlock()
+    continuation.yield(.itemsChanged(itemIds: [id], kind: .created))
+    return details
+  }
+
+  func updateDetails(_ input: ItemDetailsUpdate) throws -> ItemDetails {
+    lock.lock()
+    updated.append(input)
+    if let updateError {
+      lock.unlock()
+      throw updateError
+    }
+    guard let existing = itemsById[input.id] else {
+      lock.unlock()
+      throw AppException(.validationNotFound, params: ["entity": .string("item")])
+    }
+    let details = makeTestItemDetails(
+      id: existing.item.id,
+      name: input.name.trimmingCharacters(in: .whitespacesAndNewlines),
+      placeId: input.placeId,
+      statusId: existing.item.statusId,
+      tagNames: input.tags,
+      quantity: input.quantity,
+      createdAt: existing.item.createdAt
+    )
+    itemsById[details.item.id] = details
+    lock.unlock()
+    continuation.yield(.itemsChanged(itemIds: [details.item.id], kind: .updated))
+    return details
+  }
+
+  func get(_ id: String) throws -> ItemDetails {
+    lock.lock()
+    defer { lock.unlock() }
+    if let getError { throw getError }
+    guard let details = itemsById[id] else {
+      throw AppException(.validationNotFound, params: ["entity": .string("item")])
+    }
+    return details
+  }
+
+  func list(_ query: GalleryQuery) throws -> [GalleryEntry] {
+    lock.lock()
+    defer { lock.unlock() }
+    if let listError { throw listError }
+    lastQuery = query
+    let filtered = itemsById.values.filter { details in
+      let item = details.item
+      if let searchIds = query.searchItemIds, !searchIds.contains(item.id) {
+        return false
+      }
+      switch query.place {
+      case .all:
+        break
+      case .noPlace:
+        if item.placeId != nil { return false }
+      case .placeOnly(let placeId):
+        if item.placeId != placeId { return false }
+      case .placeSubtree(let placeId):
+        if item.placeId != placeId { return false }
+      }
+      if !query.statusIds.isEmpty, !query.statusIds.contains(item.statusId) {
+        return false
+      }
+      if !query.tagIds.isEmpty {
+        let ids = Set(details.tags.map(\.id))
+        if !ids.isSuperset(of: query.tagIds) { return false }
+      }
+      return true
+    }
+
+    let sorted = filtered.sorted { left, right in
+      switch query.sort {
+      case .createdAt:
+        if left.item.createdAt != right.item.createdAt {
+          return query.direction == .asc
+            ? left.item.createdAt < right.item.createdAt
+            : left.item.createdAt > right.item.createdAt
+        }
+      case .name:
+        let byName = NaturalSort.compare(left.item.name, right.item.name)
+        if byName != 0 {
+          return query.direction == .asc ? byName < 0 : byName > 0
+        }
+      }
+      return left.item.id < right.item.id
+    }
+    return sorted.map {
+      GalleryEntry(
+        item: $0.item,
+        statusName: $0.status.name,
+        statusArchived: $0.status.isArchived
+      )
+    }
+  }
+}
+
+final class FakeStatusService: StatusService, @unchecked Sendable {
+  private let lock = NSLock()
+  private var statuses: [Status]
+  private let continuation: AsyncStream<MutationEvent>.Continuation
+  let changes: AsyncStream<MutationEvent>
+
+  var listError: AppException?
+  var getError: AppException?
+
+  init(statuses: [Status] = [makeTestStatus()]) {
+    self.statuses = statuses
+    (changes, continuation) = AsyncStream.makeStream(of: MutationEvent.self)
+  }
+
+  func emit(_ event: MutationEvent) {
+    continuation.yield(event)
+  }
+
+  func list(includeArchived: Bool) throws -> [Status] {
+    lock.lock()
+    defer { lock.unlock() }
+    if let listError { throw listError }
+    return includeArchived ? statuses : statuses.filter { !$0.isArchived }
+  }
+
+  func get(_ id: String) throws -> Status {
+    lock.lock()
+    defer { lock.unlock() }
+    if let getError { throw getError }
+    guard let status = statuses.first(where: { $0.id == id }) else {
+      throw AppException(.validationNotFound, params: ["entity": .string("status")])
+    }
+    return status
+  }
+}
+
+final class FakeTagService: TagService, @unchecked Sendable {
+  private let lock = NSLock()
+  private var suggestions: [TagSuggestion]
+  private var attached: [String: [String]] = [:]
+  private let continuation: AsyncStream<MutationEvent>.Continuation
+  let changes: AsyncStream<MutationEvent>
+
+  var suggestError: AppException?
+
+  init(suggestions: [TagSuggestion] = []) {
+    self.suggestions = suggestions
+    (changes, continuation) = AsyncStream.makeStream(of: MutationEvent.self)
+  }
+
+  func emit(_ event: MutationEvent) {
+    continuation.yield(event)
+  }
+
+  func suggest(_ query: String, limit: Int) throws -> [TagSuggestion] {
+    lock.lock()
+    defer { lock.unlock() }
+    if let suggestError { throw suggestError }
+    let key = TagKey.normalize(query)
+    return
+      suggestions
+      .filter { key.isEmpty || TagKey.normalize($0.name).hasPrefix(key) }
+      .prefix(limit)
+      .map { $0 }
+  }
+
+  func tagsForItem(_ itemId: String) throws -> [Tag] {
+    lock.lock()
+    defer { lock.unlock() }
+    return (attached[itemId] ?? []).map {
+      Tag(id: "tag-\($0)", name: $0, nameKey: $0.lowercased())
+    }
+  }
+
+  func setItemTags(_ itemId: String, rawNames: [String]) throws {
+    lock.lock()
+    defer { lock.unlock() }
+    attached[itemId] = rawNames
+  }
+
+  func removeUnused() throws {}
 }
 
 final class FakePhotoStore: PhotoStore, @unchecked Sendable {

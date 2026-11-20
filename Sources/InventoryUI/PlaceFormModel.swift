@@ -144,19 +144,42 @@ public final class PlaceFormModel: ObservableObject {
   public func choosePhoto() async {
     guard !isProcessingPhoto else { return }
     guard let url = dialogs.chooseImageFile() else { return }
+    do {
+      let processed = try await PhotoPipeline.process(url: url, images: images)
+      preparedPhoto = processed
+      previewImage = NSImage(data: processed.thumbBytes) ?? NSImage(data: processed.photoBytes)
+    } catch let error as AppException {
+      alert = .failure(ErrorPresenter.message(for: error))
+    } catch {
+      alert = .failure(L10n.string("error.photoReadFailed"))
+    }
+  }
 
+  /// Cmd+V и кнопка «Вставить»: читает системный буфер обмена.
+  public func pastePhoto() async {
+    guard !isProcessingPhoto else { return }
+    guard let clipboard = PhotoClipboard.read() else {
+      alert = .failure(L10n.string("items.pasteEmpty"))
+      return
+    }
+    await applyPhoto(data: clipboard.data, sourceName: clipboard.sourceName)
+  }
+
+  public func acceptDrop(providers: [NSItemProvider]) async -> Bool {
+    guard !isProcessingPhoto else { return false }
+    guard let dropped = await PhotoDrop.load(providers) else { return false }
+    await applyPhoto(data: dropped.data, sourceName: dropped.name)
+    return true
+  }
+
+  private func applyPhoto(data: Data, sourceName: String?) async {
     isProcessingPhoto = true
     defer { isProcessingPhoto = false }
-
     do {
-      let data = try await Task.detached(
-        priority: .userInitiated,
-        operation: {
-          try Data(contentsOf: url)
-        }
-      ).value
-      let processed = try await images.process(
-        PhotoInput(bytes: data, sourceName: url.lastPathComponent)
+      let processed = try await PhotoPipeline.process(
+        data: data,
+        sourceName: sourceName,
+        images: images
       )
       preparedPhoto = processed
       previewImage = NSImage(data: processed.thumbBytes) ?? NSImage(data: processed.photoBytes)

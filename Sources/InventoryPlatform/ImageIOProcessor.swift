@@ -106,11 +106,11 @@ public struct ImageIOProcessor: ImageProcessor {
   }
 
   private static func isAllowed(_ type: UTType) -> Bool {
-    if type.conforms(to: .jpeg) || type.conforms(to: .png) || type.conforms(to: .webP) {
-      return true
-    }
-    // HEIC/HEIF подключаются на этапе 2 (T02.04).
-    return false
+    type.conforms(to: .jpeg)
+      || type.conforms(to: .png)
+      || type.conforms(to: .webP)
+      || type.conforms(to: .heic)
+      || type.conforms(to: .heif)
   }
 
   private static func render(

@@ -91,15 +91,34 @@ struct ImageIOProcessorTests {
     }
   }
 
-  @Test("HEIC пока не принимается (этап 2)")
-  func rejectsHEICForNow() async throws {
+  @Test("HEIC принимается и даёт JPEG с превью")
+  func processesHEIC() async throws {
     let data = try Data(contentsOf: fixture("sample.heic"))
-    do {
-      _ = try await processor.process(PhotoInput(bytes: data, sourceName: "sample.heic"))
-      Issue.record("Ожидалась ошибка photoUnsupportedFormat")
-    } catch let error as AppException {
-      #expect(error.code == .photoUnsupportedFormat)
-    }
+    let result = try await processor.process(PhotoInput(bytes: data, sourceName: "sample.heic"))
+
+    #expect(result.originalWidth == 1080)
+    #expect(result.originalHeight == 1920)
+    #expect(result.width == 1080)
+    #expect(result.height == 1920)
+    #expect(result.thumbWidth == 226)
+    #expect(result.thumbHeight == 400)
+    #expect(isJPEG(result.photoBytes))
+    #expect(isJPEG(result.thumbBytes))
+  }
+
+  @Test("HEIF принимается и не изменяет оригинальный файл")
+  func processesHEIF() async throws {
+    let url = fixture("sample.heif")
+    let original = try Data(contentsOf: url)
+    let result = try await processor.process(
+      PhotoInput(bytes: original, sourceName: "sample.heif")
+    )
+
+    #expect(result.originalWidth == 1080)
+    #expect(result.originalHeight == 1920)
+    #expect(result.thumbHeight == 400)
+    #expect(isJPEG(result.photoBytes))
+    #expect((try Data(contentsOf: url)) == original)
   }
 
   @Test("Пустые байты отклоняются")

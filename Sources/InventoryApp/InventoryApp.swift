@@ -13,11 +13,11 @@ struct InventoryApp: App {
     }
     .commands {
       CommandGroup(replacing: .newItem) {
-        Button(L10n.string("places.add")) {
-          model.presentCreatePlace()
+        Button(L10n.string("items.add")) {
+          model.presentCreateItemFromCurrentContext()
         }
         .keyboardShortcut("n", modifiers: .command)
-        .disabled(!model.canCreatePlace)
+        .disabled(!model.canCreateItem)
       }
       CommandGroup(after: .pasteboard) {
         Divider()
@@ -50,7 +50,8 @@ struct InventoryApp: App {
     return AppModel(
       storage: storage,
       imageProcessor: ImageIOProcessor(),
-      dialogs: SystemFileDialogs()
+      dialogs: SystemFileDialogs(),
+      preferences: preferences
     )
   }
 }

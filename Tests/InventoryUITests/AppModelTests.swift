@@ -22,7 +22,8 @@ struct AppModelTests {
     let model = AppModel(
       storage: coordinator,
       imageProcessor: FakeImageProcessor(),
-      dialogs: FakeFileDialogs()
+      dialogs: FakeFileDialogs(),
+      preferences: preferences
     )
     await model.start()
     defer {
@@ -32,7 +33,9 @@ struct AppModelTests {
 
     #expect(model.isReady)
     #expect(model.storePath == root.path)
-    #expect(model.selectedSection == .places)
+    #expect(model.selectedSection == .gallery)
+    #expect(!model.canCreatePlace)
+    model.selectedSection = .places
     #expect(model.canCreatePlace)
     #expect(model.browser?.children.map(\.id) == [place.id])
 
@@ -55,6 +58,71 @@ struct AppModelTests {
     #expect(model.placeForm == nil)
   }
 
+  @Test("Cmd+N создаёт вещь с местом текущего уровня")
+  func createsItemWithCurrentPlace() async throws {
+    let root = try makeStoreDirectory()
+    let preferences = InMemoryPreferencesStore()
+    let coordinator = StorageCoordinator(preferences: preferences, logger: NullLogger())
+
+    let session = try coordinator.createNew(root.path)
+    let place = try session.places.create(
+      PlaceCreate(name: "Дом", description: "", parentId: nil, photo: makeTestPhoto())
+    )
+    session.close()
+
+    let model = AppModel(
+      storage: coordinator,
+      imageProcessor: FakeImageProcessor(),
+      dialogs: FakeFileDialogs(),
+      preferences: preferences
+    )
+    await model.start()
+    defer {
+      model.stop()
+      try? FileManager.default.removeItem(at: root)
+    }
+
+    #expect(model.canCreateItem)
+    model.presentCreateItemFromCurrentContext()
+    guard case .create(let galleryPlace)? = model.itemForm?.mode else {
+      Issue.record("Ожидалась форма создания вещи")
+      return
+    }
+    #expect(galleryPlace == nil)
+    model.dismissItemForm()
+
+    model.selectedSection = .places
+    await model.browser?.open(place)
+    model.presentCreateItemFromCurrentContext()
+    guard case .create(let placeId)? = model.itemForm?.mode else {
+      Issue.record("Ожидалась форма создания вещи в месте")
+      return
+    }
+    #expect(placeId == place.id)
+    model.dismissItemForm()
+  }
+
+  @Test("Режим «Галерея/По местам» восстанавливается и сохраняется")
+  func persistsSectionMode() {
+    let preferences = InMemoryPreferencesStore()
+    preferences.setString(GalleryMode.places.rawValue, forKey: PreferenceKeys.galleryMode)
+    let coordinator = StorageCoordinator(preferences: preferences, logger: NullLogger())
+    let model = AppModel(
+      storage: coordinator,
+      imageProcessor: FakeImageProcessor(),
+      dialogs: FakeFileDialogs(),
+      preferences: preferences
+    )
+
+    #expect(model.selectedSection == .places)
+
+    model.selectedSection = .gallery
+    #expect(preferences.string(forKey: PreferenceKeys.galleryMode) == GalleryMode.grid.rawValue)
+
+    model.selectedSection = .people
+    #expect(preferences.string(forKey: PreferenceKeys.galleryMode) == GalleryMode.grid.rawValue)
+  }
+
   @Test("Пропавшее хранилище показывает ошибку и не создаёт пустую базу")
   func reportsMissingStore() async throws {
     let root = try makeStoreDirectory()
@@ -67,7 +135,8 @@ struct AppModelTests {
     let model = AppModel(
       storage: coordinator,
       imageProcessor: FakeImageProcessor(),
-      dialogs: FakeFileDialogs()
+      dialogs: FakeFileDialogs(),
+      preferences: preferences
     )
     await model.start()
     defer { model.stop() }

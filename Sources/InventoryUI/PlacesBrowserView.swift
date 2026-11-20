@@ -5,26 +5,41 @@ struct PlaceWorkspaceView: View {
   @ObservedObject var browser: PlaceBrowserModel
   let onAddPlace: () -> Void
   let onEditPlace: (Place) -> Void
+  let onAddItem: () -> Void
+  let onEditItem: (ItemDetails) -> Void
+  let onOpenPlace: (String) -> Void
 
   var body: some View {
     HSplitView {
       PlacesBrowserView(
         model: browser,
         onAddPlace: onAddPlace,
-        onEditPlace: onEditPlace
+        onEditPlace: onEditPlace,
+        onAddItem: onAddItem
       )
       .frame(minWidth: 420, maxWidth: .infinity)
 
-      if browser.showsInspector, let place = browser.selectedPlace {
-        PlaceInspectorView(
-          place: place,
-          path: browser.selectedPath,
-          photoURL: browser.photoURL(for: place),
-          onEdit: { onEditPlace(place) },
-          onDelete: { browser.requestDeleteSelected() },
-          onClose: { browser.clearSelection() }
-        )
-        .frame(minWidth: 240, idealWidth: 300, maxWidth: 420)
+      if browser.showsInspector {
+        if let details = browser.selectedItem {
+          ItemInspectorView(
+            details: details,
+            photoURL: browser.photoURL(for: details),
+            onEdit: { onEditItem(details) },
+            onOpenPlace: onOpenPlace,
+            onClose: { browser.clearSelection() }
+          )
+          .frame(minWidth: 260, idealWidth: 320, maxWidth: 460)
+        } else if let place = browser.selectedPlace {
+          PlaceInspectorView(
+            place: place,
+            path: browser.selectedPath,
+            photoURL: browser.photoURL(for: place),
+            onEdit: { onEditPlace(place) },
+            onDelete: { browser.requestDeleteSelected() },
+            onClose: { browser.clearSelection() }
+          )
+          .frame(minWidth: 240, idealWidth: 300, maxWidth: 420)
+        }
       }
     }
   }
@@ -34,6 +49,7 @@ struct PlacesBrowserView: View {
   @ObservedObject var model: PlaceBrowserModel
   let onAddPlace: () -> Void
   let onEditPlace: (Place) -> Void
+  let onAddItem: () -> Void
 
   var body: some View {
     VStack(spacing: 0) {
@@ -72,28 +88,36 @@ struct PlacesBrowserView: View {
         Task { await model.openRoot() }
       } label: {
         Text(L10n.string("places.root"))
-          .fontWeight(model.currentPath.isEmpty ? .semibold : .regular)
+          .fontWeight(model.currentPath.isEmpty && !model.isNoPlaceLevel ? .semibold : .regular)
       }
       .buttonStyle(.plain)
-      .foregroundColor(model.currentPath.isEmpty ? .primary : .accentColor)
+      .foregroundColor(model.currentPath.isEmpty && !model.isNoPlaceLevel ? .primary : .accentColor)
 
-      ForEach(Array(model.currentPath.enumerated()), id: \.element.id) { index, place in
+      if model.isNoPlaceLevel {
         Image(systemName: "chevron.compact.right")
           .foregroundColor(.secondary)
-        if index == model.currentPath.count - 1 {
-          Text(place.name)
-            .fontWeight(.semibold)
-            .lineLimit(1)
+        Text(L10n.string("items.noPlace"))
+          .fontWeight(.semibold)
+          .lineLimit(1)
+      } else {
+        ForEach(Array(model.currentPath.enumerated()), id: \.element.id) { index, place in
+          Image(systemName: "chevron.compact.right")
+            .foregroundColor(.secondary)
+          if index == model.currentPath.count - 1 {
+            Text(place.name)
+              .fontWeight(.semibold)
+              .lineLimit(1)
+              .help(place.name)
+          } else {
+            Button {
+              Task { await model.navigate(to: place) }
+            } label: {
+              Text(place.name).lineLimit(1)
+            }
+            .buttonStyle(.plain)
+            .foregroundColor(.accentColor)
             .help(place.name)
-        } else {
-          Button {
-            Task { await model.navigate(to: place) }
-          } label: {
-            Text(place.name).lineLimit(1)
           }
-          .buttonStyle(.plain)
-          .foregroundColor(.accentColor)
-          .help(place.name)
         }
       }
 
@@ -105,13 +129,20 @@ struct PlacesBrowserView: View {
         Image(systemName: "sidebar.right")
       }
       .buttonStyle(.borderless)
-      .disabled(model.selectedPlace == nil)
+      .disabled(!model.hasSelection)
       .help(L10n.string("places.inspector.toggle"))
+
+      Button {
+        onAddItem()
+      } label: {
+        Label(L10n.string("items.add"), systemImage: "photo.badge.plus")
+      }
+      .buttonStyle(.bordered)
 
       Button {
         onAddPlace()
       } label: {
-        Label(L10n.string("places.add"), systemImage: "plus")
+        Label(L10n.string("places.add"), systemImage: "folder.badge.plus")
       }
       .buttonStyle(.bordered)
     }
@@ -121,18 +152,23 @@ struct PlacesBrowserView: View {
 
   @ViewBuilder
   private var content: some View {
-    if model.isLoading && model.children.isEmpty {
+    if model.isLoading && model.children.isEmpty && model.items.isEmpty {
       ProgressView()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    } else if model.children.isEmpty {
+    } else if !isRoot && model.children.isEmpty && model.items.isEmpty {
       emptyState
     } else {
       ScrollView {
         LazyVGrid(
-          columns: [GridItem(.adaptive(minimum: 148), spacing: 16)],
+          columns: [GridItem(.adaptive(minimum: 132), spacing: 16)],
           alignment: .leading,
           spacing: 18
         ) {
+          if isRoot {
+            NoPlaceCell(count: model.noPlaceItemCount) {
+              Task { await model.openNoPlace() }
+            }
+          }
           ForEach(model.children) { place in
             PlaceCell(
               place: place,
@@ -141,30 +177,49 @@ struct PlacesBrowserView: View {
               Task { await model.open(place) }
             }
           }
+          ForEach(model.items) { entry in
+            ItemTile(
+              entry: entry,
+              thumbnailURL: model.thumbnailURL(for: entry),
+              side: 132
+            ) {
+              Task { await model.selectItem(entry) }
+            }
+          }
         }
         .padding(16)
       }
     }
   }
 
+  private var isRoot: Bool {
+    model.currentPath.isEmpty && !model.isNoPlaceLevel
+  }
+
   private var emptyState: some View {
     VStack(spacing: 12) {
-      Image(systemName: "folder")
+      Image(systemName: model.isNoPlaceLevel ? "tray" : "folder")
         .font(.system(size: 40))
         .foregroundColor(.secondary)
-      Text(L10n.string("places.empty"))
-        .font(.title3)
-      Text(L10n.string("places.emptyHint"))
-        .foregroundColor(.secondary)
-        .multilineTextAlignment(.center)
-        .frame(maxWidth: 360)
-      Button {
-        onAddPlace()
-      } label: {
-        Label(L10n.string("places.add"), systemImage: "plus")
+      Text(
+        L10n.string(model.isNoPlaceLevel ? "places.noPlaceEmpty" : "places.emptyItems")
+      )
+      .font(.title3)
+      Text(
+        L10n.string(model.isNoPlaceLevel ? "places.noPlaceEmptyHint" : "places.emptyItemsHint")
+      )
+      .foregroundColor(.secondary)
+      .multilineTextAlignment(.center)
+      .frame(maxWidth: 360)
+      if !model.isNoPlaceLevel {
+        Button {
+          onAddPlace()
+        } label: {
+          Label(L10n.string("places.add"), systemImage: "plus")
+        }
+        .buttonStyle(.borderedProminent)
+        .padding(.top, 4)
       }
-      .buttonStyle(.borderedProminent)
-      .padding(.top, 4)
     }
     .padding(32)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -211,6 +266,38 @@ private struct PlaceCell: View {
     .contentShape(Rectangle())
     .onTapGesture(perform: onOpen)
     .help(place.description.isEmpty ? place.name : "\(place.name)\n\(place.description)")
+  }
+}
+
+private struct NoPlaceCell: View {
+  let count: Int
+  let onOpen: () -> Void
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 7) {
+      ZStack {
+        RoundedRectangle(cornerRadius: 5)
+          .fill(Color(nsColor: .quaternaryLabelColor))
+        Image(systemName: "tray")
+          .font(.system(size: 30))
+          .foregroundColor(.secondary)
+      }
+      .frame(width: 132, height: 132)
+
+      Text(L10n.string("items.noPlace"))
+        .font(.body)
+        .lineLimit(2)
+        .multilineTextAlignment(.leading)
+
+      Text(L10n.format("gallery.count", count))
+        .font(.caption)
+        .foregroundColor(.secondary)
+        .lineLimit(1)
+    }
+    .frame(width: 132, alignment: .leading)
+    .contentShape(Rectangle())
+    .onTapGesture(perform: onOpen)
+    .help(L10n.string("items.noPlace"))
   }
 }
 

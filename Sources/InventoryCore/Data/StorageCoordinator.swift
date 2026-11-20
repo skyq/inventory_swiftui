@@ -9,6 +9,9 @@ public final class StorageSession: @unchecked Sendable {
   public let photos: any PhotoStore
   public let mutations: MutationBus
   public let places: any PlaceService
+  public let items: any ItemService
+  public let tags: any TagService
+  public let statuses: any StatusService
 
   private let lock: StorageLock
   private let closeLock = NSLock()
@@ -21,7 +24,10 @@ public final class StorageSession: @unchecked Sendable {
     logger: any AppLogger,
     photos: any PhotoStore,
     mutations: MutationBus,
-    places: any PlaceService
+    places: any PlaceService,
+    items: any ItemService,
+    tags: any TagService,
+    statuses: any StatusService
   ) {
     self.layout = layout
     self.database = database
@@ -30,6 +36,9 @@ public final class StorageSession: @unchecked Sendable {
     self.photos = photos
     self.mutations = mutations
     self.places = places
+    self.items = items
+    self.tags = tags
+    self.statuses = statuses
   }
 
   public func close() {
@@ -57,6 +66,7 @@ public final class StorageCoordinator: @unchecked Sendable {
   private let targetVersion: Int
   private let makeMigrator: () -> DatabaseMigrator
   private let loggerFactory: ((StoreLayout) -> any AppLogger)?
+  private let cleanupOrphansOnOpen: Bool
 
   public init(
     preferences: any PreferencesStore,
@@ -66,7 +76,8 @@ public final class StorageCoordinator: @unchecked Sendable {
     fileManager: FileManager = .default,
     targetVersion: Int = Schema.version,
     makeMigrator: @escaping () -> DatabaseMigrator = Schema.makeMigrator,
-    loggerFactory: ((StoreLayout) -> any AppLogger)? = nil
+    loggerFactory: ((StoreLayout) -> any AppLogger)? = nil,
+    cleanupOrphansOnOpen: Bool = true
   ) {
     self.preferences = preferences
     self.bootstrapLogger = logger
@@ -76,6 +87,7 @@ public final class StorageCoordinator: @unchecked Sendable {
     self.targetVersion = targetVersion
     self.makeMigrator = makeMigrator
     self.loggerFactory = loggerFactory
+    self.cleanupOrphansOnOpen = cleanupOrphansOnOpen
   }
 
   public func openOrCreateDefault() throws -> StorageSession {
@@ -274,6 +286,20 @@ public final class StorageCoordinator: @unchecked Sendable {
       ids: ids,
       mutations: mutations
     )
+    let tags = TagServiceImpl(database: database, ids: ids, mutations: mutations)
+    let statuses = StatusServiceImpl(database: database, mutations: mutations)
+    let items = ItemServiceImpl(
+      database: database,
+      photos: lifecycle,
+      clock: clock,
+      ids: ids,
+      mutations: mutations
+    )
+
+    if cleanupOrphansOnOpen {
+      OrphanPhotoCleaner(database: database, photos: photos, logger: logger).cleanup()
+    }
+
     return StorageSession(
       layout: layout,
       database: database,
@@ -281,7 +307,10 @@ public final class StorageCoordinator: @unchecked Sendable {
       logger: logger,
       photos: photos,
       mutations: mutations,
-      places: places
+      places: places,
+      items: items,
+      tags: tags,
+      statuses: statuses
     )
   }
 

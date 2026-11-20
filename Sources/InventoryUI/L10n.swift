@@ -25,6 +25,18 @@ public enum ErrorPresenter {
       )
     case .validationRequired where error.string("field") == "photo":
       return L10n.string("places.photoRequired")
+    case .validationRequired where error.string("field") == "itemPhoto":
+      return L10n.string("items.photoRequired")
+    case .validationRequired where error.string("field") == "itemName":
+      return L10n.string("items.nameRequired")
+    case .validationTooLong where error.string("field") == "itemName":
+      return L10n.format("items.nameMaxLength", error.int("max") ?? NameKey.maxLength)
+    case .validationRequired where error.string("field") == "tag":
+      return L10n.string("items.tagRequired")
+    case .validationTooLong where error.string("field") == "tag":
+      return L10n.format("items.tagTooLong", error.int("max") ?? TagKey.maxLength)
+    case .validationOutOfRange where error.string("field") == "quantity":
+      return L10n.string("items.quantityRange")
     case .validationRequired where error.string("field") == "name":
       return L10n.string("places.nameRequired")
     default:

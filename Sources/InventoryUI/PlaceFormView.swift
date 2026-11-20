@@ -6,6 +6,7 @@ struct PlaceFormView: View {
   let onClose: () -> Void
 
   @FocusState private var nameFocused: Bool
+  @State private var isDropTargeted = false
 
   var body: some View {
     VStack(spacing: 0) {
@@ -108,6 +109,13 @@ struct PlaceFormView: View {
     .onExitCommand {
       onClose()
     }
+    .onPasteCommand(of: PhotoDrop.acceptedTypes) { _ in
+      Task { await model.pastePhoto() }
+    }
+    .onDrop(of: PhotoDrop.acceptedTypes, isTargeted: nil) { providers in
+      Task { _ = await model.acceptDrop(providers: providers) }
+      return true
+    }
     .alert(item: $model.alert) { alert in
       switch alert {
       case .duplicate(let name):
@@ -146,6 +154,15 @@ struct PlaceFormView: View {
               .font(.system(size: 28))
               .foregroundColor(.secondary)
           }
+          if isDropTargeted {
+            RoundedRectangle(cornerRadius: 6)
+              .strokeBorder(Color.accentColor, lineWidth: 2)
+            Text(L10n.string("items.drop"))
+              .font(.callout)
+              .padding(6)
+              .background(Color(nsColor: .windowBackgroundColor).opacity(0.9))
+              .cornerRadius(5)
+          }
           if model.isProcessingPhoto {
             Color(nsColor: .windowBackgroundColor)
               .opacity(0.65)
@@ -155,18 +172,36 @@ struct PlaceFormView: View {
         }
         .frame(width: 150, height: 150)
         .clipShape(RoundedRectangle(cornerRadius: 6))
+        .onDrop(of: PhotoDrop.acceptedTypes, isTargeted: $isDropTargeted) { providers in
+          Task { _ = await model.acceptDrop(providers: providers) }
+          return true
+        }
 
         VStack(alignment: .leading, spacing: 8) {
-          Button {
-            Task { await model.choosePhoto() }
-          } label: {
-            Text(
-              L10n.string(model.hasPhoto ? "places.changePhoto" : "places.choosePhoto")
-            )
+          HStack(spacing: 8) {
+            Button {
+              Task { await model.choosePhoto() }
+            } label: {
+              Text(
+                L10n.string(model.hasPhoto ? "places.changePhoto" : "places.choosePhoto")
+              )
+            }
+            .disabled(model.isProcessingPhoto)
+
+            Button {
+              Task { await model.pastePhoto() }
+            } label: {
+              Text(L10n.string("items.paste"))
+            }
+            .disabled(model.isProcessingPhoto)
           }
-          .disabled(model.isProcessingPhoto)
 
           Text(L10n.string("places.photoHint"))
+            .font(.caption)
+            .foregroundColor(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+
+          Text(L10n.string("items.dropHint"))
             .font(.caption)
             .foregroundColor(.secondary)
             .fixedSize(horizontal: false, vertical: true)
