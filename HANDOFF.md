@@ -2,7 +2,7 @@
 
 Задача: этап 2 (T02.01–T02.15), приёмка T02.16
 Результат: DONE по коду и автотестам; BLOCKED по подтверждению владельца и ручным native-проверкам
-Коммит или точные изменённые файлы: `Package.swift`, `project.yml`, `Inventory.xcodeproj/`, `Sources/InventoryCore/`, `Sources/InventoryPlatform/`, `Sources/InventoryUI/`, `Sources/InventoryFixture/`, `Tests/`, `HANDOFF.md`, `RUN_LOG.md`
+Коммит: `e945a7b`. Изменённые файлы: `Package.swift`, `project.yml`, `Inventory.xcodeproj/`, `Sources/InventoryCore/`, `Sources/InventoryPlatform/`, `Sources/InventoryUI/`, `Sources/InventoryFixture/`, `Tests/`, `HANDOFF.md`, `RUN_LOG.md`
 
 ## Что уже работает
 
