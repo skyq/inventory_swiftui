@@ -111,8 +111,10 @@ private struct SidebarView: View {
     List(selection: $selection) {
       Section {
         ForEach(SidebarSection.allCases) { section in
+          // Тег без Optional: List(selection:) сопоставляет его с SidebarSection?.
+          // С Optional(section) строки не выделялись и не переключали раздел.
           Label(L10n.string(section.titleKey), systemImage: section.systemImage)
-            .tag(Optional(section))
+            .tag(section)
         }
       }
     }
