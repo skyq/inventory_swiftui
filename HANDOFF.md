@@ -2,7 +2,7 @@
 
 Задача: этап 2 (T02.01–T02.15), приёмка T02.16
 Результат: DONE по коду и автотестам; BLOCKED по подтверждению владельца и ручным native-проверкам
-Коммит: `e945a7b`. Изменённые файлы: `Package.swift`, `project.yml`, `Inventory.xcodeproj/`, `Sources/InventoryCore/`, `Sources/InventoryPlatform/`, `Sources/InventoryUI/`, `Sources/InventoryFixture/`, `Tests/`, `HANDOFF.md`, `RUN_LOG.md`
+Коммит: `e945a7b`, исправление сайдбара — `49d442e`. Изменённые файлы: `Package.swift`, `project.yml`, `Inventory.xcodeproj/`, `Sources/InventoryCore/`, `Sources/InventoryPlatform/`, `Sources/InventoryUI/`, `Sources/InventoryFixture/`, `Tests/`, `HANDOFF.md`, `RUN_LOG.md`
 
 ## Что уже работает
 
@@ -21,6 +21,7 @@
 - Cmd+N открывает создание вещи с текущим местом в режиме «По местам»; другие горячие клавиши не добавлялись (только Cmd+K/N/W/Esc).
 - `Sources/InventoryFixture`: детерминированный генератор отдельного хранилища на 500 вещей; отказывается работать поверх пути по умолчанию и не использует пользовательские фото.
 - 160 русских строк в String Catalog; поиск в toolbar остаётся заглушкой этапа 4.
+- Боковая панель: пункты «Галерея», «По местам», «Люди», «Статусы», «Теги», «Данные» выделяются и переключают раздел; «Люди/Статусы/Теги/Данные» пока показывают заглушку следующего этапа. Причина прежнего поведения — `.tag(Optional(section))` в `List(selection:)`; исправлено на `.tag(section)`.
 
 ## Действующие контракты
 
@@ -38,6 +39,7 @@
 - `xcodebuild ... -configuration Debug ... test` → `TEST SUCCEEDED`, 31 UI-тест в 5 сюитах (после `xcodegen generate`, чтобы новые файлы тестов попали в проект).
 - `xcodebuild ... -configuration Release -destination 'generic/platform=macOS' ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO` → `BUILD SUCCEEDED`; `lipo -info` → `x86_64 arm64`.
 - Фикстура: `swift run -c release InventoryFixture /tmp/InventoryFixture500` → 16 мест, 500 вещей; создание 500 вещей — 0.25 с, запрос галереи — 1.5 мс, средний `get` — 0.06 мс (первые 50 карточек). Оборудование: Apple M4, Mac16,12, macOS 26.7.1, release.
+- Сайдбар: воспроизведено и проверено временным AppKit-приложением с `List(selection:)` и синтетическими кликами по строкам. С `.tag(Optional(section))` выделения не было, с `.tag(section)` строки переключают раздел. Это диагностический harness, а не unit-тест; реальный клик в GUI остаётся за владельцем. Release-приложение пересобрано после исправления.
 - Не выполнено: запуск на Intel Mac; ручной осмотр HIG/масштабирования/Tab; реальные Cmd+V и drag/drop в GUI; прокрутка 500 вещей в окне; открытие HEIC/HEIF через интерфейс. Отдельного widget-теста нет: форма вещи покрыта model-тестами `ItemFormModelTests` (create/edit/read-only status/валидации). Эти проверки не выдаются за unit-тесты и остаются за владельцем.
 
 ## Входы для следующей задачи
