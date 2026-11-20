@@ -38,7 +38,7 @@
 - `xcodebuild ... -configuration Debug ... test` → `TEST SUCCEEDED`, 31 UI-тест в 5 сюитах (после `xcodegen generate`, чтобы новые файлы тестов попали в проект).
 - `xcodebuild ... -configuration Release -destination 'generic/platform=macOS' ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO` → `BUILD SUCCEEDED`; `lipo -info` → `x86_64 arm64`.
 - Фикстура: `swift run -c release InventoryFixture /tmp/InventoryFixture500` → 16 мест, 500 вещей; создание 500 вещей — 0.25 с, запрос галереи — 1.5 мс, средний `get` — 0.06 мс (первые 50 карточек). Оборудование: Apple M4, Mac16,12, macOS 26.7.1, release.
-- Не выполнено: запуск на Intel Mac; ручной осмотр HIG/масштабирования/Tab; реальные Cmd+V и drag/drop в GUI; прокрутка 500 вещей в окне; открытие HEIC/HEIF через интерфейс. Эти проверки не выдаются за unit-тесты и остаются за владельцем.
+- Не выполнено: запуск на Intel Mac; ручной осмотр HIG/масштабирования/Tab; реальные Cmd+V и drag/drop в GUI; прокрутка 500 вещей в окне; открытие HEIC/HEIF через интерфейс. Отдельного widget-теста нет: форма вещи покрыта model-тестами `ItemFormModelTests` (create/edit/read-only status/валидации). Эти проверки не выдаются за unit-тесты и остаются за владельцем.
 
 ## Входы для следующей задачи
 
