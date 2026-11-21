@@ -49,10 +49,10 @@
 
 ## Проверки
 
-- `swift test` → 210 тестов: 151 core, 9 platform, 50 UI; все прошли.
-  - Поиск: 36 unit-тестов (нормализация, Snowball, совпадения/ранжирование), 8 интеграционных (живой индекс), 2 производительности.
-  - UI: 6 новых тестов модели галереи (ранжирование, фильтры, очистка, пустая выдача, устаревший ответ, изменение индекса) и 1 тест Cmd+K поверх форм.
-- `xcodebuild test -project Inventory.xcodeproj -scheme InventoryApp -destination 'platform=macOS'` → `TEST SUCCEEDED`, 50 UI-тестов в 6 сюитах (после `xcodegen generate`).
+- `swift test` → 214 тестов: 154 core, 9 platform, 51 UI; все прошли.
+  - Поиск: 36 unit-тестов (нормализация, Snowball, совпадения/ранжирование), 11 интеграционных (живой индекс), 2 производительности.
+  - UI: 6 новых тестов модели галереи (ранжирование, фильтры, очистка, пустая выдача, устаревший ответ, изменение индекса), тест Cmd+K поверх форм и тест проброса строки поиска через `AppModel`.
+- `xcodebuild test -project Inventory.xcodeproj -scheme InventoryApp -destination 'platform=macOS'` → `TEST SUCCEEDED`, 51 UI-тест в 6 сюитах (после `xcodegen generate`).
 - `swift format lint --recursive Sources Tests` → без замечаний.
 - Release: `xcodebuild ... -configuration Release -derivedDataPath build-release -destination 'generic/platform=macOS' ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO build` → `BUILD SUCCEEDED`; `lipo -info` → `x86_64 arm64`; приложение запущено из `build-release/Build/Products/Release/Inventory.app` и оставалось рабочим.
 - Fault-injection: временный SQL-триггер на `items` откатывает обновление; индекс сохраняет прежнее имя и не содержит нового.

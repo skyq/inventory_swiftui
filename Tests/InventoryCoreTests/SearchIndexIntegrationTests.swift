@@ -161,6 +161,71 @@ struct SearchIndexIntegrationTests {
     #expect(ids(session, "антон") == [item.item.id])
   }
 
+  @Test("Переименование тега обновляет выдачу")
+  func updatesRenamedTag() async throws {
+    let (session, root) = try TestSupport.makeSession()
+    defer {
+      session.close()
+      try? FileManager.default.removeItem(at: root)
+    }
+
+    let item = try TestSupport.createItem(session, name: "Лампа", tags: ["Свет"])
+    await session.search.waitForIdle()
+    #expect(ids(session, "свет") == [item.item.id])
+
+    let light = try #require(item.tags.first { $0.name == "Свет" })
+    _ = try session.tags.rename(light.id, to: "Освещение")
+    await session.search.waitForIdle()
+
+    #expect(ids(session, "свет").isEmpty)
+    #expect(ids(session, "освещение") == [item.item.id])
+  }
+
+  @Test("Удаление тега убирает его из выдачи")
+  func removesDeletedTag() async throws {
+    let (session, root) = try TestSupport.makeSession()
+    defer {
+      session.close()
+      try? FileManager.default.removeItem(at: root)
+    }
+
+    let item = try TestSupport.createItem(session, name: "Лампа", tags: ["Свет", "Дом"])
+    await session.search.waitForIdle()
+    #expect(ids(session, "свет") == [item.item.id])
+
+    let light = try #require(item.tags.first { $0.name == "Свет" })
+    _ = try session.tags.delete(light.id)
+    await session.search.waitForIdle()
+
+    #expect(ids(session, "свет").isEmpty)
+    #expect(ids(session, "дом") == [item.item.id])
+  }
+
+  @Test("Перенос места обновляет путь у вложенных вещей")
+  func updatesMovedPlace() async throws {
+    let (session, root) = try TestSupport.makeSession()
+    defer {
+      session.close()
+      try? FileManager.default.removeItem(at: root)
+    }
+
+    let home = try TestSupport.createPlace(session, name: "Дом")
+    let garage = try TestSupport.createPlace(session, name: "Гараж")
+    let shelf = try TestSupport.createPlace(session, name: "Полка", parentId: home.id)
+    let item = try TestSupport.createItem(session, name: "Дрель", placeId: shelf.id)
+    await session.search.waitForIdle()
+
+    #expect(ids(session, "дом") == [item.item.id])
+    #expect(ids(session, "гараж").isEmpty)
+
+    _ = try session.places.move(shelf.id, newParentId: garage.id)
+    await session.search.waitForIdle()
+
+    #expect(ids(session, "дом").isEmpty)
+    #expect(ids(session, "гараж") == [item.item.id])
+    #expect(ids(session, "полка") == [item.item.id])
+  }
+
   @Test("Откат изменения не меняет индекс")
   func rollbackKeepsIndex() async throws {
     let (session, root) = try TestSupport.makeSession()
