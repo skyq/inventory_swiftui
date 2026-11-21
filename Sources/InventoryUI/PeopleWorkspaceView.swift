@@ -10,20 +10,22 @@ struct PeopleWorkspaceView: View {
   @State private var pendingArchive: Person?
 
   var body: some View {
-    HSplitView {
-      VStack(spacing: 0) {
-        header
-        Divider()
-        if let error = model.loadError {
-          errorBanner(error)
+    GeometryReader { proxy in
+      HSplitView {
+        VStack(spacing: 0) {
+          header
           Divider()
+          if let error = model.loadError {
+            errorBanner(error)
+            Divider()
+          }
+          list
         }
-        list
-      }
-      .frame(minWidth: 240, idealWidth: 280, maxWidth: 380)
+        .frame(minWidth: 280, idealWidth: proxy.size.width / 2, maxWidth: .infinity)
 
-      detail
-        .frame(minWidth: 360, maxWidth: .infinity)
+        detail
+          .frame(minWidth: 320, idealWidth: proxy.size.width / 2, maxWidth: .infinity)
+      }
     }
     .task { await model.start() }
     .sheet(item: $form) { presentation in

@@ -11,20 +11,22 @@ struct TagsWorkspaceView: View {
   @State private var pendingDelete: TagSuggestion?
 
   var body: some View {
-    HSplitView {
-      VStack(spacing: 0) {
-        header
-        Divider()
-        if let error = model.loadError {
-          errorBanner(error)
+    GeometryReader { proxy in
+      HSplitView {
+        VStack(spacing: 0) {
+          header
           Divider()
+          if let error = model.loadError {
+            errorBanner(error)
+            Divider()
+          }
+          list
         }
-        list
-      }
-      .frame(minWidth: 240, idealWidth: 300, maxWidth: 380)
+        .frame(minWidth: 280, idealWidth: proxy.size.width / 2, maxWidth: .infinity)
 
-      detail
-        .frame(minWidth: 360, maxWidth: .infinity)
+        detail
+          .frame(minWidth: 320, idealWidth: proxy.size.width / 2, maxWidth: .infinity)
+      }
     }
     .task { await model.start() }
     .onChange(of: model.selectedTagId) { _ in
