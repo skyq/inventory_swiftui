@@ -54,6 +54,17 @@ public struct Tag: Identifiable, Sendable, Equatable, Hashable {
   }
 }
 
+/// Итог удаления тега: вещи, с которых связь снята.
+public struct TagDeletion: Sendable, Equatable {
+  public let itemIds: Set<String>
+
+  public init(itemIds: Set<String>) {
+    self.itemIds = itemIds
+  }
+
+  public var itemCount: Int { itemIds.count }
+}
+
 public struct TagSuggestion: Identifiable, Sendable, Equatable {
   public let id: String
   public let name: String
@@ -74,7 +85,21 @@ public protocol TagService: Sendable {
   func setItemTags(_ itemId: String, rawNames: [String]) throws
   /// Удаляет теги без вещей.
   func removeUnused() throws
+  /// Все теги с количеством вещей; естественная сортировка по имени.
+  func listWithCounts() throws -> [TagSuggestion]
+  /// Переименование без слияния. Конфликт ключа — `tagNameConflict`.
+  func rename(_ id: String, to name: String) throws -> Tag
+  /// Объединение связей; `resultName` nil — оставить имя целевого тега.
+  func merge(_ sourceId: String, into targetId: String, resultName: String?) throws -> Tag
+  /// Снимает тег со всех вещей; возвращает затронутые вещи.
+  func delete(_ id: String) throws -> TagDeletion
   var changes: AsyncStream<MutationEvent> { get }
+}
+
+extension TagService {
+  public func merge(_ sourceId: String, into targetId: String) throws -> Tag {
+    try merge(sourceId, into: targetId, resultName: nil)
+  }
 }
 
 extension TagService {

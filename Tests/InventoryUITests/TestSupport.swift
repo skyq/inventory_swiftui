@@ -451,6 +451,7 @@ final class FakeStatusService: StatusService, @unchecked Sendable {
 
   var listError: AppException?
   var getError: AppException?
+  var archiveError: AppException?
 
   init(statuses: [Status] = [makeTestStatus()]) {
     self.statuses = statuses
@@ -477,6 +478,66 @@ final class FakeStatusService: StatusService, @unchecked Sendable {
     }
     return status
   }
+
+  func create(name: String) throws -> Status {
+    lock.lock()
+    defer { lock.unlock() }
+    let status = Status(
+      id: "status-\(statuses.count + 1)",
+      name: name,
+      isArchived: false,
+      sortOrder: statuses.count,
+      createdAt: 1_700_000_000_000
+    )
+    statuses.append(status)
+    return status
+  }
+
+  func rename(_ id: String, to name: String) throws -> Status {
+    lock.lock()
+    defer { lock.unlock() }
+    guard let index = statuses.firstIndex(where: { $0.id == id }) else {
+      throw AppException(.validationNotFound, params: ["entity": .string("status")])
+    }
+    let old = statuses[index]
+    let updated = Status(
+      id: old.id, name: name, isArchived: old.isArchived,
+      sortOrder: old.sortOrder, createdAt: old.createdAt
+    )
+    statuses[index] = updated
+    return updated
+  }
+
+  func archive(_ id: String, replacementId: String?) throws -> Status {
+    lock.lock()
+    defer { lock.unlock() }
+    if let archiveError { throw archiveError }
+    guard let index = statuses.firstIndex(where: { $0.id == id }) else {
+      throw AppException(.validationNotFound, params: ["entity": .string("status")])
+    }
+    let old = statuses[index]
+    let updated = Status(
+      id: old.id, name: old.name, isArchived: true,
+      sortOrder: old.sortOrder, createdAt: old.createdAt
+    )
+    statuses[index] = updated
+    return updated
+  }
+
+  func restore(_ id: String) throws -> Status {
+    lock.lock()
+    defer { lock.unlock() }
+    guard let index = statuses.firstIndex(where: { $0.id == id }) else {
+      throw AppException(.validationNotFound, params: ["entity": .string("status")])
+    }
+    let old = statuses[index]
+    let updated = Status(
+      id: old.id, name: old.name, isArchived: false,
+      sortOrder: old.sortOrder, createdAt: old.createdAt
+    )
+    statuses[index] = updated
+    return updated
+  }
 }
 
 final class FakeTagService: TagService, @unchecked Sendable {
@@ -487,6 +548,7 @@ final class FakeTagService: TagService, @unchecked Sendable {
   let changes: AsyncStream<MutationEvent>
 
   var suggestError: AppException?
+  var renameError: AppException?
 
   init(suggestions: [TagSuggestion] = []) {
     self.suggestions = suggestions
@@ -524,6 +586,46 @@ final class FakeTagService: TagService, @unchecked Sendable {
   }
 
   func removeUnused() throws {}
+
+  func listWithCounts() throws -> [TagSuggestion] {
+    lock.lock()
+    defer { lock.unlock() }
+    return suggestions
+  }
+
+  func rename(_ id: String, to name: String) throws -> Tag {
+    lock.lock()
+    defer { lock.unlock() }
+    if let renameError { throw renameError }
+    guard let index = suggestions.firstIndex(where: { $0.id == id }) else {
+      throw AppException(.validationNotFound, params: ["entity": .string("tag")])
+    }
+    let updated = TagSuggestion(
+      id: id, name: name, itemCount: suggestions[index].itemCount)
+    suggestions[index] = updated
+    return Tag(id: id, name: name, nameKey: TagKey.normalize(name))
+  }
+
+  func merge(_ sourceId: String, into targetId: String, resultName: String?) throws -> Tag {
+    lock.lock()
+    defer { lock.unlock() }
+    guard let target = suggestions.first(where: { $0.id == targetId }) else {
+      throw AppException(.validationNotFound, params: ["entity": .string("tag")])
+    }
+    suggestions.removeAll { $0.id == sourceId }
+    return Tag(
+      id: target.id,
+      name: resultName ?? target.name,
+      nameKey: TagKey.normalize(resultName ?? target.name)
+    )
+  }
+
+  func delete(_ id: String) throws -> TagDeletion {
+    lock.lock()
+    defer { lock.unlock() }
+    suggestions.removeAll { $0.id == id }
+    return TagDeletion(itemIds: [])
+  }
 }
 
 final class FakePhotoStore: PhotoStore, @unchecked Sendable {
@@ -594,4 +696,214 @@ func makeTemporaryFile(contents: String = "image") throws -> URL {
     .appendingPathComponent("InventoryUITest-\(UUID().uuidString).jpg")
   try Data(contents.utf8).write(to: url)
   return url
+}
+
+// MARK: - Люди, действия, история, настройки статусов
+
+final class FakePeopleService: PeopleService, @unchecked Sendable {
+  private let lock = NSLock()
+  private var peopleById: [String: Person] = [:]
+  private var lastGiven: [String: String] = [:]
+  private var counter = 0
+  private let continuation: AsyncStream<MutationEvent>.Continuation
+  let changes: AsyncStream<MutationEvent>
+
+  var createError: AppException?
+  var updateError: AppException?
+  var archiveError: AppException?
+  var requiresDuplicateConfirmation = false
+  private(set) var createdInputs: [PersonCreate] = []
+  private(set) var updateInputs: [PersonUpdate] = []
+
+  init(initial: [Person] = []) {
+    for person in initial { peopleById[person.id] = person }
+    (changes, continuation) = AsyncStream.makeStream(of: MutationEvent.self)
+  }
+
+  func setLastGiven(itemId: String, personId: String) {
+    lock.lock()
+    lastGiven[itemId] = personId
+    lock.unlock()
+  }
+
+  func list(includeArchived: Bool) throws -> [Person] {
+    lock.lock()
+    defer { lock.unlock() }
+    return peopleById.values
+      .filter { includeArchived || !$0.isArchived }
+      .sorted { $0.name < $1.name }
+  }
+
+  func get(_ id: String) throws -> Person {
+    lock.lock()
+    defer { lock.unlock() }
+    guard let person = peopleById[id] else {
+      throw AppException(.validationNotFound, params: ["entity": .string("person")])
+    }
+    return person
+  }
+
+  func create(_ input: PersonCreate, duplicateConfirmed: Bool) throws -> Person {
+    lock.lock()
+    defer { lock.unlock() }
+    if let createError { throw createError }
+    if requiresDuplicateConfirmation && !duplicateConfirmed,
+      peopleById.values.contains(where: { $0.name.lowercased() == input.name.lowercased() })
+    {
+      throw AppException(.personNameDuplicate, params: ["name": .string(input.name)])
+    }
+    counter += 1
+    let person = Person(
+      id: "person-\(counter)",
+      name: input.name,
+      phone: input.phone,
+      notes: input.notes,
+      isArchived: false,
+      createdAt: 1_700_000_000_000,
+      updatedAt: 1_700_000_000_000
+    )
+    peopleById[person.id] = person
+    createdInputs.append(input)
+    return person
+  }
+
+  func update(_ input: PersonUpdate, duplicateConfirmed: Bool) throws -> Person {
+    lock.lock()
+    defer { lock.unlock() }
+    if let updateError { throw updateError }
+    guard let old = peopleById[input.id] else {
+      throw AppException(.validationNotFound, params: ["entity": .string("person")])
+    }
+    let updated = Person(
+      id: old.id,
+      name: input.name,
+      phone: input.phone,
+      notes: input.notes,
+      isArchived: old.isArchived,
+      createdAt: old.createdAt,
+      updatedAt: old.updatedAt
+    )
+    peopleById[input.id] = updated
+    updateInputs.append(input)
+    return updated
+  }
+
+  func archive(_ id: String) throws -> Person {
+    lock.lock()
+    defer { lock.unlock() }
+    if let archiveError { throw archiveError }
+    guard let old = peopleById[id] else {
+      throw AppException(.validationNotFound, params: ["entity": .string("person")])
+    }
+    let updated = Person(
+      id: old.id,
+      name: old.name,
+      phone: old.phone,
+      notes: old.notes,
+      isArchived: true,
+      createdAt: old.createdAt,
+      updatedAt: old.updatedAt
+    )
+    peopleById[id] = updated
+    return updated
+  }
+
+  func restore(_ id: String) throws -> Person {
+    lock.lock()
+    defer { lock.unlock() }
+    guard let old = peopleById[id] else {
+      throw AppException(.validationNotFound, params: ["entity": .string("person")])
+    }
+    let updated = Person(
+      id: old.id,
+      name: old.name,
+      phone: old.phone,
+      notes: old.notes,
+      isArchived: false,
+      createdAt: old.createdAt,
+      updatedAt: old.updatedAt
+    )
+    peopleById[id] = updated
+    return updated
+  }
+
+  func lastGivenPersonId(itemId: String) throws -> String? {
+    lock.lock()
+    defer { lock.unlock() }
+    return lastGiven[itemId]
+  }
+}
+
+final class FakeItemActions: ItemActions, @unchecked Sendable {
+  private let lock = NSLock()
+  private(set) var changeStatusCommands: [ChangeStatusCommand] = []
+  private(set) var giveCommands: [GiveCommand] = []
+  private(set) var returnCommands: [ReturnCommand] = []
+  var error: AppException?
+  var details: ItemDetails
+
+  init(details: ItemDetails = makeTestItemDetails(id: "item-1", name: "Куртка")) {
+    self.details = details
+  }
+
+  func changeStatus(_ command: ChangeStatusCommand) throws -> ItemDetails {
+    lock.lock()
+    defer { lock.unlock() }
+    if let error { throw error }
+    changeStatusCommands.append(command)
+    return details
+  }
+
+  func give(_ command: GiveCommand) throws -> ItemDetails {
+    lock.lock()
+    defer { lock.unlock() }
+    if let error { throw error }
+    giveCommands.append(command)
+    return details
+  }
+
+  func returnItem(_ command: ReturnCommand) throws -> ItemDetails {
+    lock.lock()
+    defer { lock.unlock() }
+    if let error { throw error }
+    returnCommands.append(command)
+    return details
+  }
+}
+
+final class FakeHistoryReadService: HistoryReadService, @unchecked Sendable {
+  var itemEntries: [ItemHistoryEntry] = []
+  var personEntries: [PersonHistoryEntry] = []
+  var error: AppException?
+
+  func itemHistory(itemId: String) throws -> [ItemHistoryEntry] {
+    if let error { throw error }
+    return itemEntries
+  }
+
+  func personHistory(personId: String) throws -> [PersonHistoryEntry] {
+    if let error { throw error }
+    return personEntries
+  }
+}
+
+final class FakeStatusSettingsService: StatusSettingsService, @unchecked Sendable {
+  var value: StatusSettings
+  var error: AppException?
+  private(set) var updates: [StatusSettings] = []
+
+  init(value: StatusSettings) {
+    self.value = value
+  }
+
+  func settings() throws -> StatusSettings {
+    if let error { throw error }
+    return value
+  }
+
+  func update(_ settings: StatusSettings) throws {
+    if let error { throw error }
+    value = settings
+    updates.append(settings)
+  }
 }

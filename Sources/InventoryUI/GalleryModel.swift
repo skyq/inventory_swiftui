@@ -24,6 +24,7 @@ public final class GalleryModel: ObservableObject {
   @Published public private(set) var loadError: AppException?
   @Published public private(set) var selected: ItemDetails?
   @Published public private(set) var selectedItemId: String?
+  @Published public private(set) var selectedHistory: [ItemHistoryEntry] = []
   @Published public private(set) var showsInspector = false
   @Published public var alertMessage: String?
 
@@ -33,6 +34,7 @@ public final class GalleryModel: ObservableObject {
   private let places: any PlaceService
   private let photos: any PhotoStore
   private let preferences: any PreferencesStore
+  private let history: (any HistoryReadService)?
 
   private var observationTasks: [Task<Void, Never>] = []
   private var started = false
@@ -43,7 +45,8 @@ public final class GalleryModel: ObservableObject {
     statuses: any StatusService,
     places: any PlaceService,
     photos: any PhotoStore,
-    preferences: any PreferencesStore
+    preferences: any PreferencesStore,
+    history: (any HistoryReadService)? = nil
   ) {
     self.items = items
     self.tags = tags
@@ -51,6 +54,7 @@ public final class GalleryModel: ObservableObject {
     self.places = places
     self.photos = photos
     self.preferences = preferences
+    self.history = history
     self.state = GalleryStateCodec.load(from: preferences)
   }
 
@@ -110,6 +114,13 @@ public final class GalleryModel: ObservableObject {
     selectedItemId = entry.id
     showsInspector = true
     await loadDetails(entry.id)
+  }
+
+  /// Переход к вещи из истории человека; раздел галереи переключает AppModel.
+  public func selectItem(id: String) async {
+    selectedItemId = id
+    showsInspector = true
+    await loadDetails(id)
   }
 
   public func clearSelection() {
@@ -213,6 +224,15 @@ public final class GalleryModel: ObservableObject {
         }
       }
     )
+    observationTasks.append(
+      Task { [weak self] in
+        guard let stream = self?.statuses.changes else { return }
+        for await _ in stream {
+          guard let self else { return }
+          await self.refreshFilterData()
+        }
+      }
+    )
   }
 
   /// Перечитывает справочники фильтров после изменения мест или тегов.
@@ -237,14 +257,27 @@ public final class GalleryModel: ObservableObject {
     switch result {
     case .success(let details):
       selected = details
+      await loadHistory(id)
     case .failure(let error):
       if error.code == .validationNotFound {
         selected = nil
         selectedItemId = nil
         showsInspector = false
+        selectedHistory = []
       } else {
         alertMessage = ErrorPresenter.message(for: error)
       }
+    }
+  }
+
+  private func loadHistory(_ id: String) async {
+    guard let history else { return }
+    let result = await AsyncCore.run { try history.itemHistory(itemId: id) }
+    switch result {
+    case .success(let entries):
+      selectedHistory = entries
+    case .failure:
+      selectedHistory = []
     }
   }
 

@@ -34,6 +34,7 @@ public final class PlaceBrowserModel: ObservableObject {
   @Published public var selectedPlaceId: String?
   @Published public private(set) var selectedItemId: String?
   @Published public private(set) var selectedItem: ItemDetails?
+  @Published public private(set) var selectedItemHistory: [ItemHistoryEntry] = []
   @Published public private(set) var showsInspector = false
   @Published public private(set) var isLoading = false
   @Published public private(set) var loadError: AppException?
@@ -42,6 +43,7 @@ public final class PlaceBrowserModel: ObservableObject {
   private let places: any PlaceService
   private let photos: any PhotoStore
   private let itemsService: any ItemService
+  private let history: (any HistoryReadService)?
 
   private var observationTask: Task<Void, Never>?
   private var itemObservationTask: Task<Void, Never>?
@@ -50,11 +52,13 @@ public final class PlaceBrowserModel: ObservableObject {
   public init(
     places: any PlaceService,
     photos: any PhotoStore,
-    items: any ItemService
+    items: any ItemService,
+    history: (any HistoryReadService)? = nil
   ) {
     self.places = places
     self.photos = photos
     self.itemsService = items
+    self.history = history
   }
 
   deinit {
@@ -320,14 +324,27 @@ public final class PlaceBrowserModel: ObservableObject {
     switch result {
     case .success(let details):
       selectedItem = details
+      await loadItemHistory(id)
     case .failure(let error):
       if error.code == .validationNotFound {
         selectedItem = nil
         selectedItemId = nil
+        selectedItemHistory = []
         showsInspector = false
       } else {
         alert = .failure(ErrorPresenter.message(for: error))
       }
+    }
+  }
+
+  private func loadItemHistory(_ id: String) async {
+    guard let history else { return }
+    let result = await AsyncCore.run { try history.itemHistory(itemId: id) }
+    switch result {
+    case .success(let entries):
+      selectedItemHistory = entries
+    case .failure:
+      selectedItemHistory = []
     }
   }
 

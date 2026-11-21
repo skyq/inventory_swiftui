@@ -62,6 +62,39 @@ struct TagRepository {
     }
   }
 
+  static func itemIds(forTag db: Database, tagId: String) throws -> Set<String> {
+    Set(
+      try String.fetchAll(
+        db,
+        sql: "SELECT item_id FROM item_tags WHERE tag_id = ?",
+        arguments: [tagId]
+      )
+    )
+  }
+
+  static func updateName(_ db: Database, id: String, name: String, nameKey: String) throws {
+    try db.execute(
+      sql: "UPDATE tags SET name = ?, name_key = ? WHERE id = ?",
+      arguments: [name, nameKey, id]
+    )
+  }
+
+  /// Переносит связи исходного тега на целевой без дублей на вещах.
+  static func moveLinks(_ db: Database, from sourceId: String, to targetId: String) throws {
+    try db.execute(
+      sql: """
+        INSERT OR IGNORE INTO item_tags (item_id, tag_id)
+        SELECT item_id, ? FROM item_tags WHERE tag_id = ?
+        """,
+      arguments: [targetId, sourceId]
+    )
+    try db.execute(sql: "DELETE FROM item_tags WHERE tag_id = ?", arguments: [sourceId])
+  }
+
+  static func delete(_ db: Database, id: String) throws {
+    try db.execute(sql: "DELETE FROM tags WHERE id = ?", arguments: [id])
+  }
+
   /// Удаляет теги без связей; возвращает удалённые id.
   @discardableResult
   static func removeUnused(_ db: Database) throws -> Set<String> {

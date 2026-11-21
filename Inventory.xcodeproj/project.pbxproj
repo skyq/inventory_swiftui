@@ -11,6 +11,7 @@
 		17A13C13266B2574BE44F964 /* ItemFormModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0771542E60D2DD97F4FB9E /* ItemFormModelTests.swift */; };
 		1B71B8361EB90C2A28EC5563 /* InventoryCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5B1D8F34718CCD1A3CC1A775 /* InventoryCore */; };
 		628FDD9DF9CA5332DB71A494 /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E198DB514E7DA8098FE109EF /* TestSupport.swift */; };
+		ABA8B069101D9EA9912E228F /* Stage3ModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E338F29973A92BC4D10BB95 /* Stage3ModelsTests.swift */; };
 		B7C99B10D0C9E0AF9E2D924F /* InventoryUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5ACAE9AD5A13525AC1129EEB /* InventoryUI */; };
 		BA529B31CFE299448CA1A316 /* InventoryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9263C95C43118374037B9DC5 /* InventoryApp.swift */; };
 		BA812B9CC8F94653CF6A1CCD /* InventoryUI in Frameworks */ = {isa = PBXBuildFile; productRef = 838F560A2A56D1A41EC5DB20 /* InventoryUI */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0E338F29973A92BC4D10BB95 /* Stage3ModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage3ModelsTests.swift; sourceTree = "<group>"; };
 		0EF38549C7245F24E6FC1187 /* InventoryAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InventoryAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A8382DC0A5C2EE757AC9B63 /* PlaceBrowserModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceBrowserModelTests.swift; sourceTree = "<group>"; };
 		41DF7BDA673E5AE060C78285 /* InventoryApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InventoryApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -100,6 +102,7 @@
 				4E0771542E60D2DD97F4FB9E /* ItemFormModelTests.swift */,
 				3A8382DC0A5C2EE757AC9B63 /* PlaceBrowserModelTests.swift */,
 				91C4D1E6EDBDB9A2D22892CF /* PlaceFormModelTests.swift */,
+				0E338F29973A92BC4D10BB95 /* Stage3ModelsTests.swift */,
 				E198DB514E7DA8098FE109EF /* TestSupport.swift */,
 			);
 			path = InventoryUITests;
@@ -217,6 +220,7 @@
 				17A13C13266B2574BE44F964 /* ItemFormModelTests.swift in Sources */,
 				1108CD3B8169675478AAD663 /* PlaceBrowserModelTests.swift in Sources */,
 				D296E0AD0ACAA8494D524677 /* PlaceFormModelTests.swift in Sources */,
+				ABA8B069101D9EA9912E228F /* Stage3ModelsTests.swift in Sources */,
 				628FDD9DF9CA5332DB71A494 /* TestSupport.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

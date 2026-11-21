@@ -1,6 +1,6 @@
 # Журнал выполнения
 
-Статусы обновлены по фактическому коду и прогонам 20 ноября 2026. Подтверждение этапа хранится отдельной записью и не выводится из успешных тестов. Этап 1 подтверждён владельцем; этап 2 выполнен по коду и автотестам (коммит `e945a7b`), приёмка T02.16 ожидает владельца. После проверки владельцем исправлена боковая панель (коммит `49d442e`): тег раздела без `Optional`, иначе `List(selection:)` не выделял пункты.
+Статусы обновлены по фактическому коду и прогонам 20 ноября 2026. Подтверждение этапа хранится отдельной записью и не выводится из успешных тестов. Этап 1 и этап 2 подтверждены владельцем. Этап 3 реализован по коду и автотестам (T03.01–T03.14), приёмка T03.15 ожидает владельца и ручных native-проверок. Ранее исправленная боковая панель (`.tag(section)` вместо `Optional`) продолжает работать; разделы «Люди», «Статусы», «Теги» стали рабочими.
 
 | ID | Статус | Коммит / файлы | Проверки | Решение владельца / примечание |
 |---|---|---|---|---|
@@ -41,22 +41,22 @@
 | T02.13 | DONE | `Sources/InventoryUI/PlaceBrowserModel.swift`, `PlacesBrowserView.swift` | `PlaceBrowserModelTests.showsDirectItemsAndNoPlaceCount`, `selectsItemInspector` | «Без места» первым в корне, прямые вещи места, natural sort, создание с предзаполненным местом |
 | T02.14 | DONE | `Sources/InventoryUI/GalleryFiltersView.swift`, `GalleryModel.swift` | `GalleryModelTests`: query-параметры, «Без места», архивные статусы, сброс, sanitize | Место с потомками, multiselect статусов и тегов AND; скрытия по статусу нет |
 | T02.15 | DONE | `Sources/InventoryFixture/Fixture.swift`, `Package.swift` | `swift run -c release InventoryFixture /tmp/InventoryFixture500` | 500 вещей, 16 мест, 6 тегов, синтетические JPEG; Apple M4: создание 0.25 с, list 1.5 мс, get 0.06 мс; прокрутка GUI — за владельцем |
-| T02.16 | BLOCKED | `HANDOFF.md`, этот журнал | `swift test` — 113 тестов; `xcodebuild test` — 31 UI-тест; release universal | Ожидается подтверждение владельца этапа 2 и ручные native-проверки; этап 3 не начинается |
-| T03.01 | TODO | — | Не выполнялись | — |
-| T03.02 | TODO | — | Не выполнялись | — |
-| T03.03 | TODO | — | Не выполнялись | — |
-| T03.04 | TODO | — | Не выполнялись | — |
-| T03.05 | TODO | — | Не выполнялись | — |
-| T03.06 | TODO | — | Не выполнялись | — |
-| T03.07 | TODO | — | Не выполнялись | — |
-| T03.08 | TODO | — | Не выполнялись | — |
-| T03.09 | TODO | — | Не выполнялись | — |
-| T03.10 | TODO | — | Не выполнялись | — |
-| T03.11 | TODO | — | Не выполнялись | — |
-| T03.12 | TODO | — | Не выполнялись | — |
-| T03.13 | TODO | — | Не выполнялись | — |
-| T03.14 | TODO | — | Не выполнялись | — |
-| T03.15 | TODO | — | Не выполнялись | — |
+| T02.16 | DONE | `HANDOFF.md`, этот журнал | `swift test` — 113 тестов; `xcodebuild test` — 31 UI-тест; release universal | Этап 2 подтверждён владельцем 20.11.2026 («все работает»); после исправления сайдбара; этап 3 начат |
+| T03.01 | DONE | `Sources/InventoryCore/Domain/Status.swift`, `Data/StatusRepository.swift`, `Data/StatusServiceImpl.swift` | `StatusManagementTests.createsAndRenames`, `validatesName` | Регистронезависимая уникальность среди активных и архивных; `sort_order` только растёт; публичного удаления нет |
+| T03.02 | DONE | `Status.swift`, `StatusServiceImpl.swift`, `StorageCoordinator.swift` | `StatusManagementTests.archivesUsedStatusWithReplacement`, `archivesUnusedStatus`, `settingsUpdateIsAtomic` | Три настройки проверяются и меняются одной транзакцией; восстановление не возвращает прежние настройки; вещи сохраняют архивный статус |
+| T03.03 | DONE | `Sources/InventoryCore/Domain/Person.swift`, `Data/PeopleRepository.swift`, `Data/PeopleServiceImpl.swift` | `PeopleTests` (4 теста): дубли, архив, история, длина/пустота | `duplicateConfirmed` обязателен при совпадении имени; архивные не предлагаются, история и переименование работают по id |
+| T03.04 | DONE | `Sources/InventoryCore/Domain/ItemActions.swift`, `Data/ItemActionServiceImpl.swift` | `ItemActionsTests.changesStatus`, `rejectsInvalidStatusChange`, `rollsBackStatusChange` | Один UPDATE вещи + INSERT истории; тот же/архивный статус отклоняются; сбой триггера откатывает оба |
+| T03.05 | DONE | `ItemActions.swift`, `ItemActionServiceImpl.swift` | `ItemActionsTests.giveFlagCombinations` (4 сочетания), `giveSameStatus`, `createsPersonAtomically`, `rollsBackGive` | Дата из `Clock`, quantity не меняется; новый человек коммитится вместе с передачей (D08); при том же статусе нет `status_changes` (D02) |
+| T03.06 | DONE | `ItemActions.swift`, `ItemActionServiceImpl.swift` | `ItemActionsTests.returnPlaceAndStatus`, `returnArchivedPerson`, `rollsBackReturn` | D03: архивный человек только из истории вещи; D04: `keep`/`clear`/`place` различимы; текущий статус допустим без истории |
+| T03.07 | DONE | `Sources/InventoryCore/Domain/History.swift`, `Data/HistoryReadServiceImpl.swift` | `HistoryTests` (4 теста): смешанная лента, tie-break D12, архивные, отсутствующие id | Только чтение; текущие имена по id; порядок: `created_at` desc, передача раньше статуса, затем id ASC |
+| T03.08 | DONE | `Sources/InventoryCore/Domain/Tag.swift`, `Data/TagRepository.swift`, `Data/TagServiceImpl.swift` | `TagManagementTests.renamesAndConflicts`, `mergesWithoutDuplicates`, `mergeRejectsThirdName`, `mergeRollsBack` | Конфликт имени возвращает `tagId` для предложения merge; связи переносятся без дублей; при сбое сохраняются оба тега |
+| T03.09 | DONE | `Tag.swift`, `TagRepository.swift`, `TagServiceImpl.swift` | `TagManagementTests.listsCounts`, `deletesFromAllItems`, `deleteRollsBack` | `listWithCounts` считает уникальные вещи; `delete` возвращает `TagDeletion` с itemId; пустой тег отдельно не создаётся |
+| T03.10 | DONE | `Sources/InventoryUI/StatusesModel.swift`, `StatusesWorkspaceView.swift` | `Stage3ModelsTests.statusesModel`, `statusesArchiveError`; model-тесты | Активные/архивные, замена при архивации, восстановление, три настройки; галерея перечитывает метки по `statuses.changes` |
+| T03.11 | DONE | `Sources/InventoryUI/PeopleModel.swift`, `PeopleWorkspaceView.swift`, `AppModel.swift` | `Stage3ModelsTests.peopleModel`; ручной GUI-переход — за владельцем | Форма имя/телефон/заметка, дубль с подтверждением, архив/восстановление, история с переходом к вещи в галерею |
+| T03.12 | DONE | `Sources/InventoryUI/TagsModel.swift`, `TagsWorkspaceView.swift` | `Stage3ModelsTests.tagsSorting`, `tagsRenameConflict`; core-тесты merge/delete | Сортировки имя/количество, inline rename с предложением merge, merge с итоговым именем, delete с числом вещей; обновление по `items.changes` |
+| T03.13 | DONE | `Sources/InventoryUI/ItemInspectorView.swift`, `ItemActionsModels.swift`, `ItemActionSheets.swift`, `GalleryModel.swift` | `Stage3ModelsTests.changeStatusModel`, `changeStatusFailure`; core-тесты истории | Меню «Действия» и общий диалог с комментарием; лента с датой/было→стало/человеком; после ошибки строка не появляется |
+| T03.14 | DONE | `Sources/InventoryUI/ItemActionSheets.swift`, `ItemActionsModels.swift`, `AppModel.swift`, `InventoryRootView.swift` | `Stage3ModelsTests.giveDefaults`, `giveNewPersonAndDuplicate`, `giveValidation`, `returnDefaults`, `returnPlaceValidation` | Подсказка о части количества дословно из §6.6; оба флажка и `transfer_status_id` по умолчанию; последний получатель и `return_status_id`; повторная отправка блокируется `isSaving` |
+| T03.15 | BLOCKED | `HANDOFF.md`, этот журнал | `swift test` — 157 тестов (105 core, 9 platform, 43 UI); `xcodebuild test` — 43 UI; release universal; `swift format lint` чисто | Ожидается подтверждение владельца после ручных native-проверок; этап 4 не начинается |
 | T04.01 | TODO | — | Не выполнялись | — |
 | T04.02 | TODO | — | Не выполнялись | — |
 | T04.03 | TODO | — | Не выполнялись | — |

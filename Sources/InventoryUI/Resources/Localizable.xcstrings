@@ -601,6 +601,16 @@
         }
       }
     },
+    "items.actions": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Действия"
+          }
+        }
+      }
+    },
     "items.add": {
       "localizations": {
         "ru": {
@@ -621,12 +631,82 @@
         }
       }
     },
+    "items.changeStatus": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сменить статус…"
+          }
+        }
+      }
+    },
+    "items.changeStatusNoOptions": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет доступных статусов, кроме текущего."
+          }
+        }
+      }
+    },
+    "items.changeStatusSave": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сменить"
+          }
+        }
+      }
+    },
+    "items.changeStatusTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сменить статус"
+          }
+        }
+      }
+    },
+    "items.changeStatusToggle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сменить статус"
+          }
+        }
+      }
+    },
     "items.choosePhoto": {
       "localizations": {
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Выбрать фото…"
+          }
+        }
+      }
+    },
+    "items.clearPlace": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Снять место"
+          }
+        }
+      }
+    },
+    "items.comment": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Комментарий"
           }
         }
       }
@@ -701,6 +781,76 @@
         }
       }
     },
+    "items.give": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Передать…"
+          }
+        }
+      }
+    },
+    "items.giveSave": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Передать"
+          }
+        }
+      }
+    },
+    "items.giveTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Передать вещь"
+          }
+        }
+      }
+    },
+    "items.history": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "История"
+          }
+        }
+      }
+    },
+    "items.historyEmpty": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Событий пока нет."
+          }
+        }
+      }
+    },
+    "items.historyGive": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Передача"
+          }
+        }
+      }
+    },
+    "items.historyReturn": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Возврат"
+          }
+        }
+      }
+    },
     "items.name": {
       "localizations": {
         "ru": {
@@ -727,6 +877,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Введите название вещи."
+          }
+        }
+      }
+    },
+    "items.newPerson": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Новый человек"
           }
         }
       }
@@ -771,6 +931,16 @@
         }
       }
     },
+    "items.partialQuantityHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Если отдаёте часть количества, укажите это в комментарии, например: отдал 2 шт."
+          }
+        }
+      }
+    },
     "items.paste": {
       "localizations": {
         "ru": {
@@ -787,6 +957,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "В буфере обмена нет изображения."
+          }
+        }
+      }
+    },
+    "items.person": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Человек"
+          }
+        }
+      }
+    },
+    "items.personNotChosen": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не выбран"
           }
         }
       }
@@ -861,6 +1051,76 @@
         }
       }
     },
+    "items.return": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вернуть…"
+          }
+        }
+      }
+    },
+    "items.returnKeepPlace": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Оставить текущее место"
+          }
+        }
+      }
+    },
+    "items.returnKeepStatus": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Оставить текущий статус"
+          }
+        }
+      }
+    },
+    "items.returnNewPlace": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Указать новое место"
+          }
+        }
+      }
+    },
+    "items.returnSave": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вернуть"
+          }
+        }
+      }
+    },
+    "items.returnTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вернуть вещь"
+          }
+        }
+      }
+    },
+    "items.sameStatusHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статус уже такой же — запись о смене не создаётся."
+          }
+        }
+      }
+    },
     "items.status": {
       "localizations": {
         "ru": {
@@ -886,7 +1146,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Статус меняется отдельным действием на этапе 3."
+            "value": "Статус меняется действием «Сменить статус…»."
           }
         }
       }
@@ -947,6 +1207,216 @@
           "stringUnit": {
             "state": "translated",
             "value": "Изменено"
+          }
+        }
+      }
+    },
+    "people.add": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавить человека"
+          }
+        }
+      }
+    },
+    "people.archive": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Архивировать"
+          }
+        }
+      }
+    },
+    "people.archiveMessage": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Человек исчезнет из списка выбора, но останется в истории передач."
+          }
+        }
+      }
+    },
+    "people.archiveTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Архивировать человека?"
+          }
+        }
+      }
+    },
+    "people.count": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Людей: %d"
+          }
+        }
+      }
+    },
+    "people.duplicateConfirm": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сохранить всё равно"
+          }
+        }
+      }
+    },
+    "people.duplicateMessage": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Человек с таким именем уже есть. Проверьте, не дубль ли это."
+          }
+        }
+      }
+    },
+    "people.duplicateTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Похоже на дубль"
+          }
+        }
+      }
+    },
+    "people.edit": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Редактировать"
+          }
+        }
+      }
+    },
+    "people.editTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Редактировать человека"
+          }
+        }
+      }
+    },
+    "people.history": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "История передач"
+          }
+        }
+      }
+    },
+    "people.historyEmpty": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Передач и возвратов пока нет."
+          }
+        }
+      }
+    },
+    "people.name": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Имя"
+          }
+        }
+      }
+    },
+    "people.nameMaxLength": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не длиннее %d символов."
+          }
+        }
+      }
+    },
+    "people.nameRequired": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Укажите имя."
+          }
+        }
+      }
+    },
+    "people.newTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Новый человек"
+          }
+        }
+      }
+    },
+    "people.notes": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заметка"
+          }
+        }
+      }
+    },
+    "people.phone": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Телефон"
+          }
+        }
+      }
+    },
+    "people.restore": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Восстановить"
+          }
+        }
+      }
+    },
+    "people.selectHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выберите человека в списке."
+          }
+        }
+      }
+    },
+    "people.showArchived": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показать архивных"
           }
         }
       }
@@ -1531,6 +2001,286 @@
         }
       }
     },
+    "statuses.activeHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Активный статус доступен для новых назначений."
+          }
+        }
+      }
+    },
+    "statuses.activeSection": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Активные"
+          }
+        }
+      }
+    },
+    "statuses.add": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавить статус"
+          }
+        }
+      }
+    },
+    "statuses.archive": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Архивировать"
+          }
+        }
+      }
+    },
+    "statuses.archiveMessage": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статус исчезнет из выбора, но останется у вещей, которым уже назначен."
+          }
+        }
+      }
+    },
+    "statuses.archiveReplaceMessage": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статус «%@» используется в настройках. Выберите активную замену."
+          }
+        }
+      }
+    },
+    "statuses.archiveTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Архивировать статус?"
+          }
+        }
+      }
+    },
+    "statuses.archivedHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Архивный статус не предлагается для новых назначений, но остаётся у вещей и в фильтре."
+          }
+        }
+      }
+    },
+    "statuses.archivedSection": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Архивные"
+          }
+        }
+      }
+    },
+    "statuses.count": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Активных: %d"
+          }
+        }
+      }
+    },
+    "statuses.name": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Название"
+          }
+        }
+      }
+    },
+    "statuses.nameDuplicate": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статус с таким названием уже существует."
+          }
+        }
+      }
+    },
+    "statuses.nameMaxLength": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не длиннее %d символов."
+          }
+        }
+      }
+    },
+    "statuses.newTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Новый статус"
+          }
+        }
+      }
+    },
+    "statuses.noReplacement": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет другого активного статуса для замены."
+          }
+        }
+      }
+    },
+    "statuses.rename": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переименовать…"
+          }
+        }
+      }
+    },
+    "statuses.renameTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переименовать статус"
+          }
+        }
+      }
+    },
+    "statuses.replacement": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Замена"
+          }
+        }
+      }
+    },
+    "statuses.replacementRequired": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выберите замену"
+          }
+        }
+      }
+    },
+    "statuses.restore": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Восстановить"
+          }
+        }
+      }
+    },
+    "statuses.setting.default": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статус по умолчанию"
+          }
+        }
+      }
+    },
+    "statuses.setting.return": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статус при возврате"
+          }
+        }
+      }
+    },
+    "statuses.setting.transfer": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статус при передаче"
+          }
+        }
+      }
+    },
+    "statuses.settingsHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Эти статусы предлагаются при создании вещи, передаче и возврате."
+          }
+        }
+      }
+    },
+    "statuses.settingsSave": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сохранить настройки"
+          }
+        }
+      }
+    },
+    "statuses.settingsTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статусы по умолчанию"
+          }
+        }
+      }
+    },
+    "statuses.showArchived": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показать архивные"
+          }
+        }
+      }
+    },
+    "statuses.usedInSettings": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Используется в настройках"
+          }
+        }
+      }
+    },
     "storage.chooseFolder": {
       "localizations": {
         "ru": {
@@ -1587,6 +2337,206 @@
           "stringUnit": {
             "state": "translated",
             "value": "Повторить"
+          }
+        }
+      }
+    },
+    "tags.count": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тегов: %d"
+          }
+        }
+      }
+    },
+    "tags.delete": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить"
+          }
+        }
+      }
+    },
+    "tags.deleteMessage": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тег «%@» будет снят с вещей: %d. Сами вещи останутся."
+          }
+        }
+      }
+    },
+    "tags.deleteTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить тег?"
+          }
+        }
+      }
+    },
+    "tags.itemCount": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вещей: %d"
+          }
+        }
+      }
+    },
+    "tags.merge": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Объединить"
+          }
+        }
+      }
+    },
+    "tags.mergeConfirm": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Объединить"
+          }
+        }
+      }
+    },
+    "tags.mergeHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Связи исходного тега перейдут к целевому без дублей. Можно задать итоговое имя."
+          }
+        }
+      }
+    },
+    "tags.mergeResultName": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Итоговое имя (необязательно)"
+          }
+        }
+      }
+    },
+    "tags.mergeTarget": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Объединить с тегом"
+          }
+        }
+      }
+    },
+    "tags.mergeTargetNone": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выберите тег"
+          }
+        }
+      }
+    },
+    "tags.name": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Название"
+          }
+        }
+      }
+    },
+    "tags.nameMaxLength": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не длиннее %d символов."
+          }
+        }
+      }
+    },
+    "tags.rename": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переименовать"
+          }
+        }
+      }
+    },
+    "tags.renameHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Если имя совпадает с другим тегом, приложение предложит объединение."
+          }
+        }
+      }
+    },
+    "tags.renameMergeTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Объединить теги?"
+          }
+        }
+      }
+    },
+    "tags.selectHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выберите тег в списке."
+          }
+        }
+      }
+    },
+    "tags.sort": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сортировка тегов"
+          }
+        }
+      }
+    },
+    "tags.sort.count": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По количеству вещей"
+          }
+        }
+      }
+    },
+    "tags.sort.name": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По имени"
           }
         }
       }

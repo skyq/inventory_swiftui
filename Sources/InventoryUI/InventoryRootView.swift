@@ -34,7 +34,11 @@ public struct InventoryRootView: View {
               model: gallery,
               onAddItem: { model.presentCreateItemFromCurrentContext() },
               onEditItem: { model.presentEditItem($0) },
-              onOpenPlace: { model.openPlaceInPlaces($0) }
+              onChangeStatus: { model.presentChangeStatus($0) },
+              onGive: { model.presentGive($0) },
+              onReturn: { model.presentReturn($0) },
+              onOpenPlace: { model.openPlaceInPlaces($0) },
+              onOpenPerson: { model.openPerson($0) }
             )
             .frame(minWidth: 480, maxWidth: .infinity)
           } else if let browser = model.browser,
@@ -46,9 +50,31 @@ public struct InventoryRootView: View {
               onEditPlace: { model.presentEditPlace($0) },
               onAddItem: { model.presentCreateItem(placeId: browser.creationPlaceId) },
               onEditItem: { model.presentEditItem($0) },
-              onOpenPlace: { model.openPlaceInPlaces($0) }
+              onChangeStatus: { model.presentChangeStatus($0) },
+              onGive: { model.presentGive($0) },
+              onReturn: { model.presentReturn($0) },
+              onOpenPlace: { model.openPlaceInPlaces($0) },
+              onOpenPerson: { model.openPerson($0) }
             )
             .frame(minWidth: 480, maxWidth: .infinity)
+          } else if let statuses = model.statusesModel,
+            (model.selectedSection ?? .gallery) == .statuses
+          {
+            StatusesWorkspaceView(model: statuses)
+              .frame(minWidth: 480, maxWidth: .infinity)
+          } else if let people = model.peopleModel,
+            (model.selectedSection ?? .gallery) == .people
+          {
+            PeopleWorkspaceView(
+              model: people,
+              onOpenItem: { model.openItemInGallery($0) }
+            )
+            .frame(minWidth: 480, maxWidth: .infinity)
+          } else if let tags = model.tagsModel,
+            (model.selectedSection ?? .gallery) == .tags
+          {
+            TagsWorkspaceView(model: tags)
+              .frame(minWidth: 480, maxWidth: .infinity)
           } else {
             PlaceholderSectionView(
               section: model.selectedSection ?? .gallery
@@ -90,6 +116,9 @@ public struct InventoryRootView: View {
         ItemFormView(model: formModel, onClose: { model.dismissItemForm() })
       }
     }
+    .sheet(item: $model.itemAction) { presentation in
+      itemActionSheet(presentation)
+    }
     .alert(item: $model.alert) { alert in
       Alert(
         title: Text(L10n.string("common.error")),
@@ -101,6 +130,24 @@ public struct InventoryRootView: View {
 
   private var isSearching: Bool {
     !model.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+  }
+
+  @ViewBuilder
+  private func itemActionSheet(_ presentation: ItemActionPresentation) -> some View {
+    switch presentation.mode {
+    case .changeStatus(let details):
+      if let sheetModel = model.makeChangeStatusModel(for: details) {
+        ChangeStatusSheet(model: sheetModel, onClose: { model.dismissItemAction() })
+      }
+    case .give(let details):
+      if let sheetModel = model.makeGiveModel(for: details) {
+        GiveSheet(model: sheetModel, onClose: { model.dismissItemAction() })
+      }
+    case .returnItem(let details):
+      if let sheetModel = model.makeReturnModel(for: details) {
+        ReturnSheet(model: sheetModel, onClose: { model.dismissItemAction() })
+      }
+    }
   }
 }
 

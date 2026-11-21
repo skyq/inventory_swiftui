@@ -7,7 +7,11 @@ struct PlaceWorkspaceView: View {
   let onEditPlace: (Place) -> Void
   let onAddItem: () -> Void
   let onEditItem: (ItemDetails) -> Void
+  let onChangeStatus: (ItemDetails) -> Void
+  let onGive: (ItemDetails) -> Void
+  let onReturn: (ItemDetails) -> Void
   let onOpenPlace: (String) -> Void
+  let onOpenPerson: (String) -> Void
 
   var body: some View {
     HSplitView {
@@ -24,8 +28,13 @@ struct PlaceWorkspaceView: View {
           ItemInspectorView(
             details: details,
             photoURL: browser.photoURL(for: details),
+            history: browser.selectedItemHistory,
             onEdit: { onEditItem(details) },
+            onChangeStatus: { onChangeStatus(details) },
+            onGive: { onGive(details) },
+            onReturn: { onReturn(details) },
             onOpenPlace: onOpenPlace,
+            onOpenPerson: onOpenPerson,
             onClose: { browser.clearSelection() }
           )
           .frame(minWidth: 260, idealWidth: 320, maxWidth: 460)

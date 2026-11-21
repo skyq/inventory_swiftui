@@ -12,6 +12,10 @@ public final class StorageSession: @unchecked Sendable {
   public let items: any ItemService
   public let tags: any TagService
   public let statuses: any StatusService
+  public let statusSettings: any StatusSettingsService
+  public let people: any PeopleService
+  public let actions: any ItemActions
+  public let history: any HistoryReadService
 
   private let lock: StorageLock
   private let closeLock = NSLock()
@@ -27,7 +31,11 @@ public final class StorageSession: @unchecked Sendable {
     places: any PlaceService,
     items: any ItemService,
     tags: any TagService,
-    statuses: any StatusService
+    statuses: any StatusService,
+    statusSettings: any StatusSettingsService,
+    people: any PeopleService,
+    actions: any ItemActions,
+    history: any HistoryReadService
   ) {
     self.layout = layout
     self.database = database
@@ -39,6 +47,10 @@ public final class StorageSession: @unchecked Sendable {
     self.items = items
     self.tags = tags
     self.statuses = statuses
+    self.statusSettings = statusSettings
+    self.people = people
+    self.actions = actions
+    self.history = history
   }
 
   public func close() {
@@ -287,7 +299,12 @@ public final class StorageCoordinator: @unchecked Sendable {
       mutations: mutations
     )
     let tags = TagServiceImpl(database: database, ids: ids, mutations: mutations)
-    let statuses = StatusServiceImpl(database: database, mutations: mutations)
+    let statuses = StatusServiceImpl(
+      database: database,
+      clock: clock,
+      ids: ids,
+      mutations: mutations
+    )
     let items = ItemServiceImpl(
       database: database,
       photos: lifecycle,
@@ -295,6 +312,20 @@ public final class StorageCoordinator: @unchecked Sendable {
       ids: ids,
       mutations: mutations
     )
+    let people = PeopleServiceImpl(
+      database: database,
+      clock: clock,
+      ids: ids,
+      mutations: mutations
+    )
+    let actions = ItemActionServiceImpl(
+      database: database,
+      items: items,
+      clock: clock,
+      ids: ids,
+      mutations: mutations
+    )
+    let history = HistoryReadServiceImpl(database: database)
 
     if cleanupOrphansOnOpen {
       OrphanPhotoCleaner(database: database, photos: photos, logger: logger).cleanup()
@@ -310,7 +341,11 @@ public final class StorageCoordinator: @unchecked Sendable {
       places: places,
       items: items,
       tags: tags,
-      statuses: statuses
+      statuses: statuses,
+      statusSettings: statuses,
+      people: people,
+      actions: actions,
+      history: history
     )
   }
 
