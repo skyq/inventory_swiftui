@@ -257,6 +257,53 @@ struct AppModelTests {
     #expect(model.selectedSection == .people)
   }
 
+  @Test("Переход к месту, человеку или вещи очищает поиск")
+  func navigationClearsSearch() async throws {
+    let root = try makeStoreDirectory()
+    let preferences = InMemoryPreferencesStore()
+    let coordinator = StorageCoordinator(preferences: preferences, logger: NullLogger())
+
+    let session = try coordinator.createNew(root.path)
+    let place = try session.places.create(
+      PlaceCreate(name: "Дом", description: "", parentId: nil, photo: makeTestPhoto())
+    )
+    let item = try session.items.create(
+      ItemCreate(name: "Лампа", placeId: place.id, statusId: nil, photo: makeTestPhoto())
+    )
+    let person = try session.people.create(PersonCreate(name: "Антон"))
+    session.close()
+
+    let model = AppModel(
+      storage: coordinator,
+      imageProcessor: FakeImageProcessor(),
+      dialogs: FakeFileDialogs(),
+      preferences: preferences
+    )
+    await model.start()
+    defer {
+      model.stop()
+      try? FileManager.default.removeItem(at: root)
+    }
+
+    model.searchText = "лампа"
+    await waitUntil { model.gallery?.isSearchActive == true }
+    model.openPlaceInPlaces(place.id)
+    #expect(model.searchText.isEmpty)
+    #expect(model.selectedSection == .places)
+
+    model.searchText = "лампа"
+    await waitUntil { model.gallery?.isSearchActive == true }
+    model.openPerson(person.id)
+    #expect(model.searchText.isEmpty)
+    #expect(model.selectedSection == .people)
+
+    model.searchText = "лампа"
+    await waitUntil { model.gallery?.isSearchActive == true }
+    model.openItemInGallery(item.item.id)
+    #expect(model.searchText.isEmpty)
+    #expect(model.selectedSection == .gallery)
+  }
+
   private func waitUntil(_ condition: @escaping @MainActor () -> Bool) async {
     for _ in 0..<400 {
       if condition() { return }

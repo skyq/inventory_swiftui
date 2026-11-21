@@ -217,6 +217,7 @@ public final class AppModel: ObservableObject {
   /// Переход к человеку из ленты истории вещи.
   public func openPerson(_ personId: String) {
     guard case .ready = loadState else { return }
+    searchText = ""
     selectedSection = .people
     Task { await peopleModel?.select(personId) }
   }
@@ -224,6 +225,7 @@ public final class AppModel: ObservableObject {
   /// Переход к вещи из истории человека; правая панель открывается сразу.
   public func openItemInGallery(_ itemId: String) {
     guard case .ready = loadState else { return }
+    searchText = ""
     selectedSection = .gallery
     Task { await gallery?.selectItem(id: itemId) }
   }
@@ -231,6 +233,7 @@ public final class AppModel: ObservableObject {
   /// Переход к месту из крошек карточки вещи.
   public func openPlaceInPlaces(_ placeId: String) {
     guard case .ready = loadState else { return }
+    searchText = ""
     selectedSection = .places
     Task { await browser?.reveal(placeId: placeId) }
   }

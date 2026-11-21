@@ -28,6 +28,7 @@
 - Смена фильтра сразу меняет поисковую выдачу. Очистка строки возвращает раздел, выбранный в сайдбаре.
 - Быстрый ввод защищён счётчиком поколений: устаревший ответ не заменяет новую выдачу.
 - Живые изменения индекса перечитывают активный запрос без перезапуска приложения.
+- Переход по крошке места, к человеку или к вещи из карточки очищает поиск, чтобы открылся выбранный раздел.
 
 ## Действующие контракты
 
@@ -49,10 +50,10 @@
 
 ## Проверки
 
-- `swift test` → 214 тестов: 154 core, 9 platform, 51 UI; все прошли.
+- `swift test` → 215 тестов: 154 core, 9 platform, 52 UI; все прошли.
   - Поиск: 36 unit-тестов (нормализация, Snowball, совпадения/ранжирование), 11 интеграционных (живой индекс), 2 производительности.
-  - UI: 6 новых тестов модели галереи (ранжирование, фильтры, очистка, пустая выдача, устаревший ответ, изменение индекса), тест Cmd+K поверх форм и тест проброса строки поиска через `AppModel`.
-- `xcodebuild test -project Inventory.xcodeproj -scheme InventoryApp -destination 'platform=macOS'` → `TEST SUCCEEDED`, 51 UI-тест в 6 сюитах (после `xcodegen generate`).
+  - UI: 6 новых тестов модели галереи (ранжирование, фильтры, очистка, пустая выдача, устаревший ответ, изменение индекса), Cmd+K поверх форм, проброс строки поиска через `AppModel` и очистка поиска при переходах.
+- `xcodebuild test -project Inventory.xcodeproj -scheme InventoryApp -destination 'platform=macOS'` → `TEST SUCCEEDED`, 52 UI-теста в 6 сюитах (после `xcodegen generate`).
 - `swift format lint --recursive Sources Tests` → без замечаний.
 - Release: `xcodebuild ... -configuration Release -derivedDataPath build-release -destination 'generic/platform=macOS' ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO build` → `BUILD SUCCEEDED`; `lipo -info` → `x86_64 arm64`; приложение запущено из `build-release/Build/Products/Release/Inventory.app` и оставалось рабочим.
 - Fault-injection: временный SQL-триггер на `items` откатывает обновление; индекс сохраняет прежнее имя и не содержит нового.
