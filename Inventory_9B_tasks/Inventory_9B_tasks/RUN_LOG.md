@@ -1,6 +1,6 @@
 # Журнал выполнения
 
-Статусы обновлены по фактическому коду и прогонам 20 ноября 2026. Подтверждение этапа хранится отдельной записью и не выводится из успешных тестов. Этап 1 и этап 2 подтверждены владельцем. Этап 3 реализован по коду и автотестам (T03.01–T03.14), приёмка T03.15 ожидает владельца и ручных native-проверок. Ранее исправленная боковая панель (`.tag(section)` вместо `Optional`) продолжает работать; разделы «Люди», «Статусы», «Теги» стали рабочими.
+Статусы обновлены по фактическому коду и прогонам 20 ноября 2026. Подтверждение этапа хранится отдельной записью и не выводится из успешных тестов. Этап 1, этап 2 и этап 3 подтверждены владельцем. Этап 3 реализован по коду и автотестам (T03.01–T03.14) и принят владельцем 21.11.2026 (T03.15). Ранее исправленная боковая панель (`.tag(section)` вместо `Optional`) продолжает работать; разделы «Люди», «Статусы», «Теги» стали рабочими.
 
 | ID | Статус | Коммит / файлы | Проверки | Решение владельца / примечание |
 |---|---|---|---|---|
@@ -56,7 +56,7 @@
 | T03.12 | DONE | `Sources/InventoryUI/TagsModel.swift`, `TagsWorkspaceView.swift` | `Stage3ModelsTests.tagsSorting`, `tagsRenameConflict`; core-тесты merge/delete | Сортировки имя/количество, inline rename с предложением merge, merge с итоговым именем, delete с числом вещей; обновление по `items.changes`; список/карточка 50/50, граница свободно перетаскивается |
 | T03.13 | DONE | `Sources/InventoryUI/ItemInspectorView.swift`, `ItemActionsModels.swift`, `ItemActionSheets.swift`, `GalleryModel.swift` | `Stage3ModelsTests.changeStatusModel`, `changeStatusFailure`; core-тесты истории | Меню «Действия» и общий диалог с комментарием; лента с датой/было→стало/человеком; после ошибки строка не появляется |
 | T03.14 | DONE | `Sources/InventoryUI/ItemActionSheets.swift`, `ItemActionsModels.swift`, `AppModel.swift`, `InventoryRootView.swift` | `Stage3ModelsTests.giveDefaults`, `giveNewPersonAndDuplicate`, `giveValidation`, `returnDefaults`, `returnPlaceValidation` | Подсказка о части количества дословно из §6.6; оба флажка и `transfer_status_id` по умолчанию; последний получатель и `return_status_id`; повторная отправка блокируется `isSaving` |
-| T03.15 | BLOCKED | `HANDOFF.md`, этот журнал | `swift test` — 157 тестов (105 core, 9 platform, 43 UI); `xcodebuild test` — 43 UI; release universal; `swift format lint` чисто | Ожидается подтверждение владельца после ручных native-проверок; этап 4 не начинается |
+| T03.15 | DONE | `HANDOFF.md`, этот журнал | `swift test` — 157 тестов (105 core, 9 platform, 43 UI); `xcodebuild test` — 43 UI; release universal; `swift format lint` чисто | Этап 3 принят владельцем 21.11.2026 («Приемка - ок») после ручной проверки; можно начинать этап 4 |
 | T04.01 | TODO | — | Не выполнялись | — |
 | T04.02 | TODO | — | Не выполнялись | — |
 | T04.03 | TODO | — | Не выполнялись | — |

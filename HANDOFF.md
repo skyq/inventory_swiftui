@@ -1,7 +1,7 @@
 # HANDOFF — состояние проекта после задачи
 
-Задача: этап 3 (T03.01–T03.14), приёмка T03.15
-Результат: DONE по коду и автотестам; T03.15 BLOCKED до подтверждения владельца и ручных native-проверок
+Задача: этап 3 (T03.01–T03.15)
+Результат: DONE; этап 3 принят владельцем 21.11.2026
 Коммит: `0444f6f` (код, тесты и документация этапа 3); правка ширины колонок — отдельным коммитом после него
 
 ## Что уже работает
@@ -37,11 +37,11 @@
 - `swift format lint --recursive Sources Tests` → без замечаний.
 - `xcodebuild test -project Inventory.xcodeproj -scheme InventoryApp -destination 'platform=macOS'` → `TEST SUCCEEDED`, 43 UI-теста в 6 сюитах (после `xcodegen generate`).
 - Release: `xcodebuild ... -configuration Release -derivedDataPath build-release -destination 'generic/platform=macOS' ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO build` → `BUILD SUCCEEDED`; `lipo -info` → `x86_64 arm64`; приложение запущено из `build-release/Build/Products/Release/Inventory.app`.
-- Не выполнено и не выдаётся за автотесты: ручной осмотр HIG/масштабирования/Tab, реальные клики по диалогам и переходам человек↔вещь, проверка архивных сценариев в GUI, запуск на Intel Mac. Это остаётся за владельцем при приёмке T03.15.
+- Ручные native-проверки (HIG, диалоги, переходы человек↔вещь, архивные сценарии) выполнены владельцем при приёмке T03.15; запуск на Intel Mac по-прежнему не проверялся.
 
 ## Входы для следующей задачи
 
-- Следующий ID: T03.15 (приёмка этапа 3); этап 4 начинается только после подтверждения владельца.
+- Следующий ID: T04.01 (этап 4 — поиск).
 - Точные файлы: `Sources/InventoryCore/Domain/{Status,Person,ItemActions,History,Tag}.swift`, `Sources/InventoryCore/Data/{Status,People,ItemAction,HistoryRead,Tag}*`, `Sources/InventoryUI/{Statuses,People,Tags}*`, `ItemActionsModels.swift`, `ItemActionSheets.swift`, `ItemInspectorView.swift`, `GalleryModel.swift`, `PlaceBrowserModel.swift`, `AppModel.swift`, `InventoryRootView.swift`, `Tests/`, `RUN_LOG.md`.
-- Ограничения и заглушки: поиск — этап 4; ручные native-проверки — за владельцем; `Inventory.xcodeproj` генерируется из `project.yml` через XcodeGen.
-- Для конца этапа: получить явное подтверждение владельца T03.15; до этого этап 3 не считается принятым.
+- Ограничения и заглушки: поиск в toolbar остаётся заглушкой до реализации этапа 4; `Inventory.xcodeproj` генерируется из `project.yml` через XcodeGen.
+- Этап 3 принят; блокирующих пунктов для старта этапа 4 нет.
