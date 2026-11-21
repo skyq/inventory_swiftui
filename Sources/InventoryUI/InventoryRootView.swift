@@ -20,27 +20,14 @@ public struct InventoryRootView: View {
           SidebarView(selection: $model.selectedSection)
             .frame(minWidth: 180, idealWidth: 200, maxWidth: 260)
 
-          if isSearching {
-            PlaceholderSectionView(
-              titleKey: "search.placeholder",
-              messageKey: "search.comingSoon",
-              systemImage: "magnifyingglass"
-            )
-            .frame(minWidth: 480, maxWidth: .infinity)
+          if isSearching, let gallery = model.gallery {
+            galleryWorkspace(gallery)
+              .frame(minWidth: 480, maxWidth: .infinity)
           } else if let gallery = model.gallery,
             (model.selectedSection ?? .gallery) == .gallery
           {
-            GalleryWorkspaceView(
-              model: gallery,
-              onAddItem: { model.presentCreateItemFromCurrentContext() },
-              onEditItem: { model.presentEditItem($0) },
-              onChangeStatus: { model.presentChangeStatus($0) },
-              onGive: { model.presentGive($0) },
-              onReturn: { model.presentReturn($0) },
-              onOpenPlace: { model.openPlaceInPlaces($0) },
-              onOpenPerson: { model.openPerson($0) }
-            )
-            .frame(minWidth: 480, maxWidth: .infinity)
+            galleryWorkspace(gallery)
+              .frame(minWidth: 480, maxWidth: .infinity)
           } else if let browser = model.browser,
             (model.selectedSection ?? .places) == .places
           {
@@ -130,6 +117,20 @@ public struct InventoryRootView: View {
 
   private var isSearching: Bool {
     !model.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+  }
+
+  @ViewBuilder
+  private func galleryWorkspace(_ gallery: GalleryModel) -> some View {
+    GalleryWorkspaceView(
+      model: gallery,
+      onAddItem: { model.presentCreateItemFromCurrentContext() },
+      onEditItem: { model.presentEditItem($0) },
+      onChangeStatus: { model.presentChangeStatus($0) },
+      onGive: { model.presentGive($0) },
+      onReturn: { model.presentReturn($0) },
+      onOpenPlace: { model.openPlaceInPlaces($0) },
+      onOpenPerson: { model.openPerson($0) }
+    )
   }
 
   @ViewBuilder

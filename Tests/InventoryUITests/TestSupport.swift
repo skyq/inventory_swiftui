@@ -907,3 +907,77 @@ final class FakeStatusSettingsService: StatusSettingsService, @unchecked Sendabl
     updates.append(settings)
   }
 }
+
+/// Поиск для UI-тестов: выдача задаётся по тексту запроса.
+final class FakeSearchService: SearchService, @unchecked Sendable {
+  private let lock = NSLock()
+  private var results: [String: [SearchHit]]
+  private var recordedQueries: [String] = []
+  private let continuation: AsyncStream<Void>.Continuation
+  let changes: AsyncStream<Void>
+
+  /// Хук перед выдачей: позволяет задержать конкретный запрос в тесте.
+  var onSearch: (@Sendable (String) -> Void)?
+  /// Запрос, который ждёт `gate`; используется для проверки устаревших ответов.
+  var gatedQuery: String?
+  var gate: DispatchSemaphore?
+  private var startedQueries: [String] = []
+  private(set) var rebuildCount = 0
+
+  func hasStarted(_ query: String) -> Bool {
+    lock.lock()
+    defer { lock.unlock() }
+    return startedQueries.contains(query)
+  }
+
+  init(results: [String: [SearchHit]] = [:]) {
+    self.results = results
+    (changes, continuation) = AsyncStream.makeStream(of: Void.self)
+  }
+
+  var queries: [String] {
+    lock.lock()
+    defer { lock.unlock() }
+    return recordedQueries
+  }
+
+  func setResults(_ hits: [SearchHit], for query: String) {
+    lock.lock()
+    results[query] = hits
+    lock.unlock()
+  }
+
+  func emitChange() {
+    continuation.yield(())
+  }
+
+  func search(_ query: String) -> [SearchHit] {
+    let hook = onSearch
+    hook?(query)
+    let target = gatedQuery
+    let barrier = gate
+    if let target, query == target {
+      lock.lock()
+      startedQueries.append(query)
+      lock.unlock()
+      barrier?.wait()
+    }
+    lock.lock()
+    defer { lock.unlock() }
+    recordedQueries.append(query)
+    return results[query] ?? []
+  }
+
+  func rebuild() async {
+    bumpRebuildCount()
+    continuation.yield(())
+  }
+
+  private func bumpRebuildCount() {
+    lock.lock()
+    rebuildCount += 1
+    lock.unlock()
+  }
+
+  func waitForIdle() async {}
+}

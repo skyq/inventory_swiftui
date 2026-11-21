@@ -61,9 +61,13 @@ struct GalleryWorkspaceView: View {
 
   private var header: some View {
     HStack(spacing: 10) {
-      Text(L10n.format("gallery.count", model.entries.count))
-        .font(.callout)
-        .foregroundColor(.secondary)
+      Text(
+        model.isSearchActive
+          ? L10n.format("search.count", model.entries.count)
+          : L10n.format("gallery.count", model.entries.count)
+      )
+      .font(.callout)
+      .foregroundColor(.secondary)
 
       Spacer(minLength: 8)
 
@@ -182,19 +186,16 @@ struct GalleryWorkspaceView: View {
   private var emptyState: some View {
     VStack(spacing: 12) {
       Image(
-        systemName: model.hasActiveFilters
-          ? "line.3.horizontal.decrease.circle" : "photo.on.rectangle.angled"
+        systemName: emptyStateSymbol
       )
       .font(.system(size: 40))
       .foregroundColor(.secondary)
       Text(
-        L10n.string(model.hasActiveFilters ? "gallery.noMatches" : "gallery.empty")
+        L10n.string(emptyStateMessage)
       )
       .font(.title3)
       Text(
-        L10n.string(
-          model.hasActiveFilters ? "gallery.noMatchesHint" : "gallery.emptyHint"
-        )
+        L10n.string(emptyStateHint)
       )
       .foregroundColor(.secondary)
       .multilineTextAlignment(.center)
@@ -204,7 +205,7 @@ struct GalleryWorkspaceView: View {
         Button(L10n.string("gallery.filters.reset")) {
           Task { await model.resetFilters() }
         }
-      } else {
+      } else if !model.isSearchActive {
         Button {
           onAddItem()
         } label: {
@@ -216,6 +217,22 @@ struct GalleryWorkspaceView: View {
     }
     .padding(32)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
+  }
+
+  private var emptyStateSymbol: String {
+    if model.isSearchActive { return "magnifyingglass" }
+    return model.hasActiveFilters
+      ? "line.3.horizontal.decrease.circle" : "photo.on.rectangle.angled"
+  }
+
+  private var emptyStateMessage: String {
+    if model.isSearchActive { return "search.noResults" }
+    return model.hasActiveFilters ? "gallery.noMatches" : "gallery.empty"
+  }
+
+  private var emptyStateHint: String {
+    if model.isSearchActive { return "search.noResultsHint" }
+    return model.hasActiveFilters ? "gallery.noMatchesHint" : "gallery.emptyHint"
   }
 
   private func errorBanner(_ error: AppException) -> some View {

@@ -1,6 +1,6 @@
 # Журнал выполнения
 
-Статусы обновлены по фактическому коду и прогонам 20 ноября 2026. Подтверждение этапа хранится отдельной записью и не выводится из успешных тестов. Этап 1, этап 2 и этап 3 подтверждены владельцем. Этап 3 реализован по коду и автотестам (T03.01–T03.14) и принят владельцем 21.11.2026 (T03.15). Ранее исправленная боковая панель (`.tag(section)` вместо `Optional`) продолжает работать; разделы «Люди», «Статусы», «Теги» стали рабочими.
+Статусы обновлены по фактическому коду и прогонам 20 ноября 2026. Подтверждение этапа хранится отдельной записью и не выводится из успешных тестов. Этап 1, этап 2 и этап 3 подтверждены владельцем. Этап 3 реализован по коду и автотестам (T03.01–T03.14) и принят владельцем 21.11.2026 (T03.15). Этап 4 реализован (T04.01–T04.07); T04.08 ожидает ручной проверки и явного подтверждения владельца. Ранее исправленная боковая панель (`.tag(section)` вместо `Optional`) продолжает работать; разделы «Люди», «Статусы», «Теги» стали рабочими.
 
 | ID | Статус | Коммит / файлы | Проверки | Решение владельца / примечание |
 |---|---|---|---|---|
@@ -57,14 +57,14 @@
 | T03.13 | DONE | `Sources/InventoryUI/ItemInspectorView.swift`, `ItemActionsModels.swift`, `ItemActionSheets.swift`, `GalleryModel.swift` | `Stage3ModelsTests.changeStatusModel`, `changeStatusFailure`; core-тесты истории | Меню «Действия» и общий диалог с комментарием; лента с датой/было→стало/человеком; после ошибки строка не появляется |
 | T03.14 | DONE | `Sources/InventoryUI/ItemActionSheets.swift`, `ItemActionsModels.swift`, `AppModel.swift`, `InventoryRootView.swift` | `Stage3ModelsTests.giveDefaults`, `giveNewPersonAndDuplicate`, `giveValidation`, `returnDefaults`, `returnPlaceValidation` | Подсказка о части количества дословно из §6.6; оба флажка и `transfer_status_id` по умолчанию; последний получатель и `return_status_id`; повторная отправка блокируется `isSaving` |
 | T03.15 | DONE | `HANDOFF.md`, этот журнал | `swift test` — 157 тестов (105 core, 9 platform, 43 UI); `xcodebuild test` — 43 UI; release universal; `swift format lint` чисто | Этап 3 принят владельцем 21.11.2026 («Приемка - ок») после ручной проверки; можно начинать этап 4 |
-| T04.01 | TODO | — | Не выполнялись | — |
-| T04.02 | TODO | — | Не выполнялись | — |
-| T04.03 | TODO | — | Не выполнялись | — |
-| T04.04 | TODO | — | Не выполнялись | — |
-| T04.05 | TODO | — | Не выполнялись | — |
-| T04.06 | TODO | — | Не выполнялись | — |
-| T04.07 | TODO | — | Не выполнялись | — |
-| T04.08 | TODO | — | Не выполнялись | — |
+| T04.01 | DONE | `Sources/InventoryCore/Search/{RussianStemmer,SearchText,TermMatcher}.swift`, `Tests/InventoryCoreTests/{SearchTextTests,RussianStemmerTests}.swift` | 12 тестов: нормализация lower+ё→е+пунктуация, Snowball по эталонному словарю, ключ уменьшительных, токен/основа отдельно | Стеммер — полный Snowball без словарей отдельных слов; латиница и цифры без стемминга; ё и е дают одну основу |
+| T04.02 | DONE | `Sources/InventoryCore/Search/SearchIndex.swift`, `Data/{SearchDocumentBuilder,SearchIndexCoordinator}.swift`, `Domain/Search.swift`, `StorageCoordinator.swift` | `SearchEngineTests`: поля, путь предков, архивный человек, без дублей itemId, веса; индекс строится в `makeSession` после открытия БД | name 2.0, tags 1.5, placePath 1.2, people 1.0, description/notes 0.8; документы собираются одним чтением БД без N+1 |
+| T04.03 | DONE | `Sources/InventoryCore/Search/TermMatcher.swift`, `SearchEngineTests.swift` | «курка»→«куртка», «куртка»→«курточку», перестановка букв, 24 неродственные пары, границы коротких слов | D05: prefix от 2 символов; правки 0/<4, 1/4–7, 2/≥8; Damerau–Levenshtein; хардкода пар слов нет |
+| T04.04 | DONE | `SearchIndex.swift`, `SearchRanking.swift`, `Domain/Item.swift` (`GalleryQuery.searchItemIds`), `SearchEngineTests.swift` | Exact > stem > prefix > fuzzy, веса полей, AND по словам, пустой запрос, стабильный `id`, независимость от порядка документов | Ранжирование: score desc, порядок галереи вторичный, `id` финальный (D12); фильтры пересекаются с поиском, не подменяя ранг |
+| T04.05 | DONE | `Domain/Mutation.swift` (sync listeners), `Data/SearchIndexCoordinator.swift`, `Tests/InventoryCoreTests/SearchIndexIntegrationTests.swift` | 8 тестов: вещь, место-предок, merge тегов, give/rename/archive человека, rollback, полная пересборка | События только после commit; полная сборка документов и diff-обновление только изменённых; индекс строится при открытии и пересобирается при смене хранилища |
+| T04.06 | DONE | `Sources/InventoryUI/{GalleryModel,AppModel,InventoryRootView,GalleryView}.swift`, `InventoryApp.swift`, `Resources/Localizable.xcstrings` | `GalleryModelTests` (6 новых), `AppModelTests.blocksSearchFocusOverModals`; `xcodebuild test` — 50 UI-тестов | Результаты — те же плитки/фильтры/карточка; generation отбрасывает устаревший ответ; Cmd+K из любого раздела, но не поверх форм (D09); очистка возвращает обычную галерею |
+| T04.07 | DONE | `Tests/InventoryCoreTests/SearchPerformanceTests.swift`, `SearchEngineTests.swift`, `SearchIndexIntegrationTests.swift` | Все примеры §8.3 отдельными тестами; 500 вещей; release: worst поиск+фильтры 1.44 мс, cold build 51.7 мс, live update 0.59 мс; debug: 6.1 / 736 / 4.2 мс | Методика D11: release-тест на Apple M4, 500 вещей, 10 мест, 5 тегов; замер от вызова поиска до готового `items.list` с фильтрами, 5 повторов на запрос |
+| T04.08 | BLOCKED | `HANDOFF.md`, этот журнал | Автотесты, формат, xcodebuild, release universal — успешно | Нужна ручная проверка владельцем: §8.3 в GUI, live-обновления, Cmd+K/диалоги, Intel; этап 5 не начинать до явного подтверждения |
 | T05.01 | TODO | — | Не выполнялись | — |
 | T05.02 | TODO | — | Не выполнялись | — |
 | T05.03 | TODO | — | Не выполнялись | — |

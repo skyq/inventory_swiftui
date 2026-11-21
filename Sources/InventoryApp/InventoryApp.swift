@@ -25,7 +25,7 @@ struct InventoryApp: App {
           model.focusSearch()
         }
         .keyboardShortcut("k", modifiers: .command)
-        .disabled(!model.isReady)
+        .disabled(!model.canFocusSearch)
       }
     }
 

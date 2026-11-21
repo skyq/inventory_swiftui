@@ -19,6 +19,7 @@ public enum MutationEvent: Sendable, Equatable {
 public final class MutationBus: @unchecked Sendable {
   private let lock = NSLock()
   private var continuations: [UUID: AsyncStream<MutationEvent>.Continuation] = [:]
+  private var listeners: [UUID: @Sendable (MutationEvent) -> Void] = [:]
   private var closed = false
 
   public init() {}
@@ -47,10 +48,33 @@ public final class MutationBus: @unchecked Sendable {
   public func emit(_ event: MutationEvent) {
     lock.lock()
     let targets = continuations.values
+    let callbacks = listeners.values
     lock.unlock()
     for continuation in targets {
       continuation.yield(event)
     }
+    for callback in callbacks {
+      callback(event)
+    }
+  }
+
+  /// Синхронный слушатель. Вызывается после успешного commit, сразу после
+  /// публикации события. Возвращённый id нужен для отписки.
+  @discardableResult
+  public func addListener(_ listener: @escaping @Sendable (MutationEvent) -> Void) -> UUID {
+    let id = UUID()
+    lock.lock()
+    if !closed {
+      listeners[id] = listener
+    }
+    lock.unlock()
+    return id
+  }
+
+  public func removeListener(_ id: UUID) {
+    lock.lock()
+    listeners[id] = nil
+    lock.unlock()
   }
 
   public func close() {
@@ -58,6 +82,7 @@ public final class MutationBus: @unchecked Sendable {
     closed = true
     let targets = continuations.values
     continuations.removeAll()
+    listeners.removeAll()
     lock.unlock()
     for continuation in targets {
       continuation.finish()

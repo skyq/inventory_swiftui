@@ -26,6 +26,8 @@ public final class GalleryModel: ObservableObject {
   @Published public private(set) var selectedItemId: String?
   @Published public private(set) var selectedHistory: [ItemHistoryEntry] = []
   @Published public private(set) var showsInspector = false
+  /// Текст поиска. Пустая строка — обычная галерея (D12).
+  @Published public private(set) var searchText = ""
   @Published public var alertMessage: String?
 
   private let items: any ItemService
@@ -35,9 +37,12 @@ public final class GalleryModel: ObservableObject {
   private let photos: any PhotoStore
   private let preferences: any PreferencesStore
   private let history: (any HistoryReadService)?
+  private let searchService: (any SearchService)?
 
   private var observationTasks: [Task<Void, Never>] = []
   private var started = false
+  /// Отбрасывает ответы, устаревшие после следующего ввода.
+  private var loadGeneration = 0
 
   public init(
     items: any ItemService,
@@ -46,7 +51,8 @@ public final class GalleryModel: ObservableObject {
     places: any PlaceService,
     photos: any PhotoStore,
     preferences: any PreferencesStore,
-    history: (any HistoryReadService)? = nil
+    history: (any HistoryReadService)? = nil,
+    searchService: (any SearchService)? = nil
   ) {
     self.items = items
     self.tags = tags
@@ -55,7 +61,20 @@ public final class GalleryModel: ObservableObject {
     self.photos = photos
     self.preferences = preferences
     self.history = history
+    self.searchService = searchService
     self.state = GalleryStateCodec.load(from: preferences)
+  }
+
+  public var isSearchActive: Bool {
+    !searchText.isEmpty
+  }
+
+  /// Меняет запрос и перезагружает выдачу. Одинаковый запрос игнорируется.
+  public func setSearchText(_ text: String) async {
+    let normalized = text.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard normalized != searchText else { return }
+    searchText = normalized
+    await reload()
   }
 
   deinit {
@@ -84,15 +103,30 @@ public final class GalleryModel: ObservableObject {
   }
 
   public func reload() async {
+    loadGeneration &+= 1
+    let generation = loadGeneration
     isLoading = true
-    let query = makeQuery()
+
     let service = items
+    let queryText = searchText
+    let hits: [SearchHit]?
+    if isSearchActive, let searchService {
+      let result = await AsyncCore.run { searchService.search(queryText) }
+      hits = (try? result.get()) ?? []
+    } else if isSearchActive {
+      hits = []
+    } else {
+      hits = nil
+    }
+
+    let query = makeQuery(searchItemIds: hits.map { Set($0.map(\.itemId)) })
     let result = await AsyncCore.run { try service.list(query) }
+    guard generation == loadGeneration else { return }
     isLoading = false
 
     switch result {
     case .success(let loaded):
-      entries = loaded
+      entries = hits.map { SearchRanking.order(entries: loaded, hits: $0) } ?? loaded
       loadError = nil
     case .failure(let error):
       entries = []
@@ -233,6 +267,17 @@ public final class GalleryModel: ObservableObject {
         }
       }
     )
+    if let searchService {
+      observationTasks.append(
+        Task { [weak self] in
+          for await _ in searchService.changes {
+            guard let self else { return }
+            guard self.isSearchActive else { continue }
+            await self.reload()
+          }
+        }
+      )
+    }
   }
 
   /// Перечитывает справочники фильтров после изменения мест или тегов.
@@ -241,13 +286,14 @@ public final class GalleryModel: ObservableObject {
     await reload()
   }
 
-  private func makeQuery() -> GalleryQuery {
+  private func makeQuery(searchItemIds: Set<String>? = nil) -> GalleryQuery {
     GalleryQuery(
       place: state.placeFilter,
       statusIds: state.statusIds,
       tagIds: state.tagIds,
       sort: state.sort,
-      direction: state.direction
+      direction: state.direction,
+      searchItemIds: searchItemIds
     )
   }
 

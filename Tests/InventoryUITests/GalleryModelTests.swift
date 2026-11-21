@@ -159,12 +159,151 @@ struct GalleryModelTests {
     #expect(model.selectedItemId == "i1")
   }
 
+  @Test("Поиск сортирует по релевантности, а не по порядку галереи")
+  func ranksSearchResults() async {
+    let items = FakeItemService(initial: [
+      makeTestItemDetails(id: "i1", name: "Лампа"),
+      makeTestItemDetails(id: "i2", name: "Стол"),
+    ])
+    let search = FakeSearchService(results: [
+      "лампа": [
+        SearchHit(itemId: "i2", score: 0.4),
+        SearchHit(itemId: "i1", score: 1.0),
+      ]
+    ])
+    let model = makeModel(items: items, search: search)
+    await model.start()
+
+    await model.setSearchText("лампа")
+
+    #expect(model.isSearchActive)
+    #expect(model.entries.map(\.item.id) == ["i1", "i2"])
+    #expect(items.lastQuery?.searchItemIds == ["i1", "i2"])
+    #expect(search.queries == ["лампа"])
+  }
+
+  @Test("Поиск пересекается с фильтрами места, статуса и тегов")
+  func intersectsSearchWithFilters() async {
+    let items = FakeItemService(initial: [
+      makeTestItemDetails(id: "i1", name: "Лампа", placeId: "p1", tagNames: ["Свет"]),
+      makeTestItemDetails(id: "i2", name: "Лампа", placeId: "p2", tagNames: ["Свет"]),
+      makeTestItemDetails(id: "i3", name: "Лампа", placeId: "p1", tagNames: ["Бумага"]),
+    ])
+    let search = FakeSearchService(results: [
+      "лампа": [
+        SearchHit(itemId: "i1", score: 1.0),
+        SearchHit(itemId: "i2", score: 0.9),
+        SearchHit(itemId: "i3", score: 0.8),
+      ]
+    ])
+    let model = makeModel(
+      items: items,
+      places: FakePlaceService(initial: [makeTestPlace(id: "p1", name: "Дом")]),
+      search: search
+    )
+    await model.start()
+
+    await model.setPlaceSelection(placeId: "p1", noPlace: false)
+    await model.toggleTag("tag-Свет")
+    await model.setSearchText("лампа")
+
+    #expect(model.entries.map(\.item.id) == ["i1"])
+    #expect(items.lastQuery?.searchItemIds?.count == 3)
+  }
+
+  @Test("Очистка запроса возвращает обычную галерею")
+  func clearingQueryRestoresGallery() async {
+    let items = FakeItemService(initial: [
+      makeTestItemDetails(id: "i1", name: "Лампа"),
+      makeTestItemDetails(id: "i2", name: "Стол"),
+    ])
+    let search = FakeSearchService(results: ["лампа": [SearchHit(itemId: "i1", score: 1.0)]])
+    let model = makeModel(items: items, search: search)
+    await model.start()
+
+    await model.setSearchText("лампа")
+    #expect(model.entries.map(\.item.id) == ["i1"])
+    #expect(items.lastQuery?.searchItemIds == ["i1"])
+
+    await model.setSearchText("")
+    #expect(!model.isSearchActive)
+    #expect(items.lastQuery?.searchItemIds == nil)
+    #expect(model.entries.map(\.item.id).sorted() == ["i1", "i2"])
+  }
+
+  @Test("Пустой результат поиска не показывает обычную галерею")
+  func noSearchMatchesShowsEmpty() async {
+    let items = FakeItemService(initial: [makeTestItemDetails(id: "i1", name: "Лампа")])
+    let search = FakeSearchService()
+    let model = makeModel(items: items, search: search)
+    await model.start()
+
+    await model.setSearchText("стол")
+
+    #expect(model.isSearchActive)
+    #expect(model.entries.isEmpty)
+    #expect(items.lastQuery?.searchItemIds == [])
+  }
+
+  @Test("Устаревший ответ поиска не заменяет новую выдачу")
+  func discardsStaleSearchResponse() async {
+    let items = FakeItemService(initial: [
+      makeTestItemDetails(id: "i1", name: "Лампа"),
+      makeTestItemDetails(id: "i2", name: "Стол"),
+    ])
+    let search = FakeSearchService(results: [
+      "л": [SearchHit(itemId: "i1", score: 1.0)],
+      "ла": [SearchHit(itemId: "i2", score: 1.0)],
+    ])
+    let gate = DispatchSemaphore(value: 0)
+    search.gatedQuery = "л"
+    search.gate = gate
+    let model = makeModel(items: items, search: search)
+    await model.start()
+
+    let slow = Task { await model.setSearchText("л") }
+    await waitUntil { search.hasStarted("л") }
+
+    await model.setSearchText("ла")
+    #expect(model.searchText == "ла")
+    #expect(model.entries.map(\.item.id) == ["i2"])
+
+    gate.signal()
+    await slow.value
+    #expect(model.searchText == "ла")
+    #expect(model.entries.map(\.item.id) == ["i2"])
+  }
+
+  @Test("Изменение индекса перечитывает активный запрос")
+  func reloadsOnIndexChange() async {
+    let items = FakeItemService(initial: [makeTestItemDetails(id: "i1", name: "Лампа")])
+    let search = FakeSearchService(results: ["лампа": [SearchHit(itemId: "i1", score: 1.0)]])
+    let model = makeModel(items: items, search: search)
+    await model.start()
+    await model.setSearchText("лампа")
+    #expect(search.queries.count == 1)
+
+    search.setResults([SearchHit(itemId: "i1", score: 2.0)], for: "лампа")
+    search.emitChange()
+
+    await waitUntil { search.queries.count == 2 }
+    #expect(model.entries.map(\.item.id) == ["i1"])
+  }
+
+  private func waitUntil(_ condition: @escaping @MainActor () -> Bool) async {
+    for _ in 0..<400 {
+      if condition() { return }
+      await Task.yield()
+    }
+  }
+
   private func makeModel(
     items: FakeItemService,
     preferences: InMemoryPreferencesStore = InMemoryPreferencesStore(),
     statuses: FakeStatusService = FakeStatusService(),
     tags: FakeTagService = FakeTagService(),
-    places: FakePlaceService = FakePlaceService()
+    places: FakePlaceService = FakePlaceService(),
+    search: FakeSearchService? = nil
   ) -> GalleryModel {
     GalleryModel(
       items: items,
@@ -172,7 +311,8 @@ struct GalleryModelTests {
       statuses: statuses,
       places: places,
       photos: FakePhotoStore(),
-      preferences: preferences
+      preferences: preferences,
+      searchService: search
     )
   }
 }

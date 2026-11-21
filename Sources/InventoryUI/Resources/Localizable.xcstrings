@@ -1841,16 +1841,6 @@
         }
       }
     },
-    "search.comingSoon": {
-      "localizations": {
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Поиск станет доступен на следующем этапе."
-          }
-        }
-      }
-    },
     "search.menu": {
       "localizations": {
         "ru": {
@@ -1867,6 +1857,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Поиск"
+          }
+        }
+      }
+    },
+    "search.count": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Найдено: %d"
+          }
+        }
+      }
+    },
+    "search.noResults": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ничего не найдено"
+          }
+        }
+      }
+    },
+    "search.noResultsHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Измените запрос или сбросьте фильтры. Поиск идёт по названию, описанию, заметкам, тегам, местам и людям."
           }
         }
       }

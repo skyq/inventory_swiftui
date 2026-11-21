@@ -16,6 +16,8 @@ public final class StorageSession: @unchecked Sendable {
   public let people: any PeopleService
   public let actions: any ItemActions
   public let history: any HistoryReadService
+  public let search: any SearchService
+  public let searchIndex: SearchIndexCoordinator
 
   private let lock: StorageLock
   private let closeLock = NSLock()
@@ -35,7 +37,9 @@ public final class StorageSession: @unchecked Sendable {
     statusSettings: any StatusSettingsService,
     people: any PeopleService,
     actions: any ItemActions,
-    history: any HistoryReadService
+    history: any HistoryReadService,
+    search: any SearchService,
+    searchIndex: SearchIndexCoordinator
   ) {
     self.layout = layout
     self.database = database
@@ -51,6 +55,8 @@ public final class StorageSession: @unchecked Sendable {
     self.people = people
     self.actions = actions
     self.history = history
+    self.search = search
+    self.searchIndex = searchIndex
   }
 
   public func close() {
@@ -62,6 +68,7 @@ public final class StorageSession: @unchecked Sendable {
     closed = true
     closeLock.unlock()
 
+    searchIndex.close()
     mutations.close()
     database.close()
     lock.release()
@@ -326,6 +333,12 @@ public final class StorageCoordinator: @unchecked Sendable {
       mutations: mutations
     )
     let history = HistoryReadServiceImpl(database: database)
+    let searchIndex = SearchIndexCoordinator(
+      database: database,
+      mutations: mutations,
+      logger: logger
+    )
+    searchIndex.start()
 
     if cleanupOrphansOnOpen {
       OrphanPhotoCleaner(database: database, photos: photos, logger: logger).cleanup()
@@ -345,7 +358,9 @@ public final class StorageCoordinator: @unchecked Sendable {
       statusSettings: statuses,
       people: people,
       actions: actions,
-      history: history
+      history: history,
+      search: searchIndex,
+      searchIndex: searchIndex
     )
   }
 

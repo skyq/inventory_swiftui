@@ -75,7 +75,13 @@ public final class AppModel: ObservableObject {
   @Published public var selectedSection: SidebarSection? {
     didSet { persistSectionMode() }
   }
-  @Published public var searchText = ""
+  @Published public var searchText = "" {
+    didSet {
+      guard searchText != oldValue else { return }
+      let text = searchText
+      Task { await gallery?.setSearchText(text) }
+    }
+  }
   @Published public private(set) var searchFocusToken = 0
   @Published public private(set) var storePath: String?
   @Published public private(set) var browser: PlaceBrowserModel?
@@ -146,8 +152,13 @@ public final class AppModel: ObservableObject {
   }
 
   public func focusSearch() {
-    guard placeForm == nil else { return }
+    guard canFocusSearch else { return }
     searchFocusToken &+= 1
+  }
+
+  /// Cmd+K доступен из любого раздела, но не поверх модальной формы (D09).
+  public var canFocusSearch: Bool {
+    isReady && placeForm == nil && itemForm == nil && itemAction == nil
   }
 
   public func closeInspector() {
@@ -304,6 +315,7 @@ public final class AppModel: ObservableObject {
     peopleModel = nil
     tagsModel = nil
     alert = nil
+    searchText = ""
     loadState = .idle
     started = false
   }
@@ -363,6 +375,9 @@ public final class AppModel: ObservableObject {
       }
       if let gallery {
         await gallery.start()
+        if !searchText.isEmpty {
+          await gallery.setSearchText(searchText)
+        }
       }
     case .failure(let error):
       if session != nil {
@@ -392,7 +407,8 @@ public final class AppModel: ObservableObject {
       places: opened.places,
       photos: opened.photos,
       preferences: preferences,
-      history: opened.history
+      history: opened.history,
+      searchService: opened.search
     )
     statusesModel = StatusesModel(
       statuses: opened.statuses,

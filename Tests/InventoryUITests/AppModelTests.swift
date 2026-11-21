@@ -147,6 +147,74 @@ struct AppModelTests {
     #expect(model.browser == nil)
   }
 
+  @Test("Cmd+K недоступен поверх модальных форм")
+  func blocksSearchFocusOverModals() async throws {
+    let root = try makeStoreDirectory()
+    let preferences = InMemoryPreferencesStore()
+    let coordinator = StorageCoordinator(preferences: preferences, logger: NullLogger())
+
+    let session = try coordinator.createNew(root.path)
+    let place = try session.places.create(
+      PlaceCreate(name: "Дом", description: "", parentId: nil, photo: makeTestPhoto())
+    )
+    _ = try session.items.create(
+      ItemCreate(
+        name: "Лампа",
+        placeId: place.id,
+        statusId: nil,
+        photo: makeTestPhoto()
+      )
+    )
+    session.close()
+
+    let model = AppModel(
+      storage: coordinator,
+      imageProcessor: FakeImageProcessor(),
+      dialogs: FakeFileDialogs(),
+      preferences: preferences
+    )
+    await model.start()
+    defer {
+      model.stop()
+      try? FileManager.default.removeItem(at: root)
+    }
+
+    #expect(model.canFocusSearch)
+    var token = model.searchFocusToken
+    model.focusSearch()
+    #expect(model.searchFocusToken == token + 1)
+
+    model.presentCreateItem(placeId: nil)
+    #expect(model.itemForm != nil)
+    #expect(!model.canFocusSearch)
+    token = model.searchFocusToken
+    model.focusSearch()
+    #expect(model.searchFocusToken == token)
+    model.dismissItemForm()
+
+    model.selectedSection = .places
+    model.presentCreatePlace()
+    #expect(model.placeForm != nil)
+    #expect(!model.canFocusSearch)
+    token = model.searchFocusToken
+    model.focusSearch()
+    #expect(model.searchFocusToken == token)
+    model.dismissPlaceForm()
+
+    let entry = try #require(model.gallery?.entries.first)
+    await model.gallery?.select(entry)
+    let details = try #require(model.gallery?.selected)
+    model.presentGive(details)
+    #expect(model.itemAction != nil)
+    #expect(!model.canFocusSearch)
+    token = model.searchFocusToken
+    model.focusSearch()
+    #expect(model.searchFocusToken == token)
+    model.dismissItemAction()
+
+    #expect(model.canFocusSearch)
+  }
+
   private func makeStoreDirectory() throws -> URL {
     let url = FileManager.default.temporaryDirectory
       .appendingPathComponent("InventoryAppModel-\(UUID().uuidString)", isDirectory: true)
