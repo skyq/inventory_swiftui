@@ -93,14 +93,10 @@ public final class SearchIndex: @unchecked Sendable {
       if let exact = postings[PostingKey(kind: .exact, term: token.text)] {
         accumulate(exact, match: .exact, into: &best)
       }
-      if token.stem != token.text,
-        let stem = postings[PostingKey(kind: .stem, term: token.stem)]
-      {
+      if let stem = postings[PostingKey(kind: .stem, term: token.stem)] {
         accumulate(stem, match: .stem, into: &best)
       }
-      if token.diminutive != token.text,
-        let diminutive = postings[PostingKey(kind: .diminutive, term: token.diminutive)]
-      {
+      if let diminutive = postings[PostingKey(kind: .diminutive, term: token.diminutive)] {
         accumulate(diminutive, match: .diminutive, into: &best)
       }
 

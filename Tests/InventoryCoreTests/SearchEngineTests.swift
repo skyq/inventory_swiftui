@@ -144,6 +144,14 @@ struct SearchEngineTests {
     #expect(SearchField.name.weight > SearchField.description.weight)
   }
 
+  @Test("Основа совпадает, даже когда стеммер не изменил слово запроса")
+  func stemWhenStemEqualsWord() {
+    let index = makeIndex([SearchDocument(itemId: "a", name: "Столы")])
+    let hits = index.search("стол")
+    #expect(hits.map(\.itemId) == ["a"])
+    #expect(abs((hits.first?.score ?? 0) - 1.6) < 0.0001)
+  }
+
   @Test("Равный балл сортируется по id")
   func idTieBreak() {
     let index = makeIndex([
