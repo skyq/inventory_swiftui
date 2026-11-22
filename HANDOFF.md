@@ -1,8 +1,8 @@
 # HANDOFF — состояние проекта после задачи
 
-Задача: этап 4 (T04.01–T04.08), поиск
-Результат: T04.01–T04.07 DONE; T04.08 BLOCKED — ждёт ручной проверки и явного подтверждения владельца
-Коммит: `dd53d9a` (код, тесты и документация этапа 4); `e981cc4` (расширенные тесты live-индекса и проброса поиска); `9020a51` (очистка поиска при переходах)
+Задача: этап 5 (T05.01–T05.18), данные, бэкап и финализация MVP
+Результат: этап 4 принят владельцем 22.11.2026; этап 5 начат с T05.01
+Коммит: `6fc5e32` — последний коммит этапа 4
 
 ## Что уже работает
 
@@ -59,17 +59,16 @@
 - Fault-injection: временный SQL-триггер на `items` откатывает обновление; индекс сохраняет прежнее имя и не содержит нового.
 - Автотестами покрыты все примеры §8.3: «куртка» → «куртки/куртку/курточку», «курка» → «куртка», «шкаф» → вещь на полке, имя архивного человека, «ёлка» ↔ «елка», многословное AND, 24 неродственные пары.
 
-## Что осталось владельцу (T04.08)
+## Этап 5: состояние
 
-- Ручная проверка в GUI: примеры §8.3, результаты плитками, фильтры, открытие карточки, пустая выдача.
-- Живые изменения без перезапуска: вещь, место-предок, тег (rename/merge), человек (give/rename/archive).
-- Cmd+K из всех разделов и его недоступность поверх форм; Esc.
-- Запуск на Intel Mac (автотесты и universal-сборка проходят, реальный Intel не проверялся).
-- После подтверждения: T04.08 → DONE, зафиксировать коммит этапа 4, затем начинать этап 5.
+- Этап 4 принят владельцем 22.11.2026 («приемка ок»), T04.08 → DONE.
+- Начат этап 5 (T05.01–T05.18): согласованный снимок, экспорт ZIP, проверка архива, staging-БД, safety-копия, протокол восстановления, импорт/откат, перенос и переключение хранилища, настройки, раздел данных, напоминание, safety-размер/очистка, README, финальный smoke.
+- Для T05.06–T05.09 требуется утверждённый `RECOVERY_PROTOCOL.md` (D01). В репозитории его не было; протокол будет подготовлен отдельным документом и вынесен владельцу до реализации опасной замены данных.
+- Этап 5 не принят; T05.18 остаётся BLOCKED до финальной проверки владельцем.
 
 ## Входы для следующей задачи
 
-- Следующий ID: T04.08 (приёмка) либо T05.01 после явного подтверждения.
-- Ключевые файлы этапа 4: `Sources/InventoryCore/Search/*`, `Sources/InventoryCore/Domain/Search.swift`, `Sources/InventoryCore/Data/{SearchDocumentBuilder,SearchIndexCoordinator}.swift`, `Sources/InventoryCore/Domain/Mutation.swift`, `Sources/InventoryCore/Data/StorageCoordinator.swift`, `Sources/InventoryUI/{GalleryModel,AppModel,InventoryRootView,GalleryView}.swift`, `Sources/InventoryApp/InventoryApp.swift`, `Tests/InventoryCoreTests/{Search*,RussianStemmerTests}.swift`, `Tests/InventoryUITests/{GalleryModelTests,AppModelTests,TestSupport}.swift`.
-- `Inventory.xcodeproj` генерируется из `project.yml` через XcodeGen; после добавления файлов выполнялся `xcodegen generate`.
-- Блокирующих пунктов для этапа 5 нет, но начинать его до подтверждения T04.08 запрещено правилами этапа.
+- Следующий ID: T05.01 (согласованный снимок для экспорта).
+- Ключевые файлы этапа 5: `Sources/InventoryCore/Data/StorageCoordinator.swift`, `MigrationCoordinator.swift`, `InventoryDatabase.swift`, `Schema.swift`, `PhotoLifecycle.swift`, `Sources/InventoryCore/Domain/StoreLayout.swift`, `Sources/InventoryUI/SettingsView.swift`, `AppModel.swift`, `project.yml`.
+- `Inventory.xcodeproj` генерируется из `project.yml` через XcodeGen; после добавления файлов выполнять `xcodegen generate`.
+- Блокирующий пункт: отсутствующий утверждённый `RECOVERY_PROTOCOL.md` для T05.06–T05.09; до его ревью можно безопасно делать T05.01–T05.05.
