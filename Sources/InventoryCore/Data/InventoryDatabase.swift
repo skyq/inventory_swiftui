@@ -6,11 +6,15 @@ import GRDB
 public final class InventoryDatabase: @unchecked Sendable {
   public let pool: DatabasePool
   public let path: String
+  public let writeGate: StoreWriteGate
 
-  public init(path: String, configuration: Configuration = InventoryDatabase.makeConfiguration())
-    throws
-  {
+  public init(
+    path: String,
+    configuration: Configuration = InventoryDatabase.makeConfiguration(),
+    writeGate: StoreWriteGate = StoreWriteGate()
+  ) throws {
     self.path = path
+    self.writeGate = writeGate
     self.pool = try DatabasePool(path: path, configuration: configuration)
   }
 
@@ -28,7 +32,9 @@ public final class InventoryDatabase: @unchecked Sendable {
   }
 
   public func write<T>(_ block: (Database) throws -> T) throws -> T {
-    try pool.write(block)
+    try writeGate.performWrite {
+      try pool.write(block)
+    }
   }
 
   public func close() {

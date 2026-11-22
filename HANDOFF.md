@@ -1,8 +1,8 @@
 # HANDOFF — состояние проекта после задачи
 
 Задача: этап 5 (T05.01–T05.18), данные, бэкап и финализация MVP
-Результат: этап 4 принят владельцем 22.11.2026; этап 5 начат с T05.01
-Коммит: `6fc5e32` — последний коммит этапа 4
+Результат: этап 4 принят владельцем 22.11.2026; T05.01 DONE, следующий — T05.02
+Коммит: `d90259e` — приёмка этапа 4; код T05.01 будет в следующем коммите
 
 ## Что уже работает
 
@@ -62,13 +62,16 @@
 ## Этап 5: состояние
 
 - Этап 4 принят владельцем 22.11.2026 («приемка ок»), T04.08 → DONE.
-- Начат этап 5 (T05.01–T05.18): согласованный снимок, экспорт ZIP, проверка архива, staging-БД, safety-копия, протокол восстановления, импорт/откат, перенос и переключение хранилища, настройки, раздел данных, напоминание, safety-размер/очистка, README, финальный smoke.
-- Для T05.06–T05.09 требуется утверждённый `RECOVERY_PROTOCOL.md` (D01). В репозитории его не было; протокол будет подготовлен отдельным документом и вынесен владельцу до реализации опасной замены данных.
+- T05.01 DONE: `BackupSnapshotService` снимает все девять таблиц в одной read-транзакции, читает `user_version` и копирует только фото/превью, на которые ссылаются `places` и `items`. Временная область по умолчанию в системном temp; `logs`, `_safety`, preferences, lock и `inventory.db` в неё не попадают.
+- Согласованность обеспечивает `StoreWriteGate`: `InventoryDatabase.write` и `PhotoLifecycle.replace/deleteAfterCommit` удерживают гейт, а `makeSnapshot` — эксклюзивно на всё время чтения и копирования файлов. NSRecursiveLock допускает вложенный `db.write` из того же потока. При ошибке гейт освобождается через `defer`, временная папка удаляется.
+- `BackupSnapshot.discard()` удаляет временную область после упаковки/отказа.
+- Тесты T05.01: девять таблиц и типы TEXT/INTEGER/NULL, WAL-данные, отсутствие чужих файлов и служебных папок, замена фото после снимка не меняет копию, блокировка конкурентной записи, очистка temp и освобождение гейта после ошибки.
+- Для T05.06–T05.09 требуется утверждённый `RECOVERY_PROTOCOL.md` (D01). В репозитории его не было; безопасная часть (гейт снимка) реализована без подмены протокола, полная замена данных остаётся BLOCKED до документа и подтверждения владельца.
 - Этап 5 не принят; T05.18 остаётся BLOCKED до финальной проверки владельцем.
 
 ## Входы для следующей задачи
 
-- Следующий ID: T05.01 (согласованный снимок для экспорта).
-- Ключевые файлы этапа 5: `Sources/InventoryCore/Data/StorageCoordinator.swift`, `MigrationCoordinator.swift`, `InventoryDatabase.swift`, `Schema.swift`, `PhotoLifecycle.swift`, `Sources/InventoryCore/Domain/StoreLayout.swift`, `Sources/InventoryUI/SettingsView.swift`, `AppModel.swift`, `project.yml`.
-- `Inventory.xcodeproj` генерируется из `project.yml` через XcodeGen; после добавления файлов выполнять `xcodegen generate`.
+- Следующий ID: T05.02 (упаковка снимка в архив v1).
+- Ключевые файлы этапа 5: `Sources/InventoryCore/Data/BackupSnapshotService.swift`, `StoreWriteGate.swift`, `Domain/Backup.swift`, `StorageCoordinator.swift`, `MigrationCoordinator.swift`, `InventoryDatabase.swift`, `Schema.swift`, `PhotoLifecycle.swift`, `Sources/InventoryCore/Domain/StoreLayout.swift`, `Sources/InventoryUI/SettingsView.swift`, `AppModel.swift`, `project.yml`.
+- `Inventory.xcodeproj` генерируется из `project.yml` через XcodeGen; новые файлы пакета подхватываются автоматически, но после изменения состава/настроек целей выполнять `xcodegen generate`.
 - Блокирующий пункт: отсутствующий утверждённый `RECOVERY_PROTOCOL.md` для T05.06–T05.09; до его ревью можно безопасно делать T05.01–T05.05.

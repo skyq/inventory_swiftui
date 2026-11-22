@@ -8,6 +8,7 @@ public final class StorageSession: @unchecked Sendable {
   public let logger: any AppLogger
   public let photos: any PhotoStore
   public let mutations: MutationBus
+  public let writeGate: StoreWriteGate
   public let places: any PlaceService
   public let items: any ItemService
   public let tags: any TagService
@@ -30,6 +31,7 @@ public final class StorageSession: @unchecked Sendable {
     logger: any AppLogger,
     photos: any PhotoStore,
     mutations: MutationBus,
+    writeGate: StoreWriteGate,
     places: any PlaceService,
     items: any ItemService,
     tags: any TagService,
@@ -47,6 +49,7 @@ public final class StorageSession: @unchecked Sendable {
     self.logger = logger
     self.photos = photos
     self.mutations = mutations
+    self.writeGate = writeGate
     self.places = places
     self.items = items
     self.tags = tags
@@ -142,6 +145,7 @@ public final class StorageCoordinator: @unchecked Sendable {
 
     let logger = loggerFactory?(layout) ?? bootstrapLogger
     let lock = try StorageLock.acquire(layout: layout, fileManager: fileManager)
+    let writeGate = StoreWriteGate()
 
     do {
       if fileManager.fileExists(atPath: layout.databasePath) {
@@ -160,7 +164,7 @@ public final class StorageCoordinator: @unchecked Sendable {
       )
       try migrator.migrateIfNeeded(layout: layout, createBackup: false)
 
-      let database = try openDatabase(layout: layout)
+      let database = try openDatabase(layout: layout, writeGate: writeGate)
       do {
         try database.write { db in
           try SeedData.applyIfNeeded(db, clock: clock, ids: ids)
@@ -177,7 +181,13 @@ public final class StorageCoordinator: @unchecked Sendable {
 
       logger.info("store created", data: ["path": layout.rootPath])
       preferences.setString(layout.rootPath, forKey: PreferenceKeys.activeStorePath)
-      return makeSession(layout: layout, database: database, lock: lock, logger: logger)
+      return makeSession(
+        layout: layout,
+        database: database,
+        lock: lock,
+        logger: logger,
+        writeGate: writeGate
+      )
     } catch {
       lock.release()
       throw error
@@ -205,6 +215,7 @@ public final class StorageCoordinator: @unchecked Sendable {
 
     let logger = loggerFactory?(layout) ?? bootstrapLogger
     let lock = try StorageLock.acquire(layout: layout, fileManager: fileManager)
+    let writeGate = StoreWriteGate()
 
     do {
       let version = try integrityCheck(layout: layout)
@@ -224,10 +235,16 @@ public final class StorageCoordinator: @unchecked Sendable {
         try migrator.migrateIfNeeded(layout: layout, createBackup: true)
       }
 
-      let database = try openDatabase(layout: layout)
+      let database = try openDatabase(layout: layout, writeGate: writeGate)
       logger.info("store opened", data: ["path": layout.rootPath])
       preferences.setString(layout.rootPath, forKey: PreferenceKeys.activeStorePath)
-      return makeSession(layout: layout, database: database, lock: lock, logger: logger)
+      return makeSession(
+        layout: layout,
+        database: database,
+        lock: lock,
+        logger: logger,
+        writeGate: writeGate
+      )
     } catch {
       lock.release()
       throw error
@@ -236,9 +253,11 @@ public final class StorageCoordinator: @unchecked Sendable {
 
   // MARK: - Внутренние шаги
 
-  private func openDatabase(layout: StoreLayout) throws -> InventoryDatabase {
+  private func openDatabase(layout: StoreLayout, writeGate: StoreWriteGate) throws
+    -> InventoryDatabase
+  {
     do {
-      return try InventoryDatabase(path: layout.databasePath)
+      return try InventoryDatabase(path: layout.databasePath, writeGate: writeGate)
     } catch {
       throw AppException(
         .storageCorrupt,
@@ -293,11 +312,12 @@ public final class StorageCoordinator: @unchecked Sendable {
     layout: StoreLayout,
     database: InventoryDatabase,
     lock: StorageLock,
-    logger: any AppLogger
+    logger: any AppLogger,
+    writeGate: StoreWriteGate
   ) -> StorageSession {
     let photos = FilePhotoStore(layout: layout, ids: ids, logger: logger, fileManager: fileManager)
     let mutations = MutationBus()
-    let lifecycle = PhotoLifecycle(photos: photos, logger: logger)
+    let lifecycle = PhotoLifecycle(photos: photos, logger: logger, gate: writeGate)
     let places = PlaceServiceImpl(
       database: database,
       photos: lifecycle,
@@ -351,6 +371,7 @@ public final class StorageCoordinator: @unchecked Sendable {
       logger: logger,
       photos: photos,
       mutations: mutations,
+      writeGate: writeGate,
       places: places,
       items: items,
       tags: tags,
