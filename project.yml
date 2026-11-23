@@ -88,6 +88,7 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: Инвентарь
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_NSCameraUsageDescription: Камера нужна, чтобы сфотографировать вещь для карточки.
         SWIFT_VERSION: "6.0"
         SWIFT_TREAT_WARNINGS_AS_ERRORS: YES
 

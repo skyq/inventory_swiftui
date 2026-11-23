@@ -1,17 +1,24 @@
 import InventoryCore
+import InventoryUI
 import SwiftUI
 
 /// Карточка вещи на iPhone: фото и поля, которые показываются и на macOS.
 struct ItemCardView: View {
   let details: ItemDetails
   let url: URL?
+  let makeEditModel: (ItemFormPresentation) -> ItemFormModel?
+
+  @Environment(\.dismiss) private var dismiss
+  @State private var editing: ItemFormPresentation?
 
   var body: some View {
     NavigationStack {
       List {
         Section {
           AsyncImage(url: url) { image in
-            image.resizable().scaledToFit()
+            image.resizable().scaledToFill()
+              .aspectRatio(1, contentMode: .fit)
+              .clipShape(RoundedRectangle(cornerRadius: 10))
           } placeholder: {
             ProgressView()
           }
@@ -35,6 +42,23 @@ struct ItemCardView: View {
       }
       .navigationTitle("Вещь")
       .navigationBarTitleDisplayMode(.inline)
+      .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+          Button("Изменить") {
+            editing = ItemFormPresentation(mode: .edit(details))
+          }
+        }
+      }
+      .sheet(item: $editing) { presentation in
+        if let formModel = makeEditModel(presentation) {
+          ItemFormScreen(
+            model: formModel,
+            onClose: {
+              editing = nil
+              dismiss()
+            })
+        }
+      }
     }
     .presentationDetents([.large])
   }

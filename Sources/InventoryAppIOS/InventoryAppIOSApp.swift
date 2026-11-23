@@ -16,6 +16,7 @@ struct InventoryAppIOSApp: App {
   @MainActor
   private static func makeModel() -> AppModel {
     let preferences = UserDefaultsPreferencesStore()
+    refreshStoredPath(preferences)
     let bootstrapLogger = RotatingFileLogger(
       directory: DefaultStoreLocation.url().appendingPathComponent("logs", isDirectory: true)
     )
@@ -32,6 +33,22 @@ struct InventoryAppIOSApp: App {
       dialogs: IOSFileDialogs(),
       preferences: preferences
     )
+  }
+}
+
+extension InventoryAppIOSApp {
+  /// На iOS путь к хранилищу меняется при переустановке (новый UUID контейнера).
+  /// Если сохранённая папка пропала, а хранилище лежит по стандартному пути, переводим настройку на него.
+  @MainActor
+  static func refreshStoredPath(_ preferences: any PreferencesStore) {
+    let defaultRoot = DefaultStoreLocation.url().path
+    let defaultDatabase = StoreLayout(rootURL: URL(fileURLWithPath: defaultRoot)).databasePath
+    guard let stored = preferences.string(forKey: PreferenceKeys.activeStorePath), !stored.isEmpty,
+      stored != defaultRoot,
+      !FileManager.default.fileExists(atPath: stored),
+      FileManager.default.fileExists(atPath: defaultDatabase)
+    else { return }
+    preferences.setString(defaultRoot, forKey: PreferenceKeys.activeStorePath)
   }
 }
 

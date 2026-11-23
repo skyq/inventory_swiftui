@@ -110,8 +110,12 @@ enum PhotoDrop {
     }
   }
 #else
-  /// На iOS чтение буфера появится вместе с кнопкой «Вставить» (IOS.05).
+  import UIKit
+
   enum PhotoClipboard {
-    static func read() -> (data: Data, sourceName: String?)? { nil }
+    static func read() -> (data: Data, sourceName: String?)? {
+      guard let image = UIPasteboard.general.image, let data = image.pngData() else { return nil }
+      return (data, "clipboard.png")
+    }
   }
 #endif

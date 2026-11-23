@@ -7,6 +7,8 @@ struct GalleryScreen: View {
   @ObservedObject var model: AppModel
   @State private var searchText = ""
   @State private var selectedItem: String?
+  @State private var showsFilters = false
+  @State private var itemForm: ItemFormPresentation?
 
   private let columns = [GridItem(.adaptive(minimum: 150), spacing: 12)]
 
@@ -41,11 +43,57 @@ struct GalleryScreen: View {
           .sheet(
             isPresented: Binding(
               get: { selectedItem != nil },
-              set: { if !$0 { selectedItem = nil; gallery.clearSelection() } }
-            )
+              set: {
+                if !$0 {
+                  selectedItem = nil
+                  gallery.clearSelection()
+                }
+              }
+            ),
+            onDismiss: {
+              Task { await gallery.reload() }
+            }
           ) {
             if let details = gallery.selected {
-              ItemCardView(details: details, url: gallery.photoURL(for: details))
+              ItemCardView(
+                details: details,
+                url: gallery.photoURL(for: details),
+                makeEditModel: { presentation in model.makeItemFormModel(for: presentation) }
+              )
+            }
+          }
+          .sheet(isPresented: $showsFilters) {
+            GalleryFiltersSheet(model: gallery)
+          }
+          .sheet(
+            item: $itemForm,
+            onDismiss: {
+              Task { await gallery.reload() }
+            }
+          ) { presentation in
+            if let formModel = model.makeItemFormModel(for: presentation) {
+              ItemFormScreen(model: formModel, onClose: { itemForm = nil })
+            }
+          }
+          .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+              Button {
+                itemForm = ItemFormPresentation(mode: .create(placeId: nil))
+              } label: {
+                Label("Новая вещь", systemImage: "plus")
+              }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+              Button {
+                showsFilters = true
+              } label: {
+                Label(
+                  "Фильтры",
+                  systemImage: gallery.hasActiveFilters
+                    ? "line.3.horizontal.decrease.circle.fill"
+                    : "line.3.horizontal.decrease.circle"
+                )
+              }
             }
           }
         }
@@ -61,14 +109,16 @@ private struct GalleryTile: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
-      AsyncImage(url: url) { image in
-        image.resizable().scaledToFill()
-      } placeholder: {
-        Color.gray.opacity(0.2)
-      }
-      .frame(height: 150)
-      .clipped()
-      .cornerRadius(10)
+      Color.gray.opacity(0.2)
+        .aspectRatio(1, contentMode: .fit)
+        .overlay {
+          AsyncImage(url: url) { image in
+            image.resizable().scaledToFill()
+          } placeholder: {
+            Color.clear
+          }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 10))
       Text(entry.item.name)
         .font(.subheadline)
         .lineLimit(2)
