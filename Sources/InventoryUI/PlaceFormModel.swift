@@ -165,6 +165,11 @@ public final class PlaceFormModel: ObservableObject {
   }
 
   /// Cmd+V и кнопка «Вставить»: читает системный буфер обмена.
+  public func setPhoto(data: Data, sourceName: String?) async {
+    guard !isProcessingPhoto else { return }
+    await applyPhoto(data: data, sourceName: sourceName)
+  }
+
   public func pastePhoto() async {
     guard !isProcessingPhoto else { return }
     guard let clipboard = PhotoClipboard.read() else {

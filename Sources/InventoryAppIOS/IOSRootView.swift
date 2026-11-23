@@ -23,6 +23,8 @@ struct IOSRootView: View {
         TabView {
           GalleryScreen(model: model)
             .tabItem { Label("Вещи", systemImage: "square.grid.2x2") }
+          PlacesScreen(model: model)
+            .tabItem { Label("Места", systemImage: "mappin.and.ellipse") }
           SelfCheckView()
             .tabItem { Label("Проверка", systemImage: "checkmark.seal") }
         }
