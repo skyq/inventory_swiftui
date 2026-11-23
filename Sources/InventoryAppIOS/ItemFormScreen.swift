@@ -10,6 +10,7 @@ struct ItemFormScreen: View {
 
   @State private var pickerItem: PhotosPickerItem?
   @State private var showsCamera = false
+  @State private var cropSource: UIImage?
 
   var body: some View {
     NavigationStack {
@@ -90,8 +91,10 @@ struct ItemFormScreen: View {
       .onChange(of: pickerItem) { _, item in
         guard let item else { return }
         Task {
-          if let data = try? await item.loadTransferable(type: Data.self) {
-            await model.setPhoto(data: data, sourceName: nil)
+          if let data = try? await item.loadTransferable(type: Data.self),
+            let image = UIImage(data: data)
+          {
+            cropSource = image.normalizedForCrop()
           }
           pickerItem = nil
         }
@@ -103,6 +106,23 @@ struct ItemFormScreen: View {
           Task { await model.setPhoto(data: data, sourceName: "camera.jpg") }
         }
         .ignoresSafeArea()
+      }
+      .fullScreenCover(
+        isPresented: Binding(
+          get: { cropSource != nil },
+          set: { if !$0 { cropSource = nil } }
+        )
+      ) {
+        if let image = cropSource {
+          SquareCropView(
+            image: image,
+            onCancel: { cropSource = nil },
+            onDone: { data in
+              cropSource = nil
+              Task { await model.setPhoto(data: data, sourceName: "library.jpg") }
+            }
+          )
+        }
       }
       .alert(item: $model.alert) { alert in
         switch alert {
@@ -200,6 +220,28 @@ struct ItemFormScreen: View {
       Text(L10n.string("items.tags"))
     } footer: {
       Text(L10n.format("items.tagHint", TagKey.maxLength))
+    }
+  }
+}
+
+/// Держит одну модель формы на время показа sheet: перерисовка родителя не должна создавать новую модель и терять фото и ввод.
+struct ItemFormSheet: View {
+  let presentation: ItemFormPresentation
+  let makeModel: (ItemFormPresentation) -> ItemFormModel?
+  let onClose: () -> Void
+
+  @State private var formModel: ItemFormModel?
+
+  var body: some View {
+    Group {
+      if let formModel {
+        ItemFormScreen(model: formModel, onClose: onClose)
+      }
+    }
+    .onAppear {
+      if formModel == nil {
+        formModel = makeModel(presentation)
+      }
     }
   }
 }

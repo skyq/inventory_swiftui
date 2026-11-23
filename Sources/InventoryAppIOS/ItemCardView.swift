@@ -99,14 +99,14 @@ struct ItemCardView: View {
         }
       }
       .sheet(item: $editing) { presentation in
-        if let formModel = model.makeItemFormModel(for: presentation) {
-          ItemFormScreen(
-            model: formModel,
-            onClose: {
-              editing = nil
-              dismiss()
-            })
-        }
+        ItemFormSheet(
+          presentation: presentation,
+          makeModel: { model.makeItemFormModel(for: $0) },
+          onClose: {
+            editing = nil
+            dismiss()
+          }
+        )
       }
     }
     .presentationDetents([.large])

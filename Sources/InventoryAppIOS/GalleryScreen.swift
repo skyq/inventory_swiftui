@@ -80,9 +80,11 @@ private struct GalleryContent: View {
         Task { await gallery.reload() }
       }
     ) { presentation in
-      if let formModel = model.makeItemFormModel(for: presentation) {
-        ItemFormScreen(model: formModel, onClose: { itemForm = nil })
-      }
+      ItemFormSheet(
+        presentation: presentation,
+        makeModel: { model.makeItemFormModel(for: $0) },
+        onClose: { itemForm = nil }
+      )
     }
     .toolbar {
       ToolbarItem(placement: .topBarTrailing) {

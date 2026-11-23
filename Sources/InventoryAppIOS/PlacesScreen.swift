@@ -152,9 +152,11 @@ private struct PlacesContent: View {
         Task { await browser.reload() }
       }
     ) { presentation in
-      if let formModel = model.makeItemFormModel(for: presentation) {
-        ItemFormScreen(model: formModel, onClose: { itemForm = nil })
-      }
+      ItemFormSheet(
+        presentation: presentation,
+        makeModel: { model.makeItemFormModel(for: $0) },
+        onClose: { itemForm = nil }
+      )
     }
     .sheet(
       item: $cardPresentation,
