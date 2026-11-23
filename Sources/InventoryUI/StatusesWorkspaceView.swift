@@ -381,6 +381,8 @@ struct StatusNameSheet: View {
             .foregroundColor(.red)
         }
       }
+      .padding(.horizontal, 20)
+      .padding(.vertical, 16)
       Divider()
       sheetFooter(
         saveTitle: L10n.string("places.save"),
@@ -469,6 +471,8 @@ struct StatusArchiveSheet: View {
             .foregroundColor(.orange)
         }
       }
+      .padding(.horizontal, 20)
+      .padding(.vertical, 16)
       Divider()
       sheetFooter(
         saveTitle: L10n.string("statuses.archive"),
