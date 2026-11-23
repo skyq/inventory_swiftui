@@ -24,6 +24,20 @@ struct PlaceFormModelTests {
     #expect(message == L10n.string("places.photoRequired"))
   }
 
+  @Test("Новому месту сразу подставляется фото-заглушка")
+  func fillsDefaultPhoto() async {
+    let images = FakeImageProcessor()
+    let model = makeModel(mode: .create(parentId: nil), service: FakePlaceService(), images: images)
+    await model.loadReferences()
+
+    #expect(model.hasPhoto)
+    #expect(model.previewImage != nil)
+    #expect(await images.callCount() == 1)
+
+    model.name = "Кладовая"
+    #expect(model.canSave)
+  }
+
   @Test("Выбор фото включает сохранение и передаёт PreparedPhoto в сервис")
   func choosePhotoEnablesSave() async throws {
     let url = try makeTemporaryFile()

@@ -115,6 +115,14 @@ public final class PlaceFormModel: ObservableObject {
       previewImage = NSImage(data: data)
     }
 
+    if !isEditing, !hasPhoto {
+      let processed = await DefaultPhoto.process(images: images)
+      if let processed, preparedPhoto == nil, existingThumbURL == nil {
+        preparedPhoto = processed
+        previewImage = NSImage(data: processed.thumbBytes) ?? NSImage(data: processed.photoBytes)
+      }
+    }
+
     let service = places
     let editingId = mode.editingPlace?.id
     let allResult = await AsyncCore.run { try service.all() }

@@ -156,6 +156,14 @@ public final class ItemFormModel: ObservableObject {
       previewImage = NSImage(data: data)
     }
 
+    if !isEditing, !hasPhoto {
+      let processed = await DefaultPhoto.process(images: images)
+      if let processed, preparedPhoto == nil, existingThumbURL == nil {
+        preparedPhoto = processed
+        previewImage = NSImage(data: processed.thumbBytes) ?? NSImage(data: processed.photoBytes)
+      }
+    }
+
     let placesService = places
     let statusesService = statuses
     let tagsService = tags

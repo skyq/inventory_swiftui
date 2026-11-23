@@ -7,24 +7,25 @@ import Testing
 @Suite("Форма вещи")
 @MainActor
 struct ItemFormModelTests {
-  @Test("Без фото сохранение заблокировано")
-  func requiresPhoto() async throws {
+  @Test("Новой вещи сразу подставляется фото-заглушка")
+  func fillsDefaultPhoto() async throws {
     let items = FakeItemService()
-    let model = makeCreateModel(items: items)
+    let images = FakeImageProcessor()
+    let model = makeCreateModel(items: items, images: images)
     await model.loadReferences()
+
+    #expect(model.hasPhoto)
+    #expect(model.previewImage != nil)
+    #expect(await images.callCount() == 1)
 
     model.name = "Лампа"
     model.quantity = 1
-    #expect(!model.canSave)
+    #expect(model.canSave)
 
     await model.save()
-    guard case .failure(let message)? = model.alert else {
-      Issue.record("Ожидалась ошибка об отсутствии фото")
-      return
-    }
-    #expect(!message.isEmpty)
-    #expect(items.createdInputs.isEmpty)
-    #expect(!model.didSave)
+    #expect(model.didSave)
+    let input = try #require(items.createdInputs.first)
+    #expect(input.photo != nil)
   }
 
   @Test("Создание передаёт поля, теги и выбранный статус")
@@ -158,7 +159,8 @@ struct ItemFormModelTests {
     items: FakeItemService,
     statuses: FakeStatusService = FakeStatusService(),
     tags: FakeTagService = FakeTagService(),
-    dialogs: FakeFileDialogs = FakeFileDialogs()
+    dialogs: FakeFileDialogs = FakeFileDialogs(),
+    images: FakeImageProcessor = FakeImageProcessor()
   ) -> ItemFormModel {
     ItemFormModel(
       mode: .create(placeId: "place-1"),
@@ -166,7 +168,7 @@ struct ItemFormModelTests {
       tags: tags,
       statuses: statuses,
       places: FakePlaceService(initial: [makeTestPlace(id: "place-1", name: "Дом")]),
-      images: FakeImageProcessor(),
+      images: images,
       dialogs: dialogs,
       photos: FakePhotoStore()
     )
