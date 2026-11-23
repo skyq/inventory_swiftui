@@ -71,6 +71,8 @@ targets:
         product: InventoryPlatform
       - package: Inventory
         product: GRDB
+      - package: Inventory
+        product: InventoryUI
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.inventory.InventoryIOS
