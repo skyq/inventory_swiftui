@@ -10,6 +10,8 @@
 		1108CD3B8169675478AAD663 /* PlaceBrowserModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8382DC0A5C2EE757AC9B63 /* PlaceBrowserModelTests.swift */; };
 		17A13C13266B2574BE44F964 /* ItemFormModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0771542E60D2DD97F4FB9E /* ItemFormModelTests.swift */; };
 		1B71B8361EB90C2A28EC5563 /* InventoryCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5B1D8F34718CCD1A3CC1A775 /* InventoryCore */; };
+		2C56876505A6917D52E92CDF /* InventoryPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = 0396E96AFFB1CEEC7E3EDE17 /* InventoryPlatform */; };
+		3077598A20FF5F24ACFDAD52 /* StorageSelfCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5B4FF605E11F04F1EADAA91 /* StorageSelfCheck.swift */; };
 		628FDD9DF9CA5332DB71A494 /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E198DB514E7DA8098FE109EF /* TestSupport.swift */; };
 		ABA8B069101D9EA9912E228F /* Stage3ModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E338F29973A92BC4D10BB95 /* Stage3ModelsTests.swift */; };
 		B16A22E69D29B7B06BC78EFF /* InventoryAppIOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBE4EA8B824CF04E20CFFA7 /* InventoryAppIOSApp.swift */; };
@@ -17,7 +19,9 @@
 		BA529B31CFE299448CA1A316 /* InventoryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9263C95C43118374037B9DC5 /* InventoryApp.swift */; };
 		BA812B9CC8F94653CF6A1CCD /* InventoryUI in Frameworks */ = {isa = PBXBuildFile; productRef = 838F560A2A56D1A41EC5DB20 /* InventoryUI */; };
 		CD46E19C6BACB896C29931B5 /* InventoryCore in Frameworks */ = {isa = PBXBuildFile; productRef = E8E261456BEF46F2D20EA466 /* InventoryCore */; };
+		CF426CF8C3A6D7EF9B1F9D95 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 29F8B9422134C51C233C94BA /* GRDB */; };
 		D296E0AD0ACAA8494D524677 /* PlaceFormModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C4D1E6EDBDB9A2D22892CF /* PlaceFormModelTests.swift */; };
+		E5B4C8143B0E186B3AF2BBDF /* InventoryCore in Frameworks */ = {isa = PBXBuildFile; productRef = 70F4E054E4211BA064EAB0F3 /* InventoryCore */; };
 		F5B7B786FC5FC180444F144F /* AppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83CF05B6027DBE6EA5BCBF27 /* AppModelTests.swift */; };
 		F70945BF7FE8FE3D168E9A22 /* GalleryModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C7B00D65830C770C838EA48 /* GalleryModelTests.swift */; };
 		FE8E1BFA67ACE5C7EB6E8A84 /* InventoryPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = 016380853AEF0F38DF7CAE73 /* InventoryPlatform */; };
@@ -37,6 +41,7 @@
 		9263C95C43118374037B9DC5 /* InventoryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryApp.swift; sourceTree = "<group>"; };
 		CFBE4EA8B824CF04E20CFFA7 /* InventoryAppIOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryAppIOSApp.swift; sourceTree = "<group>"; };
 		E198DB514E7DA8098FE109EF /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
+		E5B4FF605E11F04F1EADAA91 /* StorageSelfCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageSelfCheck.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +51,16 @@
 			files = (
 				CD46E19C6BACB896C29931B5 /* InventoryCore in Frameworks */,
 				B7C99B10D0C9E0AF9E2D924F /* InventoryUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B8F92CADE0E274BE7E58D20A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E5B4C8143B0E186B3AF2BBDF /* InventoryCore in Frameworks */,
+				2C56876505A6917D52E92CDF /* InventoryPlatform in Frameworks */,
+				CF426CF8C3A6D7EF9B1F9D95 /* GRDB in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				CFBE4EA8B824CF04E20CFFA7 /* InventoryAppIOSApp.swift */,
+				E5B4FF605E11F04F1EADAA91 /* StorageSelfCheck.swift */,
 			);
 			path = InventoryAppIOS;
 			sourceTree = "<group>";
@@ -165,6 +181,7 @@
 			buildConfigurationList = F29D734E2DF3CF40E7939CEC /* Build configuration list for PBXNativeTarget "InventoryAppIOS" */;
 			buildPhases = (
 				D4043DB4DE511870B0D82FF6 /* Sources */,
+				B8F92CADE0E274BE7E58D20A /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -172,6 +189,9 @@
 			);
 			name = InventoryAppIOS;
 			packageProductDependencies = (
+				70F4E054E4211BA064EAB0F3 /* InventoryCore */,
+				0396E96AFFB1CEEC7E3EDE17 /* InventoryPlatform */,
+				29F8B9422134C51C233C94BA /* GRDB */,
 			);
 			productName = InventoryAppIOS;
 			productReference = 0001BE5FAF1DAEC29F50809A /* InventoryAppIOS.app */;
@@ -243,6 +263,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B16A22E69D29B7B06BC78EFF /* InventoryAppIOSApp.swift in Sources */,
+				3077598A20FF5F24ACFDAD52 /* StorageSelfCheck.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -586,11 +607,23 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = InventoryPlatform;
 		};
+		0396E96AFFB1CEEC7E3EDE17 /* InventoryPlatform */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = InventoryPlatform;
+		};
+		29F8B9422134C51C233C94BA /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = GRDB;
+		};
 		5ACAE9AD5A13525AC1129EEB /* InventoryUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = InventoryUI;
 		};
 		5B1D8F34718CCD1A3CC1A775 /* InventoryCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = InventoryCore;
+		};
+		70F4E054E4211BA064EAB0F3 /* InventoryCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = InventoryCore;
 		};

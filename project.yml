@@ -64,6 +64,13 @@ targets:
     platform: iOS
     sources:
       - path: Sources/InventoryAppIOS
+    dependencies:
+      - package: Inventory
+        product: InventoryCore
+      - package: Inventory
+        product: InventoryPlatform
+      - package: Inventory
+        product: GRDB
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.inventory.InventoryIOS
