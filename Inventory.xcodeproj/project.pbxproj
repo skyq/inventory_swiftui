@@ -12,6 +12,7 @@
 		1B71B8361EB90C2A28EC5563 /* InventoryCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5B1D8F34718CCD1A3CC1A775 /* InventoryCore */; };
 		628FDD9DF9CA5332DB71A494 /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E198DB514E7DA8098FE109EF /* TestSupport.swift */; };
 		ABA8B069101D9EA9912E228F /* Stage3ModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E338F29973A92BC4D10BB95 /* Stage3ModelsTests.swift */; };
+		B16A22E69D29B7B06BC78EFF /* InventoryAppIOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBE4EA8B824CF04E20CFFA7 /* InventoryAppIOSApp.swift */; };
 		B7C99B10D0C9E0AF9E2D924F /* InventoryUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5ACAE9AD5A13525AC1129EEB /* InventoryUI */; };
 		BA529B31CFE299448CA1A316 /* InventoryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9263C95C43118374037B9DC5 /* InventoryApp.swift */; };
 		BA812B9CC8F94653CF6A1CCD /* InventoryUI in Frameworks */ = {isa = PBXBuildFile; productRef = 838F560A2A56D1A41EC5DB20 /* InventoryUI */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0001BE5FAF1DAEC29F50809A /* InventoryAppIOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = InventoryAppIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0E338F29973A92BC4D10BB95 /* Stage3ModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage3ModelsTests.swift; sourceTree = "<group>"; };
 		0EF38549C7245F24E6FC1187 /* InventoryAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InventoryAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A8382DC0A5C2EE757AC9B63 /* PlaceBrowserModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceBrowserModelTests.swift; sourceTree = "<group>"; };
@@ -33,6 +35,7 @@
 		83CF05B6027DBE6EA5BCBF27 /* AppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelTests.swift; sourceTree = "<group>"; };
 		91C4D1E6EDBDB9A2D22892CF /* PlaceFormModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceFormModelTests.swift; sourceTree = "<group>"; };
 		9263C95C43118374037B9DC5 /* InventoryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryApp.swift; sourceTree = "<group>"; };
+		CFBE4EA8B824CF04E20CFFA7 /* InventoryAppIOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryAppIOSApp.swift; sourceTree = "<group>"; };
 		E198DB514E7DA8098FE109EF /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -63,9 +66,18 @@
 			isa = PBXGroup;
 			children = (
 				41DF7BDA673E5AE060C78285 /* InventoryApp.app */,
+				0001BE5FAF1DAEC29F50809A /* InventoryAppIOS.app */,
 				0EF38549C7245F24E6FC1187 /* InventoryAppTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		28B7484471A12AE29F6889C4 /* InventoryAppIOS */ = {
+			isa = PBXGroup;
+			children = (
+				CFBE4EA8B824CF04E20CFFA7 /* InventoryAppIOSApp.swift */,
+			);
+			path = InventoryAppIOS;
 			sourceTree = "<group>";
 		};
 		3B866A031763F28F467EC60C /* Packages */ = {
@@ -112,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				5DE994DA9F98D43928E451B1 /* InventoryApp */,
+				28B7484471A12AE29F6889C4 /* InventoryAppIOS */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -147,6 +160,23 @@
 			productReference = 0EF38549C7245F24E6FC1187 /* InventoryAppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		0AD7D38AF4CC5F7617ED16A1 /* InventoryAppIOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F29D734E2DF3CF40E7939CEC /* Build configuration list for PBXNativeTarget "InventoryAppIOS" */;
+			buildPhases = (
+				D4043DB4DE511870B0D82FF6 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = InventoryAppIOS;
+			packageProductDependencies = (
+			);
+			productName = InventoryAppIOS;
+			productReference = 0001BE5FAF1DAEC29F50809A /* InventoryAppIOS.app */;
+			productType = "com.apple.product-type.application";
+		};
 		4BEADC1A76CA7315E7028D56 /* InventoryApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B369776FBAF81360ABACB0E6 /* Build configuration list for PBXNativeTarget "InventoryApp" */;
@@ -177,6 +207,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					0AD7D38AF4CC5F7617ED16A1 = {
+						DevelopmentTeam = 3K55B25WBL;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 2A4523A7EA190F07F1F221D2 /* Build configuration list for PBXProject "Inventory" */;
@@ -197,12 +231,21 @@
 			projectRoot = "";
 			targets = (
 				4BEADC1A76CA7315E7028D56 /* InventoryApp */,
+				0AD7D38AF4CC5F7617ED16A1 /* InventoryAppIOS */,
 				07078AB5012D5B97C88168A2 /* InventoryAppTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D4043DB4DE511870B0D82FF6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B16A22E69D29B7B06BC78EFF /* InventoryAppIOSApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FEF3C38748EB4B99D7CA8825 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -291,7 +334,6 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -338,6 +380,34 @@
 			};
 			name = Debug;
 		};
+		8A722E1A8B966324A7BCD4DE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3K55B25WBL;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Инвентарь";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.inventory.InventoryIOS;
+				PRODUCT_NAME = "Инвентарь";
+				SDKROOT = iphoneos;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		9CD7874DD3E7D9C31FD42898 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -353,6 +423,34 @@
 				SDKROOT = macosx;
 			};
 			name = Release;
+		};
+		D6BC64B53C349440C057B9A0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3K55B25WBL;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Инвентарь";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.inventory.InventoryIOS;
+				PRODUCT_NAME = "Инвентарь";
+				SDKROOT = iphoneos;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
 		};
 		DB50D9AE237834E0D10972FF /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -411,7 +509,6 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -462,6 +559,15 @@
 			buildConfigurations = (
 				74131899C971DA127202A1CB /* Debug */,
 				2FF971F240D23BE17F82ADDF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F29D734E2DF3CF40E7939CEC /* Build configuration list for PBXNativeTarget "InventoryAppIOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6BC64B53C349440C057B9A0 /* Debug */,
+				8A722E1A8B966324A7BCD4DE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

@@ -83,3 +83,5 @@ logs/
 .flutter-plugins
 .flutter-plugins-dependencies
 pubspec.lock
+build-debug/
+build-ios/

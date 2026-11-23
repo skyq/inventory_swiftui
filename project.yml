@@ -59,6 +59,29 @@ targets:
         ITSAppUsesNonExemptEncryption: false
         NSHumanReadableCopyright: ""
 
+  InventoryAppIOS:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources/InventoryAppIOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.inventory.InventoryIOS
+        PRODUCT_NAME: Инвентарь
+        GENERATE_INFOPLIST_FILE: YES
+        IPHONEOS_DEPLOYMENT_TARGET: "26.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        DEVELOPMENT_TEAM: 3K55B25WBL
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGNING_ALLOWED: YES
+        CODE_SIGNING_REQUIRED: YES
+        ENABLE_PREVIEWS: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Инвентарь
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        SWIFT_VERSION: "6.0"
+        SWIFT_TREAT_WARNINGS_AS_ERRORS: YES
+
   InventoryAppTests:
     type: bundle.unit-test
     platform: macOS
@@ -75,6 +98,12 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
 
 schemes:
+  InventoryAppIOS:
+    build:
+      targets:
+        InventoryAppIOS: all
+    run:
+      config: Debug
   InventoryApp:
     build:
       targets:
