@@ -121,6 +121,7 @@ public final class AppModel: ObservableObject {
     self.dialogs = dialogs
     self.preferences = preferences
     self.maintenance = storage.makeMaintenance(appVersion: AppModel.appVersion)
+    LaunchProbe.begin()
     switch GalleryStateCodec.load(from: preferences).mode {
     case .grid:
       self.selectedSection = .gallery
@@ -377,6 +378,13 @@ public final class AppModel: ObservableObject {
   }
 
   private func openDefaultStore() async {
+    // Диагностический запуск на подготовленном хранилище (T05.17); без переменной — обычный путь.
+    if let override = ProcessInfo.processInfo.environment["INVENTORY_STORE_PATH"],
+      !override.isEmpty
+    {
+      await performOpen { try self.storage.openExisting(override) }
+      return
+    }
     await performOpen { try self.storage.openOrCreateDefault() }
   }
 
@@ -396,6 +404,7 @@ public final class AppModel: ObservableObject {
           await gallery.setSearchText(searchText)
         }
       }
+      LaunchProbe.markReady()
     case .failure(let error):
       if session != nil {
         // Уже открытое хранилище остаётся рабочим; ошибка переключения только сообщается.

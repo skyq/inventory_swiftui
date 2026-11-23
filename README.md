@@ -20,6 +20,23 @@ xcodegen generate
 xcodebuild test -project Inventory.xcodeproj -scheme InventoryApp -destination 'platform=macOS'
 ```
 
+## Замеры производительности (D11)
+
+```sh
+# Экспорт и импорт на 500 вещах с фото (release)
+swift run -c release InventoryBenchmark
+
+# Поиск на 500 вещах (release)
+swift test -c release --filter SearchPerformanceTests
+
+# Запуск приложения на подготовленном хранилище
+swift run -c release InventoryFixture /tmp/inventory-500
+INVENTORY_STORE_PATH=/tmp/inventory-500 INVENTORY_LAUNCH_PROBE=/tmp/launch.txt \
+  build-release/Build/Products/Release/Inventory.app/Contents/MacOS/Inventory
+```
+
+`INVENTORY_STORE_PATH` и `INVENTORY_LAUNCH_PROBE` — только диагностика: без них приложение работает обычным путём. Файл probe содержит время от старта приложения до готовой галереи.
+
 Release-сборка universal:
 
 ```sh

@@ -70,18 +70,33 @@
   - T05.12–T05.13: окно настроек (папка, три статуса, напоминание) и раздел «Данные» (экспорт, импорт, откат, копии, напоминание, модальный прогресс).
   - T05.14–T05.15: напоминание строго более 30 суток, размер и очистка копий.
   - T05.16: `README.md` с командами Swift.
-  - T05.17: PARTIAL — release universal собран, запуск 6 с без падения. Замеры на 500 вещей не выполнены.
+  - T05.17: DONE — release universal, smoke и замеры на 500 вещах (см. ниже).
 - Отклонения (зафиксированы в RUN_LOG и RECOVERY_PROTOCOL §10):
   - миграция схемы не пишет отдельный журнал (покрыта `MigrationTests`);
   - между освобождением и повторным захватом `StorageLock` при импорте/переносе есть короткое окно;
   - запись `backup.last_export_ms` выполняется `StorageMaintenance.export`, а не отдельным сервисом.
-- Итоги: `swift test` — 277 (216 core / 9 platform / 52 UI), все проходят. `xcodebuild test` — 52 UI, TEST SUCCEEDED. `swift-format lint --recursive --strict Sources Tests` — чисто. Release universal `x86_64 arm64` — BUILD SUCCEEDED.
-- Не проверено вручную: раздел «Данные» и окно настроек в GUI, полный импорт реального архива, Intel и macOS 12.
+- Итоги: `swift test` — 278 (216 core / 9 platform / 53 UI), все проходят. `xcodebuild test` — 52 UI, TEST SUCCEEDED. `swift-format lint --recursive --strict Sources Tests` — чисто. Release universal `x86_64 arm64` — BUILD SUCCEEDED.
+
+## Замеры T05.17 (D11)
+
+Машина: Apple M4 (Mac16,12), macOS 26.7.1 (25G241), release-сборка. Набор: 500 вещей, 16 мест, 6 тегов, 24 разных фото 900×675 с превью (≈307 КБ на вещь). По 3 повтора.
+
+| Что | Результат | Лимит |
+|---|---|---|
+| Запуск приложения до готовой галереи | 0.28–0.49 с (3 запуска, от старта процесса) | < 3 с |
+| Открытие карточки + чтение фото | 0.07–0.17 мс (50 вещей) | < 200 мс |
+| Поиск + фильтры | 1.39 мс (худший из запросов) | < 100 мс |
+| Экспорт | 1.12–1.13 с, архив 157 236 498 байт | — |
+| Импорт (проверка архива + замена + проверка) | 0.94–0.96 с | — |
+
+Команды: `swift run -c release InventoryBenchmark`, `swift test -c release --filter SearchPerformanceTests`, запуск с `INVENTORY_STORE_PATH` и `INVENTORY_LAUNCH_PROBE` (см. `README.md`). После каждого импорта проверены 500 вещей и наличие всех файлов фото.
+
+- Последние визуальные правки (23.11.2026): скрыты заметки и количество в карточке и форме вещи, «Статус» и «Место» в форме на одной строке, фото-заглушка из ThingsMap2 для новых вещей и мест, внутренние отступы в формах «Люди» и «Статусы».
+- Не проверено вручную: Intel и macOS 12.
 
 ## Входы для следующей задачи
 
-- Этап 5 принят; следующая работа — этап 6 по карточкам.
-- Открытый хвост T05.17: замер экспорта/импорта на 500 вещах (release, D11), запись машины и повторов; ручная проверка GUI владельцем выполнена при приёмке.
+- Этапов после 5 в плане нет: MVP завершён и принят, замеры T05.17 закрыты.
 - Ручная проверка на Intel и macOS 12 по-прежнему не выполнялась.
 - Если потребуется перепроверка раздела «Данные»: экспорт → импорт (с подтверждением числа) → откат → перенос в новую папку → возврат на старую → удаление копии; напоминание; окно «Настройки…».
 - Ключевые файлы этапа 5: `Sources/InventoryCore/Data/{StorageMaintenance,StartupRecovery,RecoveryJournal,BackupSnapshotService,BackupCodec,BackupArchiveReader,BackupValidator,StagedDatabaseBuilder,StoreWriteGate,StorageCoordinator}.swift`, `Sources/InventoryCore/Domain/{BackupReminder,Backup}.swift`, `Sources/InventoryUI/{AppModelData,DataWorkspaceView,SettingsView,InventoryRootView}.swift`.

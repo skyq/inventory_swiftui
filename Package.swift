@@ -59,6 +59,12 @@ let package = Package(
       path: "Sources/InventoryFixture",
       swiftSettings: strictSettings
     ),
+    .executableTarget(
+      name: "InventoryBenchmark",
+      dependencies: ["InventoryCore"],
+      path: "Sources/InventoryBenchmark",
+      swiftSettings: strictSettings
+    ),
     .testTarget(
       name: "InventoryCoreTests",
       dependencies: [
