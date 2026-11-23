@@ -1,4 +1,3 @@
-import AppKit
 import Foundation
 import InventoryCore
 import UniformTypeIdentifiers
@@ -78,32 +77,41 @@ enum PhotoDrop {
 }
 
 /// Чтение изображения из системного буфера обмена. Вне действия пользователя не вызывается.
-enum PhotoClipboard {
-  static func read() -> (data: Data, sourceName: String?)? {
-    let pasteboard = NSPasteboard.general
-    if let urls = pasteboard.readObjects(
-      forClasses: [NSURL.self],
-      options: [.urlReadingFileURLsOnly: true]
-    ) as? [URL], let url = urls.first {
-      if let data = try? Data(contentsOf: url) {
-        return (data, url.lastPathComponent)
-      }
-    }
+#if os(macOS)
+  import AppKit
 
-    if let data = pasteboard.data(forType: .png) {
-      return (data, "clipboard.png")
-    }
-    if let data = pasteboard.data(forType: .tiff),
-      let rep = NSBitmapImageRep(data: data),
-      let jpeg = rep.representation(using: .jpeg, properties: [.compressionFactor: 0.95])
-    {
-      return (jpeg, "clipboard.jpg")
-    }
-    for type in ["public.jpeg", "public.heic", "public.heif"] {
-      if let data = pasteboard.data(forType: NSPasteboard.PasteboardType(type)) {
-        return (data, "clipboard")
+  enum PhotoClipboard {
+    static func read() -> (data: Data, sourceName: String?)? {
+      let pasteboard = NSPasteboard.general
+      if let urls = pasteboard.readObjects(
+        forClasses: [NSURL.self],
+        options: [.urlReadingFileURLsOnly: true]
+      ) as? [URL], let url = urls.first {
+        if let data = try? Data(contentsOf: url) {
+          return (data, url.lastPathComponent)
+        }
       }
+
+      if let data = pasteboard.data(forType: .png) {
+        return (data, "clipboard.png")
+      }
+      if let data = pasteboard.data(forType: .tiff),
+        let rep = NSBitmapImageRep(data: data),
+        let jpeg = rep.representation(using: .jpeg, properties: [.compressionFactor: 0.95])
+      {
+        return (jpeg, "clipboard.jpg")
+      }
+      for type in ["public.jpeg", "public.heic", "public.heif"] {
+        if let data = pasteboard.data(forType: NSPasteboard.PasteboardType(type)) {
+          return (data, "clipboard")
+        }
+      }
+      return nil
     }
-    return nil
   }
-}
+#else
+  /// На iOS чтение буфера появится вместе с кнопкой «Вставить» (IOS.05).
+  enum PhotoClipboard {
+    static func read() -> (data: Data, sourceName: String?)? { nil }
+  }
+#endif

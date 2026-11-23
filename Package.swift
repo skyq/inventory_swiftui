@@ -9,7 +9,7 @@ let strictSettings: [SwiftSetting] = [
 let package = Package(
   name: "Inventory",
   defaultLocalization: "ru",
-  platforms: [.macOS(.v12)],
+  platforms: [.macOS(.v12), .iOS("26.0")],
   products: [
     .library(name: "InventoryCore", targets: ["InventoryCore"]),
     .library(name: "InventoryPlatform", targets: ["InventoryPlatform"]),

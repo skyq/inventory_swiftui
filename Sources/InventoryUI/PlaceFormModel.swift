@@ -1,4 +1,3 @@
-import AppKit
 import Foundation
 import InventoryCore
 
@@ -30,7 +29,7 @@ public final class PlaceFormModel: ObservableObject {
   @Published public private(set) var isProcessingPhoto = false
   @Published public private(set) var isSaving = false
   @Published public private(set) var didSave = false
-  @Published public private(set) var previewImage: NSImage?
+  @Published public private(set) var previewImage: PlatformImage?
   @Published public var alert: PlaceFormAlert?
 
   private let places: any PlaceService
@@ -112,14 +111,15 @@ public final class PlaceFormModel: ObservableObject {
         }
       ).value
     {
-      previewImage = NSImage(data: data)
+      previewImage = PlatformImage(data: data)
     }
 
     if !isEditing, !hasPhoto {
       let processed = await DefaultPhoto.process(images: images)
       if let processed, preparedPhoto == nil, existingThumbURL == nil {
         preparedPhoto = processed
-        previewImage = NSImage(data: processed.thumbBytes) ?? NSImage(data: processed.photoBytes)
+        previewImage =
+          PlatformImage(data: processed.thumbBytes) ?? PlatformImage(data: processed.photoBytes)
       }
     }
 
@@ -155,7 +155,8 @@ public final class PlaceFormModel: ObservableObject {
     do {
       let processed = try await PhotoPipeline.process(url: url, images: images)
       preparedPhoto = processed
-      previewImage = NSImage(data: processed.thumbBytes) ?? NSImage(data: processed.photoBytes)
+      previewImage =
+        PlatformImage(data: processed.thumbBytes) ?? PlatformImage(data: processed.photoBytes)
     } catch let error as AppException {
       alert = .failure(ErrorPresenter.message(for: error))
     } catch {
@@ -190,7 +191,8 @@ public final class PlaceFormModel: ObservableObject {
         images: images
       )
       preparedPhoto = processed
-      previewImage = NSImage(data: processed.thumbBytes) ?? NSImage(data: processed.photoBytes)
+      previewImage =
+        PlatformImage(data: processed.thumbBytes) ?? PlatformImage(data: processed.photoBytes)
     } catch let error as AppException {
       alert = .failure(ErrorPresenter.message(for: error))
     } catch {

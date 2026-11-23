@@ -85,3 +85,4 @@ logs/
 pubspec.lock
 build-debug/
 build-ios/
+build-ios-pkg/
