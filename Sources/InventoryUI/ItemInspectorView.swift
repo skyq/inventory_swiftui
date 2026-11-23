@@ -44,19 +44,11 @@ struct ItemInspectorView: View {
             .textSelection(.enabled)
         }
 
-        if !details.item.notes.isEmpty {
-          detailRow(title: L10n.string("items.notes"), value: details.item.notes)
-        }
-
         detailRow(
           title: L10n.string("items.status"),
           value: details.status.isArchived
             ? "\(details.status.name) (\(L10n.string("gallery.archived")))"
             : details.status.name
-        )
-        detailRow(
-          title: L10n.string("items.quantity"),
-          value: "\(details.item.quantity)"
         )
         detailRow(
           title: L10n.string("items.tags"),

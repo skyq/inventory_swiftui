@@ -35,57 +35,27 @@ struct ItemFormView: View {
               }
           }
 
-          HStack(alignment: .top, spacing: 16) {
-            field(title: L10n.string("items.description"), hint: nil) {
-              TextEditor(text: $model.description)
-                .font(.body)
-                .frame(minHeight: 64, maxHeight: 100)
-                .padding(4)
-                .overlay {
-                  RoundedRectangle(cornerRadius: 5)
-                    .stroke(Color(nsColor: .separatorColor), lineWidth: 1)
-                }
-            }
-
-            field(title: L10n.string("items.notes"), hint: nil) {
-              TextEditor(text: $model.notes)
-                .font(.body)
-                .frame(minHeight: 64, maxHeight: 100)
-                .padding(4)
-                .overlay {
-                  RoundedRectangle(cornerRadius: 5)
-                    .stroke(Color(nsColor: .separatorColor), lineWidth: 1)
-                }
-            }
+          field(title: L10n.string("items.description"), hint: nil) {
+            TextEditor(text: $model.description)
+              .font(.body)
+              .frame(minHeight: 64, maxHeight: 100)
+              .padding(4)
+              .overlay {
+                RoundedRectangle(cornerRadius: 5)
+                  .stroke(Color(nsColor: .separatorColor), lineWidth: 1)
+              }
           }
 
           photoSection
 
           HStack(alignment: .top, spacing: 16) {
-            field(title: L10n.string("items.quantity"), hint: nil) {
-              Stepper(value: $model.quantity, in: 1...99_999) {
-                Text("\(model.quantity)")
-                  .monospacedDigit()
-              }
-              .frame(maxWidth: 180, alignment: .leading)
-            }
-
             statusSection
+              .frame(maxWidth: .infinity, alignment: .leading)
+            placeSection
+              .frame(maxWidth: .infinity, alignment: .leading)
           }
 
           tagsSection
-
-          field(title: L10n.string("items.place"), hint: nil) {
-            Picker("", selection: $model.placeId) {
-              Text(L10n.string("items.noPlace")).tag(String?.none)
-              ForEach(model.placeChoices) { choice in
-                Text(choice.path).tag(Optional(choice.id))
-              }
-            }
-            .labelsHidden()
-            .pickerStyle(.menu)
-            .frame(maxWidth: 420, alignment: .leading)
-          }
         }
         .padding(20)
       }
@@ -259,6 +229,20 @@ struct ItemFormView: View {
         .pickerStyle(.menu)
         .frame(maxWidth: 220, alignment: .leading)
       }
+    }
+  }
+
+  private var placeSection: some View {
+    field(title: L10n.string("items.place"), hint: nil) {
+      Picker("", selection: $model.placeId) {
+        Text(L10n.string("items.noPlace")).tag(String?.none)
+        ForEach(model.placeChoices) { choice in
+          Text(choice.path).tag(Optional(choice.id))
+        }
+      }
+      .labelsHidden()
+      .pickerStyle(.menu)
+      .frame(maxWidth: .infinity, alignment: .leading)
     }
   }
 
