@@ -66,14 +66,16 @@
 - T05.02 DONE: `BackupCodec.exportV1` пишет `manifest.json` (format_version 1, app_version, exported_at, counts), `data.json` (9 таблиц, TEXT/INTEGER/NULL), `photos/`, `thumbs/`. Файл пишется во временное имя и публикуется после успеха. Отклонение: `backup.last_export_ms` и UI-прогресс — в T05.11/T05.13.
 - T05.03 DONE: `BackupArchiveReader.stage` проверяет ZIP, пути (zip-slip, абсолютные, `..`, symlink, дубли, коллизии регистра), сжатие (≤100) и лимиты D11 (2 GiB, 100 000 файлов, data.json ≤512 MiB), распаковывает только в staging и удаляет его при ошибке.
 - T05.04 DONE: `BackupValidatorV1` / `BackupFormatRegistry` проверяет строгую схему девяти таблиц, FK, цикл мест, счётчики манифеста, активные статусы по умолчанию и наличие фото. Формат поддержан только 1; версия 2 — `backupNewerFormat`.
-- Тесты: `BackupSnapshotTests` (5), `BackupCodecTests` (5), `BackupArchiveReaderTests` (13), `BackupValidatorTests` (17, включая round-trip реальной сессии).
-- Итоги: `swift test` — 256 (195 core / 9 platform / 52 UI), все проходят; `swift-format lint --recursive --strict Sources Tests` — чисто.
+- T05.05 DONE: `StagedDatabaseBuilder.build` создаёт отдельный `inventory.db` текущей схемой без seed, вставляет данные одной транзакцией (места топологически, история INSERT), проверяет `integrity_check` и `foreign_key_check`, ставит `user_version`. Существующий файл не перезаписывается; при ошибке удаляется только свой файл.
+- Тесты: `BackupSnapshotTests` (5), `BackupCodecTests` (5), `BackupArchiveReaderTests` (13), `BackupValidatorTests` (17, включая round-trip реальной сессии), `StagedDatabaseBuilderTests` (4).
+- Итоги: `swift test` — 260 (199 core / 9 platform / 52 UI), все проходят; `swift-format lint --recursive --strict Sources Tests` — чисто.
 - Для T05.06–T05.09 требуется утверждённый `RECOVERY_PROTOCOL.md` (D01). В репозитории его нет. Замену данных не делаем без протокола.
 - Этап 5 не принят; T05.18 остаётся BLOCKED до финальной проверки владельцем.
 
 ## Входы для следующей задачи
 
-- Следующий ID: T05.05 (staging-БД из проверенного архива, без записи в живое хранилище). Вход — `ValidatedBackup`.
+- Следующий ID: T05.06. Карточки T05.06–T05.10 ссылаются на `RECOVERY_PROTOCOL.md`, которого нет; без утверждения протокола они BLOCKED. Перед T05.11+ сверить карточки; T05.14 (напоминание) по смыслу не зависит от протокола.
+- T05.17 в карточке содержит устаревшие Flutter/Dart-команды (`flutter build`, `dart test`); при выполнении заменить на Swift-команды из `TOOLCHAIN.md`.
 - Ключевые файлы этапа 5: `Sources/InventoryCore/Data/{BackupSnapshotService,BackupCodec,BackupArchiveReader,BackupValidator,StoreWriteGate,PhotoLifecycle,StorageCoordinator,MigrationCoordinator}.swift`, `Domain/Backup.swift`, `Domain/StoreLayout.swift`.
 - Блокирующий пункт: отсутствующий утверждённый `RECOVERY_PROTOCOL.md` для T05.06–T05.09 (замена, журнал фаз, откат).
 - `Inventory.xcodeproj` генерируется из `project.yml` через XcodeGen; новые файлы пакета подхватываются, после изменения целей выполнять `xcodegen generate`.

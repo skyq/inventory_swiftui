@@ -9,6 +9,12 @@ public struct ValidatedBackup: Sendable {
   /// Проверенные строки в порядке `BackupFormat.tableNames`.
   public let tables: [BackupTable]
 
+  public init(staged: StagedBackupArchive, manifest: BackupManifest, tables: [BackupTable]) {
+    self.staged = staged
+    self.manifest = manifest
+    self.tables = tables
+  }
+
   public var itemCount: Int { tables.first { $0.name == "items" }?.rows.count ?? 0 }
 
   public var counts: [String: Int] {
