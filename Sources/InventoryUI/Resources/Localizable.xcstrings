@@ -1311,12 +1311,32 @@
         }
       }
     },
+    "people.empty": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Людей пока нет"
+          }
+        }
+      }
+    },
     "people.history": {
       "localizations": {
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "История передач"
+          }
+        }
+      }
+    },
+    "people.title": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Люди"
           }
         }
       }

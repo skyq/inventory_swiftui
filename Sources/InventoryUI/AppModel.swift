@@ -245,6 +245,13 @@ public final class AppModel: ObservableObject {
     Task { await gallery?.selectItem(id: itemId) }
   }
 
+  /// Карточка вещи для экранов без галереи (история человека на iPhone).
+  public func loadItemDetails(_ itemId: String) async -> ItemDetails? {
+    guard let items = session?.items else { return nil }
+    let result = await AsyncCore.run { try items.get(itemId) }
+    return try? result.get()
+  }
+
   /// Переход к месту из крошек карточки вещи.
   public func openPlaceInPlaces(_ placeId: String) {
     guard case .ready = loadState else { return }

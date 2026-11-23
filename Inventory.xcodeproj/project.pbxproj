@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1108CD3B8169675478AAD663 /* PlaceBrowserModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8382DC0A5C2EE757AC9B63 /* PlaceBrowserModelTests.swift */; };
 		17A13C13266B2574BE44F964 /* ItemFormModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0771542E60D2DD97F4FB9E /* ItemFormModelTests.swift */; };
+		185114E83F61B90D588F9BC0 /* PersonFormScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39AAA989C0394CE22D53C2D /* PersonFormScreen.swift */; };
 		1B71B8361EB90C2A28EC5563 /* InventoryCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5B1D8F34718CCD1A3CC1A775 /* InventoryCore */; };
 		25FA4DE675B9F333F34CA26B /* GalleryFiltersSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D02051047CC8BA5CD727817 /* GalleryFiltersSheet.swift */; };
 		26C71DAFF0EF60AD364C8045 /* ItemFormScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE16448B4E7125552D0E8DB3 /* ItemFormScreen.swift */; };
@@ -34,6 +35,7 @@
 		E5B4C8143B0E186B3AF2BBDF /* InventoryCore in Frameworks */ = {isa = PBXBuildFile; productRef = 70F4E054E4211BA064EAB0F3 /* InventoryCore */; };
 		F5B7B786FC5FC180444F144F /* AppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83CF05B6027DBE6EA5BCBF27 /* AppModelTests.swift */; };
 		F70945BF7FE8FE3D168E9A22 /* GalleryModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C7B00D65830C770C838EA48 /* GalleryModelTests.swift */; };
+		FC5D02ADE7ED737D0290439A /* PeopleScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04A9D7DAC863DA60432EF00 /* PeopleScreen.swift */; };
 		FCB089C1733FC1D611EC25B9 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EE5E7D81F35E5B50BB54BA /* CameraPicker.swift */; };
 		FE8E1BFA67ACE5C7EB6E8A84 /* InventoryPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = 016380853AEF0F38DF7CAE73 /* InventoryPlatform */; };
 /* End PBXBuildFile section */
@@ -59,6 +61,8 @@
 		C114768BB347078B8A610BAC /* PlacesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesScreen.swift; sourceTree = "<group>"; };
 		C970AA9FF1C8D7C0FAC657C4 /* GalleryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryScreen.swift; sourceTree = "<group>"; };
 		CFBE4EA8B824CF04E20CFFA7 /* InventoryAppIOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryAppIOSApp.swift; sourceTree = "<group>"; };
+		D04A9D7DAC863DA60432EF00 /* PeopleScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleScreen.swift; sourceTree = "<group>"; };
+		D39AAA989C0394CE22D53C2D /* PersonFormScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonFormScreen.swift; sourceTree = "<group>"; };
 		DE16448B4E7125552D0E8DB3 /* ItemFormScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemFormScreen.swift; sourceTree = "<group>"; };
 		E198DB514E7DA8098FE109EF /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
 		E5B4FF605E11F04F1EADAA91 /* StorageSelfCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageSelfCheck.swift; sourceTree = "<group>"; };
@@ -119,6 +123,8 @@
 				E5D4FDE6CFB79FBA0160C85D /* IOSRootView.swift */,
 				B0CE60366F6E362C194984AE /* ItemCardView.swift */,
 				DE16448B4E7125552D0E8DB3 /* ItemFormScreen.swift */,
+				D04A9D7DAC863DA60432EF00 /* PeopleScreen.swift */,
+				D39AAA989C0394CE22D53C2D /* PersonFormScreen.swift */,
 				A556A0B15614E3B813129425 /* PlaceFormScreen.swift */,
 				C114768BB347078B8A610BAC /* PlacesScreen.swift */,
 				64A277C6AB2B4BA19784C1AB /* SelfCheckView.swift */,
@@ -302,6 +308,8 @@
 				B16A22E69D29B7B06BC78EFF /* InventoryAppIOSApp.swift in Sources */,
 				6819EF2E59134C377388C374 /* ItemCardView.swift in Sources */,
 				26C71DAFF0EF60AD364C8045 /* ItemFormScreen.swift in Sources */,
+				FC5D02ADE7ED737D0290439A /* PeopleScreen.swift in Sources */,
+				185114E83F61B90D588F9BC0 /* PersonFormScreen.swift in Sources */,
 				C847D4DB0C3036C2763A854A /* PlaceFormScreen.swift in Sources */,
 				CE2C33D9B0001A4A337C97EF /* PlacesScreen.swift in Sources */,
 				BADD6103DBBE2186D4470F37 /* SelfCheckView.swift in Sources */,
