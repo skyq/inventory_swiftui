@@ -38,6 +38,7 @@
 		FC5D02ADE7ED737D0290439A /* PeopleScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04A9D7DAC863DA60432EF00 /* PeopleScreen.swift */; };
 		FCB089C1733FC1D611EC25B9 /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EE5E7D81F35E5B50BB54BA /* CameraPicker.swift */; };
 		FE8E1BFA67ACE5C7EB6E8A84 /* InventoryPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = 016380853AEF0F38DF7CAE73 /* InventoryPlatform */; };
+		FFDBC01A086AC96967D0F1EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D457AC081F3218F4A49E1ED8 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +64,7 @@
 		CFBE4EA8B824CF04E20CFFA7 /* InventoryAppIOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryAppIOSApp.swift; sourceTree = "<group>"; };
 		D04A9D7DAC863DA60432EF00 /* PeopleScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleScreen.swift; sourceTree = "<group>"; };
 		D39AAA989C0394CE22D53C2D /* PersonFormScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonFormScreen.swift; sourceTree = "<group>"; };
+		D457AC081F3218F4A49E1ED8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DE16448B4E7125552D0E8DB3 /* ItemFormScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemFormScreen.swift; sourceTree = "<group>"; };
 		E198DB514E7DA8098FE109EF /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
 		E5B4FF605E11F04F1EADAA91 /* StorageSelfCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageSelfCheck.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 		28B7484471A12AE29F6889C4 /* InventoryAppIOS */ = {
 			isa = PBXGroup;
 			children = (
+				D457AC081F3218F4A49E1ED8 /* Assets.xcassets */,
 				40EE5E7D81F35E5B50BB54BA /* CameraPicker.swift */,
 				6D02051047CC8BA5CD727817 /* GalleryFiltersSheet.swift */,
 				C970AA9FF1C8D7C0FAC657C4 /* GalleryScreen.swift */,
@@ -219,6 +222,7 @@
 			buildConfigurationList = F29D734E2DF3CF40E7939CEC /* Build configuration list for PBXNativeTarget "InventoryAppIOS" */;
 			buildPhases = (
 				D4043DB4DE511870B0D82FF6 /* Sources */,
+				65F1A7C5CC75CE5F82CE00BC /* Resources */,
 				B8F92CADE0E274BE7E58D20A /* Frameworks */,
 			);
 			buildRules = (
@@ -295,6 +299,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		65F1A7C5CC75CE5F82CE00BC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FFDBC01A086AC96967D0F1EB /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D4043DB4DE511870B0D82FF6 /* Sources */ = {
