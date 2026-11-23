@@ -64,6 +64,7 @@ let package = Package(
       dependencies: [
         "InventoryCore",
         .product(name: "GRDB", package: "GRDB.swift"),
+        .product(name: "ZIPFoundation", package: "ZIPFoundation"),
       ],
       path: "Tests/InventoryCoreTests",
       swiftSettings: strictSettings

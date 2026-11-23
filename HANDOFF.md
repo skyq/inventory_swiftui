@@ -62,16 +62,18 @@
 ## Этап 5: состояние
 
 - Этап 4 принят владельцем 22.11.2026 («приемка ок»), T04.08 → DONE.
-- T05.01 DONE: `BackupSnapshotService` снимает все девять таблиц в одной read-транзакции, читает `user_version` и копирует только фото/превью, на которые ссылаются `places` и `items`. Временная область по умолчанию в системном temp; `logs`, `_safety`, preferences, lock и `inventory.db` в неё не попадают.
-- Согласованность обеспечивает `StoreWriteGate`: `InventoryDatabase.write` и `PhotoLifecycle.replace/deleteAfterCommit` удерживают гейт, а `makeSnapshot` — эксклюзивно на всё время чтения и копирования файлов. NSRecursiveLock допускает вложенный `db.write` из того же потока. При ошибке гейт освобождается через `defer`, временная папка удаляется.
-- `BackupSnapshot.discard()` удаляет временную область после упаковки/отказа.
-- Тесты T05.01: девять таблиц и типы TEXT/INTEGER/NULL, WAL-данные, отсутствие чужих файлов и служебных папок, замена фото после снимка не меняет копию, блокировка конкурентной записи, очистка temp и освобождение гейта после ошибки.
-- Для T05.06–T05.09 требуется утверждённый `RECOVERY_PROTOCOL.md` (D01). В репозитории его не было; безопасная часть (гейт снимка) реализована без подмены протокола, полная замена данных остаётся BLOCKED до документа и подтверждения владельца.
+- T05.01 DONE: `BackupSnapshotService` снимает девять таблиц в одной read-транзакции и копирует только фото/превью из `places` и `items`. `StoreWriteGate` блокирует запись на время снимка; при ошибке временная папка удаляется.
+- T05.02 DONE: `BackupCodec.exportV1` пишет `manifest.json` (format_version 1, app_version, exported_at, counts), `data.json` (9 таблиц, TEXT/INTEGER/NULL), `photos/`, `thumbs/`. Файл пишется во временное имя и публикуется после успеха. Отклонение: `backup.last_export_ms` и UI-прогресс — в T05.11/T05.13.
+- T05.03 DONE: `BackupArchiveReader.stage` проверяет ZIP, пути (zip-slip, абсолютные, `..`, symlink, дубли, коллизии регистра), сжатие (≤100) и лимиты D11 (2 GiB, 100 000 файлов, data.json ≤512 MiB), распаковывает только в staging и удаляет его при ошибке.
+- T05.04 DONE: `BackupValidatorV1` / `BackupFormatRegistry` проверяет строгую схему девяти таблиц, FK, цикл мест, счётчики манифеста, активные статусы по умолчанию и наличие фото. Формат поддержан только 1; версия 2 — `backupNewerFormat`.
+- Тесты: `BackupSnapshotTests` (5), `BackupCodecTests` (5), `BackupArchiveReaderTests` (13), `BackupValidatorTests` (17, включая round-trip реальной сессии).
+- Итоги: `swift test` — 256 (195 core / 9 platform / 52 UI), все проходят; `swift-format lint --recursive --strict Sources Tests` — чисто.
+- Для T05.06–T05.09 требуется утверждённый `RECOVERY_PROTOCOL.md` (D01). В репозитории его нет. Замену данных не делаем без протокола.
 - Этап 5 не принят; T05.18 остаётся BLOCKED до финальной проверки владельцем.
 
 ## Входы для следующей задачи
 
-- Следующий ID: T05.02 (упаковка снимка в архив v1).
-- Ключевые файлы этапа 5: `Sources/InventoryCore/Data/BackupSnapshotService.swift`, `StoreWriteGate.swift`, `Domain/Backup.swift`, `StorageCoordinator.swift`, `MigrationCoordinator.swift`, `InventoryDatabase.swift`, `Schema.swift`, `PhotoLifecycle.swift`, `Sources/InventoryCore/Domain/StoreLayout.swift`, `Sources/InventoryUI/SettingsView.swift`, `AppModel.swift`, `project.yml`.
-- `Inventory.xcodeproj` генерируется из `project.yml` через XcodeGen; новые файлы пакета подхватываются автоматически, но после изменения состава/настроек целей выполнять `xcodegen generate`.
-- Блокирующий пункт: отсутствующий утверждённый `RECOVERY_PROTOCOL.md` для T05.06–T05.09; до его ревью можно безопасно делать T05.01–T05.05.
+- Следующий ID: T05.05 (staging-БД из проверенного архива, без записи в живое хранилище). Вход — `ValidatedBackup`.
+- Ключевые файлы этапа 5: `Sources/InventoryCore/Data/{BackupSnapshotService,BackupCodec,BackupArchiveReader,BackupValidator,StoreWriteGate,PhotoLifecycle,StorageCoordinator,MigrationCoordinator}.swift`, `Domain/Backup.swift`, `Domain/StoreLayout.swift`.
+- Блокирующий пункт: отсутствующий утверждённый `RECOVERY_PROTOCOL.md` для T05.06–T05.09 (замена, журнал фаз, откат).
+- `Inventory.xcodeproj` генерируется из `project.yml` через XcodeGen; новые файлы пакета подхватываются, после изменения целей выполнять `xcodegen generate`.

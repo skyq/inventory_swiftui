@@ -1,5 +1,50 @@
 import Foundation
 
+/// Манифест архива v1. Ключи JSON фиксированы D11 и не зависят от
+/// Swift-имён свойств.
+public struct BackupManifest: Sendable, Equatable, Codable {
+  public let formatVersion: Int
+  public let appVersion: String
+  public let exportedAt: Int64
+  public let counts: [String: Int]
+
+  public init(
+    formatVersion: Int = BackupFormat.version,
+    appVersion: String,
+    exportedAt: Int64,
+    counts: [String: Int]
+  ) {
+    self.formatVersion = formatVersion
+    self.appVersion = appVersion
+    self.exportedAt = exportedAt
+    self.counts = counts
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case formatVersion = "format_version"
+    case appVersion = "app_version"
+    case exportedAt = "exported_at"
+    case counts
+  }
+}
+
+/// Прогресс упаковки архива. `completedSteps` включает manifest и data.json,
+/// поэтому после успеха всегда равен `totalSteps`.
+public struct BackupExportProgress: Sendable, Equatable {
+  public let completedSteps: Int
+  public let totalSteps: Int
+
+  public init(completedSteps: Int, totalSteps: Int) {
+    self.completedSteps = completedSteps
+    self.totalSteps = totalSteps
+  }
+
+  public var fraction: Double {
+    guard totalSteps > 0 else { return 1 }
+    return Double(completedSteps) / Double(totalSteps)
+  }
+}
+
 /// Константы формата архива v1 (D11). Имена таблиц идут в порядке,
 /// зафиксированном для `data.json` и `manifest.json`.
 public enum BackupFormat {
