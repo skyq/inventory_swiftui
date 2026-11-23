@@ -137,16 +137,14 @@ private struct StatusDetailView: View {
 
           Section {
             Toggle(
-              "Скрывать из галереи",
+              L10n.string("statuses.hidden"),
               isOn: Binding(
                 get: { status.isHidden },
                 set: { hidden in Task { _ = await statuses.setHidden(status.id, hidden: hidden) } }
               )
             )
           } footer: {
-            Text(
-              "Вещи с этим статусом не видны в галерее и поиске, пока в фильтрах не включено «Показывать скрытые»."
-            )
+            Text(L10n.string("statuses.hiddenHint"))
           }
 
           Section {

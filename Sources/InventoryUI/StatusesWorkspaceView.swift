@@ -203,6 +203,19 @@
               }
             }
 
+            VStack(alignment: .leading, spacing: 4) {
+              Toggle(
+                L10n.string("statuses.hidden"),
+                isOn: Binding(
+                  get: { status.isHidden },
+                  set: { hidden in Task { _ = await model.setHidden(status.id, hidden: hidden) } }
+                )
+              )
+              Text(L10n.string("statuses.hiddenHint"))
+                .font(.caption)
+                .foregroundColor(.secondary)
+            }
+
             HStack(spacing: 8) {
               Button(L10n.string("statuses.rename")) {
                 nameSheet = .rename(status)

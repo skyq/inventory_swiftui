@@ -1351,6 +1351,26 @@
         }
       }
     },
+    "statuses.hidden": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Скрывать из галереи"
+          }
+        }
+      }
+    },
+    "statuses.hiddenHint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вещи с этим статусом не видны в галерее и поиске, пока в фильтрах не включено «Показывать скрытые»."
+          }
+        }
+      }
+    },
     "statuses.title": {
       "localizations": {
         "ru": {
