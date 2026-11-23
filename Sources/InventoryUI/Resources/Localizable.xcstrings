@@ -2570,6 +2570,506 @@
           }
         }
       }
+    },
+    "data.activity.export": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Экспорт данных"
+          }
+        }
+      }
+    },
+    "data.activity.check": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Проверка архива"
+          }
+        }
+      }
+    },
+    "data.activity.import": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Импорт данных"
+          }
+        }
+      }
+    },
+    "data.activity.rollback": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Откат импорта"
+          }
+        }
+      }
+    },
+    "data.activity.move": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перенос данных"
+          }
+        }
+      }
+    },
+    "data.activity.open": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открытие хранилища"
+          }
+        }
+      }
+    },
+    "data.cancel": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмена"
+          }
+        }
+      }
+    },
+    "data.export.section": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Экспорт"
+          }
+        }
+      }
+    },
+    "data.export.hint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Архив содержит данные и фото. Файл сохраняется в выбранной папке."
+          }
+        }
+      }
+    },
+    "data.export.button": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Экспорт архива…"
+          }
+        }
+      }
+    },
+    "data.import.section": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Импорт"
+          }
+        }
+      }
+    },
+    "data.import.hint": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Импорт полностью заменяет текущие данные. Перед заменой создаётся копия текущего хранилища."
+          }
+        }
+      }
+    },
+    "data.import.button": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Импорт архива…"
+          }
+        }
+      }
+    },
+    "data.import.confirmTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заменить данные из архива?"
+          }
+        }
+      }
+    },
+    "data.import.confirmBody": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В архиве %lld вещей. Сейчас в хранилище %lld вещей. Текущие данные будут полностью заменены и сохранены в копии."
+          }
+        }
+      }
+    },
+    "data.import.confirmField": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Введите число вещей из архива"
+          }
+        }
+      }
+    },
+    "data.import.confirm": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заменить данные"
+          }
+        }
+      }
+    },
+    "data.rollback.button": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Откатить последний импорт"
+          }
+        }
+      }
+    },
+    "data.rollback.unavailable": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Откат доступен после импорта."
+          }
+        }
+      }
+    },
+    "data.rollback.title": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Откатить импорт?"
+          }
+        }
+      }
+    },
+    "data.rollback.message": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Текущие данные будут заменены копией, сделанной перед последним импортом."
+          }
+        }
+      }
+    },
+    "data.rollback.confirm": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Откатить"
+          }
+        }
+      }
+    },
+    "data.storage.section": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Папка данных"
+          }
+        }
+      }
+    },
+    "data.storage.move": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перенести в другую папку…"
+          }
+        }
+      }
+    },
+    "data.storage.open": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открыть другую папку…"
+          }
+        }
+      }
+    },
+    "data.folder.moveTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перенести данные?"
+          }
+        }
+      }
+    },
+    "data.folder.openTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открыть папку?"
+          }
+        }
+      }
+    },
+    "data.folder.moveBody": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Данные будут скопированы в %@. Старая папка не удаляется: решение о её удалении остаётся за вами."
+          }
+        }
+      }
+    },
+    "data.folder.openBody": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Хранилище в %@ будет открыто. Текущие данные не изменятся."
+          }
+        }
+      }
+    },
+    "data.folder.cloudWarning": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Папка находится в сервисе «%@». Синхронизация может мешать работе приложения."
+          }
+        }
+      }
+    },
+    "data.folder.confirm": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Продолжить"
+          }
+        }
+      }
+    },
+    "data.safety.section": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Копии безопасности"
+          }
+        }
+      }
+    },
+    "data.safety.beforeImport": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Копия до последнего импорта: %@"
+          }
+        }
+      }
+    },
+    "data.safety.none": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "нет"
+          }
+        }
+      }
+    },
+    "data.safety.clearBefore": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить копию до импорта…"
+          }
+        }
+      }
+    },
+    "data.safety.clearTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить копию?"
+          }
+        }
+      }
+    },
+    "data.safety.clearMessage": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Копия будет удалена без возможности отката. Текущие данные не изменятся."
+          }
+        }
+      }
+    },
+    "data.safety.clearConfirm": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить"
+          }
+        }
+      }
+    },
+    "data.reminder.section": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Напоминание о копии"
+          }
+        }
+      }
+    },
+    "data.reminder.toggle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Напоминать о ручной копии"
+          }
+        }
+      }
+    },
+    "data.reminder.due": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Давно не было экспорта. Сохраните архив данных."
+          }
+        }
+      }
+    },
+    "data.reminder.never": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Экспорта ещё не было."
+          }
+        }
+      }
+    },
+    "data.reminder.last": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Последний экспорт: %@"
+          }
+        }
+      }
+    },
+    "settings.statuses": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статусы"
+          }
+        }
+      }
+    },
+    "settings.status.default": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По умолчанию для новых вещей"
+          }
+        }
+      }
+    },
+    "settings.status.transfer": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Предлагать при передаче"
+          }
+        }
+      }
+    },
+    "settings.status.return": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Предлагать при возврате"
+          }
+        }
+      }
+    },
+    "settings.statusesUnavailable": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Откройте хранилище, чтобы выбрать статусы."
+          }
+        }
+      }
+    },
+    "settings.reminder": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Напоминание"
+          }
+        }
+      }
+    },
+    "settings.save": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сохранить"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

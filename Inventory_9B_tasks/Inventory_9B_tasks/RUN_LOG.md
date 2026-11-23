@@ -70,16 +70,16 @@
 | T05.03 | DONE | `Sources/InventoryCore/Data/BackupArchiveReader.swift`, `Tests/InventoryCoreTests/BackupArchiveReaderTests.swift` | `swift test --filter BackupArchiveReaderTests` — 13 тестов | Повреждённый ZIP, manifest без версии/строка/0/булево/лишние поля, версия 2 (`backupNewerFormat`), zip-slip, абсолютные пути, symlink, дубли и коллизии регистра, бомба сжатия, лимиты count/total/data.json; распаковка только в staging с проверкой назначения; при ошибке staging удаляется; активные данные не читаются |
 | T05.04 | DONE | `Sources/InventoryCore/Data/BackupValidator.swift`, `Tests/InventoryCoreTests/BackupValidatorTests.swift` | `swift test --filter BackupValidatorTests` — 17 тестов, включая round-trip: архив из реальной сессии (UUID) → reader → validator | Строгая схема девяти таблиц (ключи, типы, NULL, UUID, уникальность id/name_key/пар), FK, цикл мест, счётчики манифеста, активные статусы по умолчанию, три настройки, фото в `photos/` и `thumbs/` с наличием файлов; `BackupFormatRegistry` поддерживает только формат 1 |
 | T05.05 | DONE | `Sources/InventoryCore/Data/StagedDatabaseBuilder.swift`, `Tests/InventoryCoreTests/StagedDatabaseBuilderTests.swift`, `BackupValidator.swift` (публичный init `ValidatedBackup`) | `swift test --filter StagedDatabaseBuilderTests` — 4 теста | Новая БД по текущей миграции, без seed; родители мест вставляются топологически; история вставляется INSERT, триггеры UPDATE/DELETE работают; `integrity_check` и `foreign_key_check` до commit; существующий файл не перезаписывается; при ошибке удаляется только свой файл и журналы |
-| T05.06 | TODO | — | Не выполнялись | — |
-| T05.07 | TODO | — | Не выполнялись | — |
-| T05.08 | TODO | — | Не выполнялись | — |
-| T05.09 | TODO | — | Не выполнялись | — |
-| T05.10 | TODO | — | Не выполнялись | — |
-| T05.11 | TODO | — | Не выполнялись | — |
-| T05.12 | TODO | — | Не выполнялись | — |
-| T05.13 | TODO | — | Не выполнялись | — |
-| T05.14 | TODO | — | Не выполнялись | — |
-| T05.15 | TODO | — | Не выполнялись | — |
-| T05.16 | TODO | — | Не выполнялись | — |
-| T05.17 | TODO | — | Не выполнялись | — |
-| T05.18 | TODO | — | Не выполнялись | — |
+| T05.06 | DONE | `Sources/InventoryCore/Data/StorageMaintenance.swift`, `StartupRecovery.swift` | `StorageMaintenance`-тесты: `importReplacesDataAndKeepsSafetyCopy`, `failedImportRestoresPreviousState` | Копия до импорта: VACUUM INTO + фото/превью в `_safety/before-import.new`; прежняя `before-import` удаляется только в `done` |
+| T05.07 | DONE | `RecoveryJournal.swift`, `StartupRecovery.swift`, `StorageCoordinator.openExisting` | `interruptedImportRecoversOnOpen`, `journalRoundTripAndCorruption` | `_safety/recovery.json`: tmp → fsync → rename → sync(). Восстановление идёт под блокировкой до проверки БД. Миграция журнал не пишет — см. RECOVERY_PROTOCOL §10 |
+| T05.08 | DONE | `StorageMaintenance.importBackup`, `prepareImport` | `importReplacesDataAndKeepsSafetyCopy`, `confirmationMismatchKeepsData`, `failedImportRestoresPreviousState` | Проверка → подтверждение числа вещей → копия → staging → swap → verify → done; сбой после swap откатывает из копии. Отклонение: короткое окно между освобождением и повторным захватом блокировки |
+| T05.09 | DONE | `StorageMaintenance.rollbackImport` | `rollbackIsIdempotent`, `rollbackWithoutCopyIsRejected` | Диагностическая копия `before-import-rollback`; повторный откат идемпотентен; копия до импорта остаётся |
+| T05.10 | DONE | `StorageMaintenance.moveStore`, `validateMoveTarget` | `moveCopiesAndSwitches`, `moveRejectsUnsafeTargets`, `failedMoveKeepsSource` | Цель только пустая; внутри хранилища/тот же путь отклоняются; при сбое цель очищается, источник не трогается; старая папка остаётся |
+| T05.11 | DONE | `StorageMaintenance.switchStore`, `StorageLocationWarning` | `switchToMissingKeepsCurrent`, `switchToExistingStore`, `cloudWarning` | Новая папка открывается до закрытия текущей; при ошибке прежняя сессия остаётся; предупреждение о iCloud/Dropbox/Google Drive/OneDrive |
+| T05.12 | DONE (ручная проверка окна — за владельцем) | `Sources/InventoryUI/SettingsView.swift`, `AppModelData.swift` | `AppModel` через `xcodebuild test` (52 UI-теста проходят) | Папка данных, три статуса (только активные, запись в `settings`), переключатель напоминания; стандартное меню «Настройки…» |
+| T05.13 | DONE (ручная проверка GUI — за владельцем) | `Sources/InventoryUI/DataWorkspaceView.swift`, `AppModelData.swift`, `InventoryRootView.swift`, `Localizable.xcstrings` | Сборка Release universal; запуск 6 с без падения | Раздел «Данные»: экспорт, импорт с подтверждением числа вещей, откат, папка, копии, напоминание; модальный прогресс |
+| T05.14 | DONE | `Sources/InventoryCore/Domain/BackupReminder.swift` | `reminderBoundary`, `disabledReminderPersists` | Граница: 29 и 30 суток — без напоминания, 30 суток + 1 мс — с напоминанием; без экспорта — сразу; дата обновляется только после успешного экспорта |
+| T05.15 | DONE | `StorageMaintenance.safetyUsage`, `clearSafetyCopy` | `clearingSafetyCopyRespectsJournal` | Размер копий в разделе «Данные»; удаление с подтверждением; при активном журнале очистка запрещена |
+| T05.16 | DONE | `README.md` | Команды проверены: `swift test`, `swift-format lint`, `xcodebuild test`, release universal | Сборка, тесты, данные, экспорт/импорт, ограничения, ручные проверки |
+| T05.17 | PARTIAL | — | Release universal (`x86_64 arm64`) — BUILD SUCCEEDED; запуск 6 с без падения; `swift test` — 277; `xcodebuild test` — 52 UI | Не выполнено: замеры импорта/экспорта на наборе 500 вещей (D11) и ручная проверка GUI. Команды из карточки с Flutter заменены на Swift |
+| T05.18 | BLOCKED | — | — | Финальная приёмка этапа 5 — только владелец |

@@ -31,4 +31,15 @@ public final class SystemFileDialogs: FileDialogs {
     panel.message = "Выберите фотографию"
     return panel.runModal() == .OK ? panel.url : nil
   }
+
+  public func chooseArchiveFile() -> URL? {
+    let panel = NSOpenPanel()
+    panel.canChooseFiles = true
+    panel.canChooseDirectories = false
+    panel.allowsMultipleSelection = false
+    panel.allowedContentTypes = [.zip]
+    panel.prompt = "Выбрать"
+    panel.message = "Выберите архив .inventory.zip"
+    return panel.runModal() == .OK ? panel.url : nil
+  }
 }

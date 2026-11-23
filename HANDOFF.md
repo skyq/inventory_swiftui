@@ -61,21 +61,26 @@
 
 ## Этап 5: состояние
 
-- Этап 4 принят владельцем 22.11.2026 («приемка ок»), T04.08 → DONE.
-- T05.01 DONE: `BackupSnapshotService` снимает девять таблиц в одной read-транзакции и копирует только фото/превью из `places` и `items`. `StoreWriteGate` блокирует запись на время снимка; при ошибке временная папка удаляется.
-- T05.02 DONE: `BackupCodec.exportV1` пишет `manifest.json` (format_version 1, app_version, exported_at, counts), `data.json` (9 таблиц, TEXT/INTEGER/NULL), `photos/`, `thumbs/`. Файл пишется во временное имя и публикуется после успеха. Отклонение: `backup.last_export_ms` и UI-прогресс — в T05.11/T05.13.
-- T05.03 DONE: `BackupArchiveReader.stage` проверяет ZIP, пути (zip-slip, абсолютные, `..`, symlink, дубли, коллизии регистра), сжатие (≤100) и лимиты D11 (2 GiB, 100 000 файлов, data.json ≤512 MiB), распаковывает только в staging и удаляет его при ошибке.
-- T05.04 DONE: `BackupValidatorV1` / `BackupFormatRegistry` проверяет строгую схему девяти таблиц, FK, цикл мест, счётчики манифеста, активные статусы по умолчанию и наличие фото. Формат поддержан только 1; версия 2 — `backupNewerFormat`.
-- T05.05 DONE: `StagedDatabaseBuilder.build` создаёт отдельный `inventory.db` текущей схемой без seed, вставляет данные одной транзакцией (места топологически, история INSERT), проверяет `integrity_check` и `foreign_key_check`, ставит `user_version`. Существующий файл не перезаписывается; при ошибке удаляется только свой файл.
-- Тесты: `BackupSnapshotTests` (5), `BackupCodecTests` (5), `BackupArchiveReaderTests` (13), `BackupValidatorTests` (17, включая round-trip реальной сессии), `StagedDatabaseBuilderTests` (4).
-- Итоги: `swift test` — 260 (199 core / 9 platform / 52 UI), все проходят; `swift-format lint --recursive --strict Sources Tests` — чисто.
-- Для T05.06–T05.09 требуется утверждённый `RECOVERY_PROTOCOL.md` (D01). В репозитории его нет. Замену данных не делаем без протокола.
-- Этап 5 не принят; T05.18 остаётся BLOCKED до финальной проверки владельцем.
+- Этап 4 принят владельцем 22.11.2026. Этап 5 не принят; T05.18 — BLOCKED до приёмки владельцем.
+- `RECOVERY_PROTOCOL.md` принят владельцем (перенесён из ThingsMap2). В документ добавлен раздел §10 с адаптацией для Swift; исходный текст не менялся.
+- Реализовано:
+  - T05.01–T05.05: снимок (`StoreWriteGate`), экспорт ZIP v1, безопасное чтение, валидация, staging-БД без seed.
+  - T05.06–T05.09: копия до импорта (`before-import`), журнал `_safety/recovery.json`, восстановление при открытии (`StartupRecovery`), импорт с подтверждением числа вещей и автооткат, откат последнего импорта.
+  - T05.10–T05.11: перенос в пустую папку и переключение на существующую; облачные папки — предупреждение.
+  - T05.12–T05.13: окно настроек (папка, три статуса, напоминание) и раздел «Данные» (экспорт, импорт, откат, копии, напоминание, модальный прогресс).
+  - T05.14–T05.15: напоминание строго более 30 суток, размер и очистка копий.
+  - T05.16: `README.md` с командами Swift.
+  - T05.17: PARTIAL — release universal собран, запуск 6 с без падения. Замеры на 500 вещей не выполнены.
+- Отклонения (зафиксированы в RUN_LOG и RECOVERY_PROTOCOL §10):
+  - миграция схемы не пишет отдельный журнал (покрыта `MigrationTests`);
+  - между освобождением и повторным захватом `StorageLock` при импорте/переносе есть короткое окно;
+  - запись `backup.last_export_ms` выполняется `StorageMaintenance.export`, а не отдельным сервисом.
+- Итоги: `swift test` — 277 (216 core / 9 platform / 52 UI), все проходят. `xcodebuild test` — 52 UI, TEST SUCCEEDED. `swift-format lint --recursive --strict Sources Tests` — чисто. Release universal `x86_64 arm64` — BUILD SUCCEEDED.
+- Не проверено вручную: раздел «Данные» и окно настроек в GUI, полный импорт реального архива, Intel и macOS 12.
 
 ## Входы для следующей задачи
 
-- Следующий ID: T05.06. Карточки T05.06–T05.10 ссылаются на `RECOVERY_PROTOCOL.md`, которого нет; без утверждения протокола они BLOCKED. Перед T05.11+ сверить карточки; T05.14 (напоминание) по смыслу не зависит от протокола.
-- T05.17 в карточке содержит устаревшие Flutter/Dart-команды (`flutter build`, `dart test`); при выполнении заменить на Swift-команды из `TOOLCHAIN.md`.
-- Ключевые файлы этапа 5: `Sources/InventoryCore/Data/{BackupSnapshotService,BackupCodec,BackupArchiveReader,BackupValidator,StoreWriteGate,PhotoLifecycle,StorageCoordinator,MigrationCoordinator}.swift`, `Domain/Backup.swift`, `Domain/StoreLayout.swift`.
-- Блокирующий пункт: отсутствующий утверждённый `RECOVERY_PROTOCOL.md` для T05.06–T05.09 (замена, журнал фаз, откат).
-- `Inventory.xcodeproj` генерируется из `project.yml` через XcodeGen; новые файлы пакета подхватываются, после изменения целей выполнять `xcodegen generate`.
+- Ручная проверка владельцем: экспорт → импорт (с подтверждением числа) → откат → перенос в новую папку → возврат на старую → удаление копии; напоминание; окно «Настройки…».
+- Для T05.17: замер экспорта/импорта на 500 вещах (release, D11), запись машины и повторов.
+- Ключевые файлы этапа 5: `Sources/InventoryCore/Data/{StorageMaintenance,StartupRecovery,RecoveryJournal,BackupSnapshotService,BackupCodec,BackupArchiveReader,BackupValidator,StagedDatabaseBuilder,StoreWriteGate,StorageCoordinator}.swift`, `Sources/InventoryCore/Domain/{BackupReminder,Backup}.swift`, `Sources/InventoryUI/{AppModelData,DataWorkspaceView,SettingsView,InventoryRootView}.swift`.
+- `Inventory.xcodeproj` генерируется из `project.yml` через XcodeGen; после изменения состава целей выполнять `xcodegen generate`.

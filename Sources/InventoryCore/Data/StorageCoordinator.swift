@@ -121,6 +121,24 @@ public final class StorageCoordinator: @unchecked Sendable {
     return session
   }
 
+  public func makeMaintenance(
+    appVersion: String,
+    temporaryRoot: URL? = nil,
+    checkpoint: MaintenanceCheckpoint? = nil
+  ) -> StorageMaintenance {
+    StorageMaintenance(
+      coordinator: self,
+      preferences: preferences,
+      clock: clock,
+      ids: ids,
+      logger: bootstrapLogger,
+      appVersion: appVersion,
+      fileManager: fileManager,
+      temporaryRoot: temporaryRoot,
+      checkpoint: checkpoint
+    )
+  }
+
   public func createNew(_ rootPath: String) throws -> StorageSession {
     let root = URL(fileURLWithPath: rootPath)
     let layout = StoreLayout(rootURL: root)
@@ -206,18 +224,20 @@ public final class StorageCoordinator: @unchecked Sendable {
         params: ["path": .string(layout.rootPath), "reason": .string("missing")]
       )
     }
-    guard fileManager.fileExists(atPath: layout.databasePath) else {
-      throw AppException(
-        .storageUnavailable,
-        params: ["path": .string(layout.rootPath), "reason": .string("missing-database")]
-      )
-    }
 
     let logger = loggerFactory?(layout) ?? bootstrapLogger
     let lock = try StorageLock.acquire(layout: layout, fileManager: fileManager)
     let writeGate = StoreWriteGate()
 
     do {
+      // Восстановление идёт до проверки наличия БД: после аварии файл может быть перенесён.
+      try StartupRecovery.run(layout: layout, fileManager: fileManager, logger: logger)
+      guard fileManager.fileExists(atPath: layout.databasePath) else {
+        throw AppException(
+          .storageUnavailable,
+          params: ["path": .string(layout.rootPath), "reason": .string("missing-database")]
+        )
+      }
       let version = try integrityCheck(layout: layout)
       if version > targetVersion {
         throw AppException(

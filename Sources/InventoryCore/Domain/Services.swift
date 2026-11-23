@@ -31,4 +31,6 @@ public protocol FileDialogs: Sendable {
   func chooseDirectory(startingAt url: URL?) -> URL?
   /// nil — пользователь отменил выбор.
   func chooseImageFile() -> URL?
+  /// Выбор файла `.inventory.zip`; nil — пользователь отменил выбор.
+  func chooseArchiveFile() -> URL?
 }

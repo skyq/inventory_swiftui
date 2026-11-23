@@ -689,6 +689,12 @@ final class FakeFileDialogs: FileDialogs {
     imageRequestCount += 1
     return imageURL
   }
+
+  var archiveURL: URL?
+
+  func chooseArchiveFile() -> URL? {
+    archiveURL
+  }
 }
 
 func makeTemporaryFile(contents: String = "image") throws -> URL {

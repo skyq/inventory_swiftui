@@ -71,7 +71,7 @@ public final class AppModel: ObservableObject {
     case failed(AppException)
   }
 
-  @Published public private(set) var loadState: LoadState = .idle
+  @Published public internal(set) var loadState: LoadState = .idle
   @Published public var selectedSection: SidebarSection? {
     didSet { persistSectionMode() }
   }
@@ -83,7 +83,7 @@ public final class AppModel: ObservableObject {
     }
   }
   @Published public private(set) var searchFocusToken = 0
-  @Published public private(set) var storePath: String?
+  @Published public internal(set) var storePath: String?
   @Published public private(set) var browser: PlaceBrowserModel?
   @Published public private(set) var gallery: GalleryModel?
   @Published public private(set) var statusesModel: StatusesModel?
@@ -93,12 +93,21 @@ public final class AppModel: ObservableObject {
   @Published public var itemForm: ItemFormPresentation?
   @Published public var itemAction: ItemActionPresentation?
   @Published public var alert: AppAlert?
+  @Published public internal(set) var dataActivity: DataActivity?
+  @Published public internal(set) var safetyUsage = SafetyUsage(
+    beforeImportBytes: nil, beforeMigrationBytes: nil, rollbackDiagnosticBytes: nil)
+  @Published public internal(set) var reminderDue = false
+  @Published public var pendingImport: PendingImport?
+  @Published public var pendingFolderChange: PendingFolderChange?
+  @Published public var pendingRollback = false
+  @Published public var pendingSafetyClear: SafetyKind?
 
   private let storage: StorageCoordinator
   private let imageProcessor: any ImageProcessor
-  private let dialogs: any FileDialogs
-  private let preferences: any PreferencesStore
-  private var session: StorageSession?
+  let dialogs: any FileDialogs
+  let preferences: any PreferencesStore
+  let maintenance: StorageMaintenance
+  var session: StorageSession?
   private var started = false
 
   public init(
@@ -111,12 +120,17 @@ public final class AppModel: ObservableObject {
     self.imageProcessor = imageProcessor
     self.dialogs = dialogs
     self.preferences = preferences
+    self.maintenance = storage.makeMaintenance(appVersion: AppModel.appVersion)
     switch GalleryStateCodec.load(from: preferences).mode {
     case .grid:
       self.selectedSection = .gallery
     case .places:
       self.selectedSection = .places
     }
+  }
+
+  static var appVersion: String {
+    Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
   }
 
   /// Вызывается один раз при появлении окна.
@@ -393,7 +407,7 @@ public final class AppModel: ObservableObject {
     }
   }
 
-  private func attach(_ opened: StorageSession) {
+  func attach(_ opened: StorageSession) {
     session?.close()
     session = opened
     storePath = opened.layout.rootPath
@@ -426,9 +440,10 @@ public final class AppModel: ObservableObject {
     placeForm = nil
     itemForm = nil
     itemAction = nil
+    refreshDataState()
   }
 
-  private func currentDirectoryHint() -> URL? {
+  func currentDirectoryHint() -> URL? {
     if let storePath {
       return URL(fileURLWithPath: storePath, isDirectory: true).deletingLastPathComponent()
     }

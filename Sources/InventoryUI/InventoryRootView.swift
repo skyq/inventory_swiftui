@@ -62,6 +62,9 @@ public struct InventoryRootView: View {
           {
             TagsWorkspaceView(model: tags)
               .frame(minWidth: 480, maxWidth: .infinity)
+          } else if (model.selectedSection ?? .gallery) == .data {
+            DataWorkspaceView(model: model)
+              .frame(minWidth: 480, maxWidth: .infinity)
           } else {
             PlaceholderSectionView(
               section: model.selectedSection ?? .gallery
@@ -105,6 +108,24 @@ public struct InventoryRootView: View {
     }
     .sheet(item: $model.itemAction) { presentation in
       itemActionSheet(presentation)
+    }
+    .sheet(item: $model.pendingImport) { pending in
+      ImportConfirmView(
+        pending: pending,
+        onCancel: { model.cancelImport() },
+        onConfirm: { _ in Task { await model.confirmImport() } }
+      )
+    }
+    .sheet(
+      isPresented: Binding(
+        get: { model.dataActivity != nil },
+        set: { _ in }
+      )
+    ) {
+      if let activity = model.dataActivity {
+        DataActivityView(activity: activity)
+          .interactiveDismissDisabled()
+      }
     }
     .alert(item: $model.alert) { alert in
       Alert(
