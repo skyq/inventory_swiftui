@@ -191,10 +191,8 @@ public final class BackupSnapshotService: @unchecked Sendable {
       )
     }
 
-    let destination = directory.appendingPathComponent(relativePath).standardizedFileURL
-    let root = directory.standardizedFileURL.path
-    let prefix = root.hasSuffix("/") ? root : root + "/"
-    guard destination.path.hasPrefix(prefix) else {
+    let destination = directory.appendingPathComponent(relativePath)
+    guard destination.path.hasPrefix(directory.path + "/") else {
       throw AppException(
         .backupIntegrityFailed,
         params: ["path": .string(relativePath)],

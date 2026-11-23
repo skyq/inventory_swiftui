@@ -47,8 +47,9 @@ public struct PendingFolderChange: Identifiable {
 /// Тяжёлая работа идёт вне главного потока; интерфейс блокируется модальным прогрессом.
 @MainActor
 extension AppModel {
-  public func exportBackup(to directory: URL) async {
-    guard let session else { return }
+  @discardableResult
+  public func exportBackup(to directory: URL) async -> URL? {
+    guard let session else { return nil }
     let maintenance = self.maintenance
     let progress = progressReporter()
     dataActivity = DataActivity(title: L10n.string("data.activity.export"), fraction: nil)
@@ -57,15 +58,24 @@ extension AppModel {
     }
     dataActivity = nil
     switch result {
-    case .success:
+    case .success(let url):
       refreshDataState()
+      return url
     case .failure(let error):
+      session.logger.error("backup export failed", error: String(describing: error), data: nil)
       alert = .failure(ErrorPresenter.message(for: error))
+      return nil
     }
   }
 
   public func chooseImportArchive() async {
-    guard let url = dialogs.chooseArchiveFile(), let session else { return }
+    guard let url = dialogs.chooseArchiveFile() else { return }
+    await prepareImport(archiveAt: url)
+  }
+
+  /// Проверяет выбранный архив и открывает подтверждение. Доступ к файлу должен быть открыт вызывающим.
+  public func prepareImport(archiveAt url: URL) async {
+    guard let session else { return }
     let maintenance = self.maintenance
     dataActivity = DataActivity(title: L10n.string("data.activity.check"), fraction: nil)
     let result = await AsyncCore.run {
@@ -74,7 +84,7 @@ extension AppModel {
     dataActivity = nil
     switch result {
     case .success(let validated):
-      let current = (try? session.items.list(GalleryQuery()).count) ?? 0
+      let current = (try? session.items.list(GalleryQuery(showHidden: true)).count) ?? 0
       pendingImport = PendingImport(validated: validated, currentItemCount: current)
     case .failure(let error):
       alert = .failure(ErrorPresenter.message(for: error))
@@ -107,17 +117,18 @@ extension AppModel {
 
   public func chooseMoveDestination() {
     guard let url = dialogs.chooseDirectory(startingAt: currentDirectoryHint()) else { return }
-    pendingFolderChange = PendingFolderChange(
-      kind: .move,
-      url: url,
-      cloudProvider: StorageLocationWarning.cloudProviderName(for: url.path)
-    )
+    requestFolderChange(.move, url: url)
   }
 
   public func chooseOpenFolder() {
     guard let url = dialogs.chooseDirectory(startingAt: currentDirectoryHint()) else { return }
+    requestFolderChange(.open, url: url)
+  }
+
+  /// Открывает подтверждение переноса или переключения папки. Доступ к папке должен быть открыт вызывающим.
+  public func requestFolderChange(_ kind: PendingFolderChange.Kind, url: URL) {
     pendingFolderChange = PendingFolderChange(
-      kind: .open,
+      kind: kind,
       url: url,
       cloudProvider: StorageLocationWarning.cloudProviderName(for: url.path)
     )

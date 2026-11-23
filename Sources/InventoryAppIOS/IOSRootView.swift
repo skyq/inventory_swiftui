@@ -1,9 +1,14 @@
 import InventoryCore
+import InventoryPlatform
 import InventoryUI
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct IOSRootView: View {
   @ObservedObject var model: AppModel
+
+  private let preferences = UserDefaultsPreferencesStore()
+  @State private var showFolderPicker = false
 
   var body: some View {
     Group {
@@ -17,8 +22,17 @@ struct IOSRootView: View {
           Button("Повторить") {
             Task { await model.retry() }
           }
+          Button("Выбрать папку данных…") {
+            showFolderPicker = true
+          }
         }
         .padding()
+        .fileImporter(isPresented: $showFolderPicker, allowedContentTypes: [.folder]) { result in
+          guard case .success(let url) = result else { return }
+          _ = url.startAccessingSecurityScopedResource()
+          ExternalStoreAccess.remember(url, in: preferences)
+          Task { await model.openExistingStore(at: url) }
+        }
       case .ready:
         TabView {
           GalleryScreen(model: model)

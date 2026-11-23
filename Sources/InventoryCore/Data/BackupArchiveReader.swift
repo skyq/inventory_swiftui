@@ -241,9 +241,11 @@ public final class BackupArchiveReader: @unchecked Sendable {
     total: inout UInt64,
     limit: UInt64?
   ) throws {
-    let destination = directory.appendingPathComponent(entry.path).standardizedFileURL
-    let root = directory.standardizedFileURL.path + "/"
-    guard destination.path.hasPrefix(root) else {
+    let destination = directory.appendingPathComponent(entry.path)
+    guard
+      !entry.path.split(separator: "/").contains(".."),
+      destination.path.hasPrefix(directory.path + "/")
+    else {
       throw unsafe(entry.path, reason: "destination escapes staging")
     }
 

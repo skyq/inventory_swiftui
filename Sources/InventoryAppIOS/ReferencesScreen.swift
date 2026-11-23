@@ -18,6 +18,11 @@ struct ReferencesScreen: View {
         } label: {
           Label(L10n.string("tags.title"), systemImage: "tag")
         }
+        NavigationLink {
+          DataScreen(model: model)
+        } label: {
+          Label("Данные", systemImage: "externaldrive")
+        }
       }
       .navigationTitle(L10n.string("reference.title"))
     }

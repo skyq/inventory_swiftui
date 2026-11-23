@@ -481,6 +481,16 @@
         }
       }
     },
+    "gallery.filters.showHidden": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показывать скрытые"
+          }
+        }
+      }
+    },
     "gallery.filters.tags": {
       "localizations": {
         "ru": {

@@ -53,6 +53,9 @@
           .frame(minHeight: 90, maxHeight: .infinity)
         }
 
+        Toggle(L10n.string("gallery.filters.showHidden"), isOn: $model.showHidden)
+          .font(.subheadline)
+
         Divider()
 
         VStack(alignment: .leading, spacing: 5) {

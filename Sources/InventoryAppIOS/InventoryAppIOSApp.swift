@@ -16,6 +16,7 @@ struct InventoryAppIOSApp: App {
   @MainActor
   private static func makeModel() -> AppModel {
     let preferences = UserDefaultsPreferencesStore()
+    ExternalStoreAccess.restore(preferences)
     refreshStoredPath(preferences)
     let bootstrapLogger = RotatingFileLogger(
       directory: DefaultStoreLocation.url().appendingPathComponent("logs", isDirectory: true)
@@ -52,7 +53,7 @@ extension InventoryAppIOSApp {
   }
 }
 
-/// Заглушка до IOS.07: выбор папок и архивов на iPhone появится через «Файлы».
+/// На iPhone выбор папок и архивов идёт через SwiftUI (`fileImporter`), эти методы не вызываются.
 @MainActor
 final class IOSFileDialogs: FileDialogs {
   func chooseDirectory(startingAt url: URL?) -> URL? { nil }

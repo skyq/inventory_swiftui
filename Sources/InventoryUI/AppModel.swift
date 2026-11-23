@@ -157,6 +157,11 @@ public final class AppModel: ObservableObject {
     await performOpen { try self.storage.openExisting(url.path) }
   }
 
+  /// Открывает папку, выбранную через системный диалог (доступ должен быть открыт вызывающим).
+  public func openExistingStore(at url: URL) async {
+    await performOpen { try self.storage.openExisting(url.path) }
+  }
+
   /// Создаёт новое хранилище только по явному выбору пользователя.
   public func chooseNewStore() async {
     guard let url = dialogs.chooseDirectory(startingAt: currentDirectoryHint()) else { return }
