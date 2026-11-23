@@ -75,7 +75,7 @@
   - миграция схемы не пишет отдельный журнал (покрыта `MigrationTests`);
   - между освобождением и повторным захватом `StorageLock` при импорте/переносе есть короткое окно;
   - запись `backup.last_export_ms` выполняется `StorageMaintenance.export`, а не отдельным сервисом.
-- Итоги: `swift test` — 278 (216 core / 9 platform / 53 UI), все проходят. `xcodebuild test` — 52 UI, TEST SUCCEEDED. `swift-format lint --recursive --strict Sources Tests` — чисто. Release universal `x86_64 arm64` — BUILD SUCCEEDED.
+- Итоги: `swift test` — 278 (216 core / 9 platform / 53 UI), все проходят. `xcodebuild test` — 53 UI, TEST SUCCEEDED. `swift-format lint --recursive --strict Sources Tests` — чисто. Release universal `x86_64 arm64` — BUILD SUCCEEDED.
 
 ## Замеры T05.17 (D11)
 
