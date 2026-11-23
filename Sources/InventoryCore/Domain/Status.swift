@@ -6,19 +6,23 @@ public struct Status: Identifiable, Sendable, Equatable {
   public let isArchived: Bool
   public let sortOrder: Int
   public let createdAt: Int64
+  /// Вещи со скрытым статусом не показываются в галерее и поиске, пока фильтр не выбран.
+  public let isHidden: Bool
 
   public init(
     id: String,
     name: String,
     isArchived: Bool,
     sortOrder: Int,
-    createdAt: Int64
+    createdAt: Int64,
+    isHidden: Bool = false
   ) {
     self.id = id
     self.name = name
     self.isArchived = isArchived
     self.sortOrder = sortOrder
     self.createdAt = createdAt
+    self.isHidden = isHidden
   }
 }
 
@@ -50,6 +54,8 @@ public protocol StatusService: Sendable {
   func archive(_ id: String, replacementId: String?) throws -> Status
   /// Настройки при восстановлении не возвращаются автоматически.
   func restore(_ id: String) throws -> Status
+  /// Скрытый статус: его вещи не показываются в галерее и поиске, пока фильтр не включён.
+  func setHidden(_ id: String, hidden: Bool) throws -> Status
   var changes: AsyncStream<MutationEvent> { get }
 }
 

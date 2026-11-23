@@ -37,7 +37,7 @@ struct SchemaTests {
     let version = try session.database.read { db in
       try Int.fetchOne(db, sql: "PRAGMA user_version")
     }
-    #expect(version == 1)
+    #expect(version == 2)
 
     let placeColumns = try columns(of: "places", in: session.database)
     #expect(

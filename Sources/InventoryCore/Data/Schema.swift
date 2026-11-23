@@ -1,9 +1,10 @@
 import Foundation
 import GRDB
 
-/// Схема БД версии 1. SQL повторяет §5 ТЗ и совместим с данными Flutter-версии.
+/// Схема БД версии 2. SQL v1 повторяет §5 ТЗ и совместим с данными Flutter-версии;
+/// v2 добавляет флаг скрытия статуса (`statuses.is_hidden`).
 public enum Schema {
-  public static let version = 1
+  public static let version = 2
 
   public static func makeMigrator() -> DatabaseMigrator {
     var migrator = DatabaseMigrator()
@@ -108,6 +109,10 @@ public enum Schema {
           CREATE INDEX transfers_item_created ON transfers(item_id, created_at);
           CREATE INDEX transfers_person_id ON transfers(person_id);
           """)
+    }
+    migrator.registerMigration("v2") { db in
+      try db.execute(
+        sql: "ALTER TABLE statuses ADD COLUMN is_hidden INTEGER NOT NULL DEFAULT 0")
     }
     return migrator
   }

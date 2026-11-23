@@ -538,6 +538,21 @@ final class FakeStatusService: StatusService, @unchecked Sendable {
     statuses[index] = updated
     return updated
   }
+
+  func setHidden(_ id: String, hidden: Bool) throws -> Status {
+    lock.lock()
+    defer { lock.unlock() }
+    guard let index = statuses.firstIndex(where: { $0.id == id }) else {
+      throw AppException(.validationNotFound, params: ["entity": .string("status")])
+    }
+    let old = statuses[index]
+    let updated = Status(
+      id: old.id, name: old.name, isArchived: old.isArchived,
+      sortOrder: old.sortOrder, createdAt: old.createdAt, isHidden: hidden
+    )
+    statuses[index] = updated
+    return updated
+  }
 }
 
 final class FakeTagService: TagService, @unchecked Sendable {

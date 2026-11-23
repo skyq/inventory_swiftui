@@ -30,10 +30,10 @@ public struct ValidatedBackup: Sendable {
   }
 }
 
-/// Реестр читателей по `format_version`. Сейчас поддержан только формат 1;
-/// прежних версий до 1 не существовало, поэтому нижней ветки нет (D11).
+/// Реестр читателей по `format_version`. Поддержаны форматы 1 и 2 (v2 добавляет
+/// `statuses.is_hidden`; архивы v1 читаются, скрытие по умолчанию выключено).
 public enum BackupFormatRegistry {
-  public static let supportedVersions: Set<Int> = [1]
+  public static let supportedVersions: Set<Int> = [1, 2]
 
   public static func validate(_ staged: StagedBackupArchive) throws -> ValidatedBackup {
     let version = staged.manifest.formatVersion
@@ -43,7 +43,7 @@ public enum BackupFormatRegistry {
         params: ["found": .int(version), "supported": .int(BackupFormat.version)]
       )
     }
-    return try BackupValidatorV1.validate(staged)
+    return try BackupValidatorV1.validate(staged, formatVersion: version)
   }
 }
 
@@ -69,7 +69,14 @@ enum BackupValidatorV1 {
     }
   }
 
-  private static let schema: [(table: String, columns: [Column])] = [
+  private static func schema(for formatVersion: Int) -> [(table: String, columns: [Column])] {
+    baseSchema.map { spec in
+      guard spec.table == "statuses", formatVersion >= 2 else { return spec }
+      return (spec.table, spec.columns + [Column("is_hidden", .integer)])
+    }
+  }
+
+  private static let baseSchema: [(table: String, columns: [Column])] = [
     (
       "places",
       [
@@ -173,9 +180,12 @@ enum BackupValidatorV1 {
     "return_status_id",
   ]
 
-  static func validate(_ staged: StagedBackupArchive) throws -> ValidatedBackup {
+  static func validate(
+    _ staged: StagedBackupArchive,
+    formatVersion: Int
+  ) throws -> ValidatedBackup {
     let raw = try decodeTables(at: staged.dataURL)
-    let tables = try schema.map { spec in
+    let tables = try schema(for: formatVersion).map { spec in
       try validateTable(spec.table, columns: spec.columns, rows: raw[spec.table] ?? [])
     }
     let byName = Dictionary(uniqueKeysWithValues: tables.map { ($0.name, $0.rows) })
@@ -221,7 +231,7 @@ enum BackupValidatorV1 {
     var seenKeys = Set<String>()
     for (index, row) in rows.enumerated() {
       guard Set(row.keys) == names else {
-        throw integrity(table, "row \(index) must have exactly the v1 columns")
+        throw integrity(table, "row \(index) must have exactly the expected columns")
       }
       for column in columns {
         let value = row[column.name] ?? .null

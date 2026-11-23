@@ -273,10 +273,31 @@ struct BackupValidatorTests {
     try expectRejected(.backupIntegrityFailed, "no tags") { try stage(tables) }
   }
 
+  @Test("v1 без is_hidden принимается; v2 требует is_hidden в статусах")
+  func v1AcceptedV2RequiresHidden() throws {
+    let v1 = try stage(validTables())
+    defer { v1.discard() }
+    #expect(try BackupFormatRegistry.validate(v1).counts["statuses"] == 2)
+
+    var withHidden = validTables()
+    withHidden["statuses"] = withHidden["statuses"]?.map { row in
+      var row = row
+      row["is_hidden"] = 0
+      return row
+    }
+    let v2 = try stage(withHidden, formatVersion: 2)
+    defer { v2.discard() }
+    #expect(try BackupFormatRegistry.validate(v2).counts["statuses"] == 2)
+
+    try expectRejected(.backupIntegrityFailed, "v2 без is_hidden") {
+      try stage(validTables(), formatVersion: 2)
+    }
+  }
+
   @Test("Формат новее и неизвестный формат отклоняются через реестр")
   func registryRejectsUnsupportedVersions() throws {
-    try expectRejected(.backupNewerFormat, "version 2") {
-      try stage(validTables(), formatVersion: 2)
+    try expectRejected(.backupNewerFormat, "version 3") {
+      try stage(validTables(), formatVersion: 3)
     }
     try expectRejected(.backupManifestInvalid, "version 0") {
       try stage(validTables(), formatVersion: 0)

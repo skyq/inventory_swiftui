@@ -143,7 +143,7 @@ struct MigrationTests {
     let session = try TestSupport.makeCoordinator().createNew(root.path)
     session.close()
 
-    let coordinator = MigrationCoordinator(targetVersion: 1)
+    let coordinator = MigrationCoordinator(targetVersion: Schema.version)
     let migrated = try coordinator.migrateIfNeeded(
       layout: StoreLayout(rootURL: root), createBackup: true)
     #expect(!migrated)

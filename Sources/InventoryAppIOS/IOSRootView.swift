@@ -27,6 +27,8 @@ struct IOSRootView: View {
             .tabItem { Label("Места", systemImage: "mappin.and.ellipse") }
           PeopleScreen(model: model)
             .tabItem { Label("Люди", systemImage: "person.2") }
+          ReferencesScreen(model: model)
+            .tabItem { Label("Справочники", systemImage: "list.bullet.rectangle") }
           SelfCheckView()
             .tabItem { Label("Проверка", systemImage: "checkmark.seal") }
         }

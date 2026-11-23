@@ -36,7 +36,7 @@ struct BackupCodecTests {
 
     let manifestData = try data(in: archive, at: "manifest.json")
     let manifest = try JSONDecoder().decode(BackupManifest.self, from: manifestData)
-    #expect(manifest.formatVersion == 1)
+    #expect(manifest.formatVersion == BackupFormat.version)
     #expect(manifest.appVersion == "1.2.3")
     #expect(manifest.exportedAt == snapshot.createdAt)
     #expect(manifest.counts == snapshot.counts)

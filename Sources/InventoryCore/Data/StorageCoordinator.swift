@@ -239,6 +239,10 @@ public final class StorageCoordinator: @unchecked Sendable {
         )
       }
       let version = try integrityCheck(layout: layout)
+      logger.info(
+        "store schema checked",
+        data: ["found": String(version), "target": String(targetVersion), "path": layout.databasePath]
+      )
       if version > targetVersion {
         throw AppException(
           .storageNewerSchema,

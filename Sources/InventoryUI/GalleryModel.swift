@@ -27,6 +27,12 @@ public final class GalleryModel: ObservableObject {
   @Published public private(set) var selectedHistory: [ItemHistoryEntry] = []
   @Published public private(set) var showsInspector = false
   /// Текст поиска. Пустая строка — обычная галерея (D12).
+  @Published public var showHidden = false {
+    didSet {
+      guard showHidden != oldValue else { return }
+      Task { await reload() }
+    }
+  }
   @Published public private(set) var searchText = ""
   @Published public var alertMessage: String?
 
@@ -293,7 +299,8 @@ public final class GalleryModel: ObservableObject {
       tagIds: state.tagIds,
       sort: state.sort,
       direction: state.direction,
-      searchItemIds: searchItemIds
+      searchItemIds: searchItemIds,
+      showHidden: showHidden
     )
   }
 

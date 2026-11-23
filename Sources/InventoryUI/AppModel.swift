@@ -252,6 +252,12 @@ public final class AppModel: ObservableObject {
     return try? result.get()
   }
 
+  public func loadItemHistory(_ itemId: String) async -> [ItemHistoryEntry] {
+    guard let history = session?.history else { return [] }
+    let result = await AsyncCore.run { try history.itemHistory(itemId: itemId) }
+    return (try? result.get()) ?? []
+  }
+
   /// Переход к месту из крошек карточки вещи.
   public func openPlaceInPlaces(_ placeId: String) {
     guard case .ready = loadState else { return }

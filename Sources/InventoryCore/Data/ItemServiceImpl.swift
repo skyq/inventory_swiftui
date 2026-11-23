@@ -174,6 +174,9 @@ public final class ItemServiceImpl: ItemService, @unchecked Sendable {
         if !query.statusIds.isEmpty, !query.statusIds.contains(item.statusId) {
           return false
         }
+        if row.statusHidden, !query.showHidden, !query.statusIds.contains(item.statusId) {
+          return false
+        }
         if !query.tagIds.isEmpty {
           let tags = itemTags[item.id] ?? []
           if !tags.isSuperset(of: query.tagIds) { return false }

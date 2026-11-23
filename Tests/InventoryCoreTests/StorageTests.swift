@@ -79,7 +79,7 @@ struct StorageTests {
     } catch let error as AppException {
       #expect(error.code == .storageNewerSchema)
       #expect(error.int("found") == 99)
-      #expect(error.int("supported") == 1)
+      #expect(error.int("supported") == 2)
     }
   }
 

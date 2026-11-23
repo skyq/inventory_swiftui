@@ -166,6 +166,8 @@ public struct GalleryQuery: Sendable, Equatable {
   public let direction: GalleryDirection
   /// Пересечение с результатами поиска. nil — без ограничения; пусто — пусто.
   public let searchItemIds: Set<String>?
+  /// false — вещи со скрытыми статусами не показываются, если их статус не выбран в `statusIds`.
+  public let showHidden: Bool
 
   public init(
     place: GalleryPlaceFilter = .all,
@@ -173,7 +175,8 @@ public struct GalleryQuery: Sendable, Equatable {
     tagIds: Set<String> = [],
     sort: GallerySort = .createdAt,
     direction: GalleryDirection = .desc,
-    searchItemIds: Set<String>? = nil
+    searchItemIds: Set<String>? = nil,
+    showHidden: Bool = false
   ) {
     self.place = place
     self.statusIds = statusIds
@@ -181,6 +184,7 @@ public struct GalleryQuery: Sendable, Equatable {
     self.sort = sort
     self.direction = direction
     self.searchItemIds = searchItemIds
+    self.showHidden = showHidden
   }
 }
 

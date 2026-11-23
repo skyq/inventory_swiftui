@@ -45,10 +45,10 @@ public struct BackupExportProgress: Sendable, Equatable {
   }
 }
 
-/// Константы формата архива v1 (D11). Имена таблиц идут в порядке,
-/// зафиксированном для `data.json` и `manifest.json`.
+/// Константы формата архива (D11; версия 2 добавляет `statuses.is_hidden`).
+/// Имена таблиц идут в порядке, зафиксированном для `data.json` и `manifest.json`.
 public enum BackupFormat {
-  public static let version = 1
+  public static let version = 2
 
   public static let tableNames: [String] = [
     "places",

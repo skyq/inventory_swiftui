@@ -24,7 +24,7 @@ private struct PlacesContent: View {
 
   @State private var placeForm: PlaceFormPresentation?
   @State private var itemForm: ItemFormPresentation?
-  @State private var showsItemCard = false
+  @State private var cardPresentation: ItemCardPresentation?
 
   var body: some View {
     List {
@@ -85,7 +85,9 @@ private struct PlacesContent: View {
           Button {
             Task {
               await browser.selectItem(entry)
-              showsItemCard = true
+              if let details = browser.selectedItem {
+                cardPresentation = ItemCardPresentation(details: details)
+              }
             }
           } label: {
             HStack(spacing: 12) {
@@ -155,19 +157,17 @@ private struct PlacesContent: View {
       }
     }
     .sheet(
-      isPresented: $showsItemCard,
+      item: $cardPresentation,
       onDismiss: {
         browser.clearSelection()
         Task { await browser.reload() }
       }
-    ) {
-      if let details = browser.selectedItem {
-        ItemCardView(
-          details: details,
-          url: browser.photoURL(for: details),
-          makeEditModel: { presentation in model.makeItemFormModel(for: presentation) }
-        )
-      }
+    ) { presentation in
+      ItemCardView(
+        details: presentation.details,
+        url: browser.photoURL(for: presentation.details),
+        model: model
+      )
     }
     .alert(item: $browser.alert) { alert in
       switch alert {

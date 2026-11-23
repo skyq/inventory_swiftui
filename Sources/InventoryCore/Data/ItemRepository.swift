@@ -5,6 +5,7 @@ struct ItemRow {
   let item: Item
   let statusName: String
   let statusArchived: Bool
+  let statusHidden: Bool
 }
 
 /// SQL-доступ к вещам. Транзакцию открывает вызывающий сервис.
@@ -13,7 +14,7 @@ struct ItemRepository {
     try Row.fetchOne(
       db,
       sql: """
-        SELECT i.*, s.name AS status_name, s.is_archived AS status_archived
+        SELECT i.*, s.name AS status_name, s.is_archived AS status_archived, s.is_hidden AS status_hidden
         FROM items i
         JOIN statuses s ON s.id = i.status_id
         WHERE i.id = ?
@@ -26,7 +27,7 @@ struct ItemRepository {
     try Row.fetchAll(
       db,
       sql: """
-        SELECT i.*, s.name AS status_name, s.is_archived AS status_archived
+        SELECT i.*, s.name AS status_name, s.is_archived AS status_archived, s.is_hidden AS status_hidden
         FROM items i
         JOIN statuses s ON s.id = i.status_id
         """
@@ -114,7 +115,8 @@ struct ItemRepository {
     return ItemRow(
       item: item,
       statusName: row["status_name"],
-      statusArchived: (row["status_archived"] as Int) != 0
+      statusArchived: (row["status_archived"] as Int) != 0,
+      statusHidden: (row["status_hidden"] as Int) != 0
     )
   }
 }

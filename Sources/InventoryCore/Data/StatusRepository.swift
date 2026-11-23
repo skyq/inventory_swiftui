@@ -71,6 +71,13 @@ struct StatusRepository {
     )
   }
 
+  static func setHidden(_ db: Database, id: String, hidden: Bool) throws {
+    try db.execute(
+      sql: "UPDATE statuses SET is_hidden = ? WHERE id = ?",
+      arguments: [hidden ? 1 : 0, id]
+    )
+  }
+
   static func nextSortOrder(_ db: Database) throws -> Int {
     (try Int.fetchOne(db, sql: "SELECT MAX(sort_order) FROM statuses") ?? -1) + 1
   }
@@ -89,7 +96,8 @@ struct StatusRepository {
       name: row["name"],
       isArchived: (row["is_archived"] as Int) != 0,
       sortOrder: row["sort_order"],
-      createdAt: row["created_at"]
+      createdAt: row["created_at"],
+      isHidden: (row["is_hidden"] as Int) != 0
     )
   }
 }

@@ -1331,6 +1331,46 @@
         }
       }
     },
+    "reference.title": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Справочники"
+          }
+        }
+      }
+    },
+    "statuses.title": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статусы"
+          }
+        }
+      }
+    },
+    "tags.title": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Теги"
+          }
+        }
+      }
+    },
+    "tags.renameTitle": {
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переименовать тег"
+          }
+        }
+      }
+    },
     "people.title": {
       "localizations": {
         "ru": {

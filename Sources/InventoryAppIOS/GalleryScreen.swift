@@ -23,7 +23,7 @@ private struct GalleryContent: View {
   @ObservedObject var gallery: GalleryModel
   let model: AppModel
   @State private var searchText = ""
-  @State private var selectedItem: String?
+  @State private var cardPresentation: ItemCardPresentation?
   @State private var showsFilters = false
   @State private var itemForm: ItemFormPresentation?
 
@@ -34,8 +34,12 @@ private struct GalleryContent: View {
       LazyVGrid(columns: columns, spacing: 12) {
         ForEach(gallery.entries) { entry in
           Button {
-            selectedItem = entry.id
-            Task { await gallery.selectItem(id: entry.id) }
+            Task {
+              await gallery.selectItem(id: entry.id)
+              if let details = gallery.selected {
+                cardPresentation = ItemCardPresentation(details: details)
+              }
+            }
           } label: {
             GalleryTile(entry: entry, url: gallery.thumbnailURL(for: entry))
           }
@@ -55,26 +59,17 @@ private struct GalleryContent: View {
       Task { await gallery.setSearchText(text) }
     }
     .sheet(
-      isPresented: Binding(
-        get: { selectedItem != nil },
-        set: {
-          if !$0 {
-            selectedItem = nil
-            gallery.clearSelection()
-          }
-        }
-      ),
+      item: $cardPresentation,
       onDismiss: {
+        gallery.clearSelection()
         Task { await gallery.reload() }
       }
-    ) {
-      if let details = gallery.selected {
-        ItemCardView(
-          details: details,
-          url: gallery.photoURL(for: details),
-          makeEditModel: { presentation in model.makeItemFormModel(for: presentation) }
-        )
-      }
+    ) { presentation in
+      ItemCardView(
+        details: presentation.details,
+        url: gallery.photoURL(for: presentation.details),
+        model: model
+      )
     }
     .sheet(isPresented: $showsFilters) {
       GalleryFiltersSheet(model: gallery)

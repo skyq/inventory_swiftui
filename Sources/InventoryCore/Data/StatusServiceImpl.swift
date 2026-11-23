@@ -131,6 +131,19 @@ public final class StatusServiceImpl: StatusService, StatusSettingsService, @unc
     return status
   }
 
+  public func setHidden(_ id: String, hidden: Bool) throws -> Status {
+    let status = try db.write { database -> Status in
+      guard let existing = try StatusRepository.findOne(database, id: id) else {
+        throw notFound(id)
+      }
+      guard existing.isHidden != hidden else { return existing }
+      try StatusRepository.setHidden(database, id: id, hidden: hidden)
+      return try requireStatus(database, id: id)
+    }
+    mutations.emit(.statusesChanged(statusIds: [status.id], kind: .updated))
+    return status
+  }
+
   public func settings() throws -> StatusSettings {
     try db.read { database in
       try StatusRepository.settings(database)

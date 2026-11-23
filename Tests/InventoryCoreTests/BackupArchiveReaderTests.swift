@@ -160,7 +160,7 @@ struct BackupArchiveReaderTests {
     let fixture = try makeFixture()
     defer { try? FileManager.default.removeItem(at: fixture.root) }
     let members = [
-      Member(path: "manifest.json", kind: .file, bytes: try manifest(formatVersion: 2)),
+      Member(path: "manifest.json", kind: .file, bytes: try manifest(formatVersion: 3)),
       Member(path: "data.json", kind: .file, bytes: dataJSON()),
     ]
     let archiveURL = fixture.root.appendingPathComponent("new.inventory.zip")
@@ -172,8 +172,8 @@ struct BackupArchiveReaderTests {
       Issue.record("Ожидалась ошибка backupNewerFormat")
     } catch let error as AppException {
       #expect(error.code == .backupNewerFormat)
-      #expect(error.int("found") == 2)
-      #expect(error.int("supported") == 1)
+      #expect(error.int("found") == 3)
+      #expect(error.int("supported") == 2)
     }
     #expect(try contents(of: fixture.staging).isEmpty)
   }

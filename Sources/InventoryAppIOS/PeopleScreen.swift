@@ -160,7 +160,7 @@ private struct PersonDetailView: View {
         ItemCardView(
           details: details,
           url: model.gallery?.photoURL(for: details),
-          makeEditModel: { presentation in model.makeItemFormModel(for: presentation) }
+          model: model
         )
       }
     }

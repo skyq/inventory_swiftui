@@ -150,6 +150,19 @@ public final class StatusesModel: ObservableObject {
     }
   }
 
+  public func setHidden(_ id: String, hidden: Bool) async -> Bool {
+    let service = statusesService
+    let result = await AsyncCore.run { try service.setHidden(id, hidden: hidden) }
+    switch result {
+    case .success:
+      await reload()
+      return true
+    case .failure(let error):
+      alertMessage = ErrorPresenter.message(for: error)
+      return false
+    }
+  }
+
   public func restore(_ id: String) async -> Bool {
     let service = statusesService
     let result = await AsyncCore.run { try service.restore(id) }

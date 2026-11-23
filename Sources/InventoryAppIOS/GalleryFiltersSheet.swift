@@ -33,6 +33,14 @@ struct GalleryFiltersSheet: View {
           }
         }
 
+        Section {
+          Toggle("Показывать скрытые", isOn: $model.showHidden)
+        } footer: {
+          Text(
+            "Скрытые статусы (например, «Утеряна») не видны в галерее, пока эта опция выключена."
+          )
+        }
+
         Section("Теги") {
           if model.availableTags.isEmpty {
             Text("Тегов пока нет")
