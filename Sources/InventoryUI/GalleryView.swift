@@ -11,8 +11,6 @@ struct GalleryWorkspaceView: View {
   let onOpenPlace: (String) -> Void
   let onOpenPerson: (String) -> Void
 
-  @State private var showsFilters = false
-
   var body: some View {
     HSplitView {
       VStack(spacing: 0) {
@@ -122,7 +120,7 @@ struct GalleryWorkspaceView: View {
       .help(L10n.string("gallery.sort"))
 
       Button {
-        showsFilters.toggle()
+        GalleryFiltersWindow.toggle(model: model)
       } label: {
         Image(
           systemName: model.hasActiveFilters
@@ -132,9 +130,6 @@ struct GalleryWorkspaceView: View {
       }
       .buttonStyle(.borderless)
       .help(L10n.string("gallery.filters"))
-      .popover(isPresented: $showsFilters, arrowEdge: .bottom) {
-        GalleryFiltersView(model: model)
-      }
 
       if model.hasActiveFilters {
         Button(L10n.string("gallery.filters.reset")) {

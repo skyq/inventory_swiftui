@@ -49,7 +49,7 @@ struct GalleryFiltersView: View {
           }
           .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(maxHeight: 120)
+        .frame(minHeight: 90, maxHeight: .infinity)
       }
 
       Divider()
@@ -78,7 +78,7 @@ struct GalleryFiltersView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
           }
-          .frame(maxHeight: 140)
+          .frame(minHeight: 90, maxHeight: .infinity)
         }
       }
 
@@ -93,7 +93,8 @@ struct GalleryFiltersView: View {
       }
     }
     .padding(16)
-    .frame(width: 320)
+    .frame(minWidth: 300, minHeight: 380, alignment: .topLeading)
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
   }
 
   private var placeSelection: Binding<String> {
